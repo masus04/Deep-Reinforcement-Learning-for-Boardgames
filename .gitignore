@@ -109,5 +109,5 @@ functions.o
 # logging
 .log.*
 
-log\.txt
-/plots/*
+# plots
+testPlot.png

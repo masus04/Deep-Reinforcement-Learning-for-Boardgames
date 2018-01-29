@@ -1,13 +1,13 @@
 import numpy as np
 from random import choice, random
 
-import TicTacToe.config as config
-from TicTacToe.abstract_classes import Player
+from abstract_classes import Player
 
 
 class RandomPlayer(Player):
 
-    def get_move(self, board):
+    @staticmethod
+    def get_move(board):
         valid_moves = board.get_valid_moves()
         return choice(valid_moves)
 
@@ -19,13 +19,14 @@ class ExperiencedPlayer(Player):
     """Wins games, blocks opponent, uses Heuristic Table"""
     heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
 
-    def __init__(self, deterministic=False):
+    def __init__(self, deterministic=False, block_mid=False):
         self.deterministic = deterministic
+        self.block_mid = block_mid
 
     def get_move(self, board):
         valid_moves = board.get_valid_moves(self.color)
 
-        if sum(board.count_stones()) == 1 and (1, 1) in valid_moves:
+        if self.block_mid and sum(board.count_stones()) == 1 and (1, 1) in valid_moves:
             return 1, 1
 
         denies, attacks = [], []

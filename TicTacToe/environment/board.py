@@ -1,6 +1,6 @@
 import numpy as np
 
-from TicTacToe.abstract_classes import Board
+from abstract_classes import Board, BoardException
 import TicTacToe.config as config
 from TicTacToe.config import BLACK, WHITE, EMPTY
 
@@ -10,6 +10,7 @@ class TicTacToeBoard(Board):
     def __init__(self, board=None):
         self.board_size = board.board_size if board else config.BOARD_SIZE
         self.board = board.board.copy() if board else np.full((self.board_size, self.board_size), EMPTY, dtype=np.float64)
+        self.illegal_move = None
 
     def get_valid_moves(self, color=None):
         legal_moves = []
@@ -28,9 +29,13 @@ class TicTacToeBoard(Board):
             self.board[move[0]][move[1]] = color
             return self
         else:
-            raise BoardException("%s applied an illegal move: %s for board: \n%s" % (config.get_color_from_player_number(color), move, self.board))
+            self.illegal_move = color
+            return self
 
     def game_won(self):
+        if self.illegal_move is not None:
+            return self.other_color(self.illegal_move)
+
         if not self.get_valid_moves():
             return EMPTY
 
@@ -57,7 +62,6 @@ class TicTacToeBoard(Board):
             if not (p >= 0 and p < self.board_size):
                 return False
         return True
-
 
     def get_representation(self, color):
         if color == BLACK:
@@ -88,16 +92,6 @@ class TicTacToeBoard(Board):
     def copy(self):
         return TicTacToeBoard(self)
 
-    @staticmethod
-    def other_color(color):
-        if color == BLACK:
-            return WHITE
-        if color == WHITE:
-            return BLACK
-        if color == EMPTY:
-            return color
-        raise BoardException("Illegal color provided: %s" % color)
-
     def count_stones(self):
         """ returns a tuple (num_black_stones, num_white_stones)"""
         black = 0
@@ -109,7 +103,3 @@ class TicTacToeBoard(Board):
                 elif tile == config.WHITE:
                     white += 1
         return black, white
-
-
-class BoardException(Exception):
-    pass
