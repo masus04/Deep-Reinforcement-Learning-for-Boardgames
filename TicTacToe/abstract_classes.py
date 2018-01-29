@@ -24,11 +24,14 @@ class Board:
 
 class Player:
 
+    color = None
+    original_color = None
+
     def get_move(self, board):
         raise NotImplementedError("function |get_move| must be implemented by subclass")
 
     def register_winner(self, winner_color):
-        raise NotImplementedError("function |register_winner| must be implemented by subclass")
+        pass
 
     def save(self):
-        raise NotImplementedError("function |save| must be implemented by subclass")
+        pass

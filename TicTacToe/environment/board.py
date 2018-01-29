@@ -9,9 +9,9 @@ class TicTacToeBoard(Board):
 
     def __init__(self, board=None):
         self.board_size = board.board_size if board else config.BOARD_SIZE
-        self.board = board if board else np.full((self.board_size, self.board_size), EMPTY, dtype=np.float64)
+        self.board = board.board.copy() if board else np.full((self.board_size, self.board_size), EMPTY, dtype=np.float64)
 
-    def get_valid_moves(self, color):
+    def get_valid_moves(self, color=None):
         legal_moves = []
         for i in range(self.board_size):
             for j in range(self.board_size):
@@ -21,19 +21,28 @@ class TicTacToeBoard(Board):
         return legal_moves
 
     def apply_move(self, move, color):
-        if move in self.get_valid_moves(color):
+        if color is None:
+            raise BoardException("Illegal color provided: %s" % color)
+
+        if move in self.get_valid_moves():
             self.board[move[0]][move[1]] = color
+            return self
         else:
-            raise BoardException("%s applied an illegal move: %s" % (config.get_color_from_player_number(color), move))
+            raise BoardException("%s applied an illegal move: %s for board: \n%s" % (config.get_color_from_player_number(color), move, self.board))
 
     def game_won(self):
+        if not self.get_valid_moves():
+            return EMPTY
 
         for i in range(self.board_size):
             for j in range(self.board_size):
                 # Make use of symmetry, only check bottom right half of directions
                 for direction in [[1, 0], [-1, 1], [0, 1], [1, 1]]:
-                    return self.__recursive_game_won__((i, j), direction, BLACK, 0)
-                    return self.__recursive_game_won__((i, j), direction, WHITE, 0)
+                    if self.__recursive_game_won__((i, j), direction, BLACK, 0):
+                        return BLACK
+                    if self.__recursive_game_won__((i, j), direction, WHITE, 0):
+                        return WHITE
+        return False
 
     def __recursive_game_won__(self, position, direction, color, depth):
         if depth >= config.WIN_LINE_LENGTH:
@@ -41,7 +50,6 @@ class TicTacToeBoard(Board):
         if self.in_bounds(position) and self.board[position[0]][position[1]] == color:
             next_p = (position[0] + direction[0], position[1] + direction[1])
             return self.__recursive_game_won__(next_p, direction, color, depth+1)
-
         return False
 
     def in_bounds(self, position):
@@ -78,14 +86,29 @@ class TicTacToeBoard(Board):
             legal_moves_map[move[0]][move[1]] = 1
 
     def copy(self):
-        return Board(self.board)
+        return TicTacToeBoard(self)
 
-    def other_color(self, color):
+    @staticmethod
+    def other_color(color):
         if color == BLACK:
             return WHITE
         if color == WHITE:
             return BLACK
-        return EMPTY
+        if color == EMPTY:
+            return color
+        raise BoardException("Illegal color provided: %s" % color)
+
+    def count_stones(self):
+        """ returns a tuple (num_black_stones, num_white_stones)"""
+        black = 0
+        white = 0
+        for col in self.board:
+            for tile in col:
+                if tile == config.BLACK:
+                    black += 1
+                elif tile == config.WHITE:
+                    white += 1
+        return black, white
 
 
 class BoardException(Exception):

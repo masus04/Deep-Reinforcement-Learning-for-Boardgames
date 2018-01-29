@@ -1,0 +1,59 @@
+import numpy as np
+from random import choice, random
+
+import TicTacToe.config as config
+from TicTacToe.abstract_classes import Player
+
+
+class RandomPlayer(Player):
+
+    def get_move(self, board):
+        valid_moves = board.get_valid_moves()
+        return choice(valid_moves)
+
+    def register_winner(self, winner_color):
+        pass
+
+
+class ExperiencedPlayer(Player):
+    """Wins games, blocks opponent, uses Heuristic Table"""
+    heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
+
+    def __init__(self, deterministic=False):
+        self.deterministic = deterministic
+
+    def get_move(self, board):
+        valid_moves = board.get_valid_moves(self.color)
+
+        if sum(board.count_stones()) == 1 and (1, 1) in valid_moves:
+            return 1, 1
+
+        denies, attacks = [], []
+        for move in valid_moves:
+            afterstate = board.copy().apply_move(move, self.color)
+            if afterstate.game_won() == self.color:
+                return move
+
+            afterstate_opponent = board.copy().apply_move(move, board.other_color(self.color))
+            if afterstate_opponent.game_won() == board.other_color(self.color):
+                denies.append((self.evaluate_heuristic_table(afterstate_opponent), move))
+
+            attacks.append((self.evaluate_heuristic_table(afterstate), move))
+
+        if denies:
+            return max(denies)[1]
+        else:
+            return max(attacks)[1]
+
+    def evaluate_heuristic_table(self, board):
+        self_mask = board.board == self.color
+        other_mask = board.board == board.other_color(self.color)
+        score = np.sum(self.heuristic_table * self_mask - self.heuristic_table * other_mask)
+        if not self.deterministic:
+            score += random() * 0.001  # Bring some randomness to equaly valued boards
+        return score
+
+
+class ExpertPlayer(Player):
+    """Never loses"""
+    pass
