@@ -1,16 +1,19 @@
+import numpy as np
+
 import TicTacToe.config as config
 from TicTacToe.environment.board import TicTacToeBoard
 
 
 class TicTacToe:
 
-    def __init__(self, player1, player2):
-        self.player1 = player1
-        self.player2 = player2
+    def __init__(self, players):
+        self.player1 = players[0]
+        self.player2 = players[1]
 
         self.player1.color = config.BLACK
         self.player2.color = config.WHITE
-        for player in player1, player2:
+
+        for player in players:
             player.original_color = player.color
 
     def __run__(self, player1, player2):
@@ -28,9 +31,11 @@ class TicTacToe:
             players = list(reversed(players))
 
     def run_simulations(self, episodes, switch_colors=True, switch_players=True):
+        """ Runs @episodes simulations using the given players. @return the results and average losses per episode"""
         simulation_players = [self.player1, self.player2]
 
         results = []
+        losses = []
 
         for episode in range(episodes):
             if switch_colors and episode != 0 and episode % 2 == 0:
@@ -40,13 +45,17 @@ class TicTacToe:
                 simulation_players = list(reversed(simulation_players))
 
             winner = self.__run__(simulation_players[0], simulation_players[1])
+            player_losses = []
             for player in simulation_players:
-                player.register_winner(winner.original_color)
+                loss = player.register_winner(winner.original_color)
+                if loss:
+                    player_losses.append(loss)
 
+            losses.append(np.mean(player_losses))
             results.append(winner.original_color)
 
         for player in simulation_players:
             player.color = player.original_color
 
-        return results
+        return results, losses
 

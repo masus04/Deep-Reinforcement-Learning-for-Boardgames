@@ -34,7 +34,7 @@ class TestReinforcePlayer(unittest.TestCase):
         player1 = reinforcePlayer.ReinforcePlayer(strategy=reinforcePlayer.Strategy, lr=0.001)
         player2 = RandomPlayer()
 
-        simulation = TicTacToe(player1, player2)
+        simulation = TicTacToe([player1, player2])
         simulation.run_simulations(100)
 
 

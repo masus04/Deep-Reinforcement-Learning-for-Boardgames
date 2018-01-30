@@ -110,4 +110,4 @@ functions.o
 .log.*
 
 # plots
-testPlot.png
+*.png

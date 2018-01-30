@@ -5,7 +5,7 @@ import os
 
 import TicTacToe.config as config
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.board import TicTacToeBoard, BoardException
+from TicTacToe.environment.board import TicTacToeBoard
 import TicTacToe.players.base_players as ttt_players
 from plotting import Plotter
 
@@ -66,8 +66,8 @@ class TestEnvironment(unittest.TestCase):
     def testRandomPlayer(self):
         player1 = ttt_players.RandomPlayer()
         player2 = ttt_players.RandomPlayer()
-        simulation = TicTacToe(player1, player2)
-        results = simulation.run_simulations(self.TEST_EPISODES)
+        simulation = TicTacToe([player1, player2])
+        results, losses = simulation.run_simulations(self.TEST_EPISODES)
         self.assertTrue(len(results) == self.TEST_EPISODES)
         self.assertTrue(None not in results)
 
@@ -82,8 +82,8 @@ class TestEnvironment(unittest.TestCase):
     def testExperiencedPlayer(self):
         player1 = ttt_players.ExperiencedPlayer()
         player2 = ttt_players.ExperiencedPlayer()
-        simulation = TicTacToe(player1, player2)
-        results = simulation.run_simulations(self.TEST_EPISODES)
+        simulation = TicTacToe([player1, player2])
+        results, losses = simulation.run_simulations(self.TEST_EPISODES)
         self.assertTrue(len(results) == self.TEST_EPISODES)
         self.assertTrue(None not in results)
 
@@ -98,22 +98,22 @@ class TestEnvironment(unittest.TestCase):
     def testExperiencedVsRandom(self):
         player1 = ttt_players.ExperiencedPlayer()
         player2 = ttt_players.RandomPlayer()
-        simulation = TicTacToe(player1, player2)
-        results = simulation.run_simulations(self.TEST_EPISODES)
+        simulation = TicTacToe([player1, player2])
+        results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced vs Random: %s" % np.mean(results))
 
     def testExperiencedBlockVsRandom(self):
         player1 = ttt_players.ExperiencedPlayer(block_mid=True)
         player2 = ttt_players.RandomPlayer()
-        simulation = TicTacToe(player1, player2)
-        results = simulation.run_simulations(self.TEST_EPISODES)
+        simulation = TicTacToe([player1, player2])
+        results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced(block) vs Random: %s" % np.mean(results))
 
     def testBlockMid(self):
         player1 = ttt_players.ExperiencedPlayer(block_mid=True)
         player2 = ttt_players.ExperiencedPlayer(block_mid=False)
-        simulation = TicTacToe(player1, player2)
-        results = simulation.run_simulations(self.TEST_EPISODES)
+        simulation = TicTacToe([player1, player2])
+        results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced(block) vs Experienced(): %s" % np.mean(results))
 
     def testPlotter(self):

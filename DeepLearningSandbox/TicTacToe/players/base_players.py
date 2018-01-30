@@ -1,7 +1,9 @@
 import numpy as np
 from random import choice, random
 
+import TicTacToe.config as config
 from abstract_classes import Player
+from TicTacToe.environment.game import TicTacToe
 
 
 class RandomPlayer(Player):
@@ -12,11 +14,12 @@ class RandomPlayer(Player):
         return choice(valid_moves)
 
     def register_winner(self, winner_color):
+        """ End of episode callback. @return the accumulated loss for the episode if available"""
         pass
 
 
 class ExperiencedPlayer(Player):
-    """Wins games, blocks opponent, uses Heuristic Table"""
+    """ Wins games, blocks opponent, uses Heuristic Table """
     heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
 
     def __init__(self, deterministic=False, block_mid=False):
@@ -56,5 +59,24 @@ class ExperiencedPlayer(Player):
 
 
 class ExpertPlayer(Player):
-    """Never loses"""
+    """ Never loses, only draws """
     pass
+
+
+def evaluate_against_base_players(player):
+    """ Standardized evaluation against base players. @return an evaluation score (0, 100) """
+
+    EVALUATION_PLAYERS = (RandomPlayer(), ExperiencedPlayer())
+
+    try:
+        player.strategy.train = True
+    except KeyError:
+        pass
+
+    accumulated_results = []
+    for e_player in EVALUATION_PLAYERS:
+        simulation = TicTacToe([player, e_player])
+        results, losses = simulation.run_simulations(config.EVALUATION_GAMES)
+        accumulated_results.append(results)
+
+    return np.mean(accumulated_results)

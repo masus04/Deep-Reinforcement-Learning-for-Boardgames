@@ -31,9 +31,9 @@ class Plotter:
         line1_values = self.losses.get_values()
 
         line2_name = "score"
-        line2_values = self.scores.get_values()
+        line2_values = self.__scale__(self.scores.get_values(), len(line1_values))
 
-        if not line1_values or not line2_values:
+        if len(line1_values) == 0 or len(line2_values) == 0:
             raise Exception("Cannot plot empty values")
 
         line1 = pd.Series(line1_values, name=line1_name)
@@ -47,6 +47,15 @@ class Plotter:
 
         return plt
         plt.savefig("./plots" + path + "%s.png" % file_name)
+
+    @staticmethod
+    def __scale__(lst, length):
+        old_indices = np.arange(0, len(lst))
+        new_indices = np.linspace(0, len(lst) - 1, length)
+        spl = UnivariateSpline(old_indices, lst, k=1, s=0)
+        lst = spl(new_indices)
+
+        return lst
 
 
 class DataResolutionManager:
@@ -91,6 +100,10 @@ class DataResolutionManager:
 
 
 class Printer:
+
+    @staticmethod
+    def print_episode(episode, total_episodes, time_taken=None):
+        Printer.print_inplace("Episode %s/%s" % (episode, total_episodes), 100 * episode // total_episodes, time_taken)
 
     @staticmethod
     def print_inplace(text, percentage, time_taken=None, comment=""):

@@ -72,6 +72,7 @@ class Strategy(ABC):
     model = None
     optimizer = None
     training_samples = []
+    train = True
 
     @abstractmethod
     def evaluate(self, board_sample):
