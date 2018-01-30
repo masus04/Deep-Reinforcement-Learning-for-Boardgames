@@ -11,12 +11,15 @@ class SupervisedCrossValidation(Experiment):
         super(SupervisedCrossValidation, self).__init__(os.path.dirname(os.path.abspath(__file__)))
 
     def run(self, iterations, lr_boundaries):
-        for i in range(iterations):
-            GAMES = 20
-            EPISODES = 200
-            LR = 10**uniform(lr_boundaries[0], lr_boundaries[1])
 
-            nested_experiment = TrainPGStrategySupervised()
+        GAMES = 20
+        EPISODES = 100
+
+        nested_experiment = TrainPGStrategySupervised()
+
+        for i in range(iterations):
+            LR = 10 ** uniform(lr_boundaries[0], lr_boundaries[1])
+
             nested_experiment.run(games=GAMES, episodes=EPISODES, lr=LR)
             nested_experiment.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % LR)
 
