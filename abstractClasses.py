@@ -68,11 +68,13 @@ class Player(ABC):
 
 
 class Strategy(ABC):
-    lr = None
-    model = None
-    optimizer = None
-    training_samples = []
-    train = True
+
+    def __init__(self):
+        self.lr = None
+        self.model = None
+        self.optimizer = None
+        self.training_samples = []
+        self.train = True
 
     @abstractmethod
     def evaluate(self, board_sample):
