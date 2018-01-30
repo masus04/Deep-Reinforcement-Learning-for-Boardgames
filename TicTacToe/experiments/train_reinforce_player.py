@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from experiment import Experiment
@@ -10,7 +11,7 @@ from plotting import Printer
 class TrainReinforcePlayer(Experiment):
 
     def __init__(self, games, evaluations):
-        super(TrainReinforcePlayer, self).__init__()
+        super(TrainReinforcePlayer, self).__init__(os.path.dirname(os.path.abspath(__file__)))
 
         self.player1 = ReinforcePlayer(Strategy, lr=0.001)
 
@@ -51,4 +52,5 @@ if __name__ == '__main__':
     experiment = TrainReinforcePlayer(GAMES, EVALUATIONS)
     experiment.run()
     experiment.plot_and_save("TrainReinforcePlayerWithSharedNetwork")
+    print("Successively trained on %s games" % experiment.__plotter__.num_episodes)
 

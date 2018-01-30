@@ -10,13 +10,7 @@ class TestExperiments(unittest.TestCase):
         self.assertIsNotNone(experiment.last_plot)
 
     def test_fixCommandLineExecution(self):
-        import sys;
-        print(sys.executable)
-
-        import os;
-        print(os.getcwd())
-
-        print(sys.path)
+        pass
 
 
 if __name__ == '__main__':

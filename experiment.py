@@ -8,12 +8,13 @@ from plotting import Plotter
 class Experiment(ABC):
     """ Base class for running experiments. Provides a plotter as well as path handling. DO NOT FORGET TO CALL super()"""
 
-    def __init__(self):
+    def __init__(self, experiment_path):
         self.experiment_name = self.__class__.__name__
         self.__plotter__ = Plotter()
         self.last_plot = None
 
-        self.path = "./%s/" % self.experiment_name
+        self.path = "%s/%s/" % (experiment_path, self.experiment_name)
+        print(self.path)
 
     @abstractmethod
     def run(self):
@@ -46,3 +47,4 @@ class Experiment(ABC):
             os.makedirs(self.path)
 
         self.last_plot.savefig(self.path + file_name)
+
