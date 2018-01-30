@@ -1,5 +1,5 @@
-
 import os
+import torch
 from abc import ABC, abstractmethod
 
 from plotting import Plotter
@@ -46,5 +46,12 @@ class Experiment(ABC):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
-        self.last_plot.savefig(self.path + file_name)
+        self.last_plot.savefig(self.path + file_name + ".png")
+        self.last_plot.close("all")
+
+    def save_player(self, player, filename):
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+
+        torch.save(player, self.path + filename)
 

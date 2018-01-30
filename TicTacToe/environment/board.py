@@ -1,6 +1,6 @@
 import numpy as np
 
-from abstract_classes import Board, BoardException
+from abstractClasses import Board, BoardException
 import TicTacToe.config as config
 from TicTacToe.config import BLACK, WHITE, EMPTY
 

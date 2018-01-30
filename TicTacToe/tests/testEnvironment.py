@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 import random
 import os
+from datetime import datetime
 
 import TicTacToe.config as config
 from TicTacToe.environment.game import TicTacToe
@@ -131,6 +132,15 @@ class TestEnvironment(unittest.TestCase):
         plt.savefig("testPlot")
 
         self.assertTrue(os.path.exists("testPlot.png"))
+
+    def testEvaluation(self):
+        start = datetime.now()
+        score = ttt_players.evaluate_against_base_players(ttt_players.RandomPlayer())
+        print("Evaluating RandomPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
+
+        start = datetime.now()
+        ttt_players.evaluate_against_base_players(ttt_players.ExpertPlayer())
+        print("Evaluating ExpertPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ from scipy.interpolate import UnivariateSpline
 import matplotlib.pyplot as plt
 import pandas as pd
 
+import TicTacToe.config as config
 
 class Plotter:
 
@@ -40,13 +41,12 @@ class Plotter:
         line2 = pd.Series(line2_values, name=line2_name)
         df = pd.DataFrame([line1, line2])
         df = df.transpose()
-        df.plot(secondary_y=[line2_name], legend=True, figsize=(16, 9))
+        df.plot(legend=True, figsize=(16, 9))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
 
         plt.title(title)
         plt.xlabel = "Episodes"
 
         return plt
-        plt.savefig("./plots" + path + "%s.png" % file_name)
 
     @staticmethod
     def __scale__(lst, length):

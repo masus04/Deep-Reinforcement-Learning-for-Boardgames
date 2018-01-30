@@ -2,7 +2,7 @@ import numpy as np
 from random import choice, random
 
 import TicTacToe.config as config
-from abstract_classes import Player
+from abstractClasses import Player
 from TicTacToe.environment.game import TicTacToe
 
 
@@ -22,7 +22,7 @@ class ExperiencedPlayer(Player):
     """ Wins games, blocks opponent, uses Heuristic Table """
     heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
 
-    def __init__(self, deterministic=False, block_mid=False):
+    def __init__(self, deterministic=True, block_mid=False):
         self.deterministic = deterministic
         self.block_mid = block_mid
 
@@ -70,7 +70,7 @@ def evaluate_against_base_players(player):
 
     try:
         player.strategy.train = True
-    except KeyError:
+    except AttributeError:
         pass
 
     accumulated_results = []

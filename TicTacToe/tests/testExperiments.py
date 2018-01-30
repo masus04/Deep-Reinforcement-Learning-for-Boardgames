@@ -1,16 +1,13 @@
 import unittest
 
-from TicTacToe.experiments.train_reinforce_player import TrainReinforcePlayer
+from TicTacToe.experiments.trainReinforcePlayer import TrainReinforcePlayer
 
 
 class TestExperiments(unittest.TestCase):
 
     def test_trainReinforcePlayer(self):
-        experiment = TrainReinforcePlayer(100, 10).run()
+        experiment = TrainReinforcePlayer().run(games=100, evaluations=10, lr=0.001)
         self.assertIsNotNone(experiment.last_plot)
-
-    def test_fixCommandLineExecution(self):
-        pass
 
 
 if __name__ == '__main__':

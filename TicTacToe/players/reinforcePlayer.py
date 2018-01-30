@@ -6,7 +6,7 @@ from torch.autograd import Variable
 from copy import deepcopy
 
 import TicTacToe.config as config
-import abstract_classes as abstract
+import abstractClasses as abstract
 
 
 class ReinforcePlayer(abstract.Player):
@@ -29,11 +29,11 @@ class ReinforcePlayer(abstract.Player):
         return self.strategy.update(self.get_label(winner_color))
 
 
-class Strategy(abstract.Strategy):
+class PGStrategy(abstract.Strategy):
 
     def __init__(self, lr, model=None):
         self.lr = lr
-        self.model = model if model else Model()
+        self.model = model if model else PGModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
     def copy(self, shared_weights=True):
@@ -75,16 +75,18 @@ class Strategy(abstract.Strategy):
             return loss.data[0]
 
 
-class Model(abstract.Model):
+class PGModel(abstract.Model):
 
     def __init__(self):
-        super(Model, self).__init__()
+        super(PGModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
         board_states = self.board_size**2**3
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=board_states)
         self.fc2 = torch.nn.Linear(in_features=board_states, out_features=self.board_size**2)
+        # self.fc2 = torch.nn.Linear(in_features=board_states, out_features=board_states)
+        # self.fc3 = torch.nn.Linear(in_features=board_states, out_features=self.board_size ** 2)
 
     def copy(self):
         return deepcopy(self)
@@ -93,5 +95,8 @@ class Model(abstract.Model):
         x = input.view(-1, self.board_size**2)
         x = F.relu(self.fc1(x))
         x = F.sigmoid(self.fc2(x))
+        # x = F.relu(self.fc2(x))
+        # x = F.sigmoid(self.fc3(x))
+
         x = F.softmax(x, dim=1)
         return x
