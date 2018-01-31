@@ -72,12 +72,12 @@ class PGLinearModel(abstract.Model):
 
         self.board_size = config.BOARD_SIZE
         intermediate_size = 128
-        p = 0.1
+        self.p_dropout = 0.0
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
-        self.dropout1 = torch.nn.Dropout(p=p)
+        self.dropout1 = torch.nn.Dropout(p=self.p_dropout)
         self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.dropout2 = torch.nn.Dropout(p=p)
+        self.dropout2 = torch.nn.Dropout(p=self.p_dropout)
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
 
 
@@ -86,9 +86,11 @@ class PGLinearModel(abstract.Model):
     def forward(self, input):
         x = input.view(-1, self.board_size**2)
         x = F.relu(self.fc1(x))
-        x = self.dropout1(x)
+        if self.p_dropout > 0:
+            x = self.dropout1(x)
         x = F.relu(self.fc2(x))
-        x = self.dropout2(x)
+        if self.p_dropout > 0:
+            x = self.dropout2(x)
         x = self.fc3(x)
 
         x = F.softmax(x, dim=1)
