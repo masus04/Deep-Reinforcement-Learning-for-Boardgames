@@ -29,6 +29,7 @@ class TrainPGSupervisedContinuous(Experiment):
         generator = RandomPlayer()
         color_iterator = Experiment.AlternatingColorIterator()
 
+        print("Training ReinforcedPlayer supervised continuously with LR: %s" % lr)
         start = datetime.now()
         for game in range(self.games):
             acc_reward = 0
