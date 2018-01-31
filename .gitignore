@@ -111,3 +111,4 @@ functions.o
 
 # plots
 *.png
+networkSpecs.txt

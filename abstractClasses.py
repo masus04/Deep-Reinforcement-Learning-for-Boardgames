@@ -1,7 +1,9 @@
 import torch
+from copy import deepcopy
 from abc import ABC, abstractmethod
 
 import TicTacToe.config as config
+from docInheritDecorator import DocInherit
 
 
 class Board(ABC):
@@ -100,9 +102,10 @@ class Player(ABC):
 
     Players are hooked into their specific game frameworks. The game defines the format of the Board and move.
     """
-
-    color = None
-    original_color = None
+    def __init__(self):
+        super(Player, self).__init__()
+        self.color = None
+        self.original_color = None
 
     @abstractmethod
     def get_move(self, board):
@@ -119,9 +122,9 @@ class Player(ABC):
         Callback method which is called after a game has ended. Announces the winner of the game.
 
         :param winner_color: The color used to represent the winner of the game that just finished.
-        :return: A loss measure for the whole game if available. This is used mostly for plotting statistics.
+        :return: A loss measure for the whole game if available, else 0. This is used mostly for plotting statistics.
         """
-        pass
+        return 0
 
     def save(self):
         """
@@ -143,7 +146,29 @@ class Player(ABC):
         if Board.other_color(self.color) == winner_color:
             return config.LABEL_LOSS
         return config.LABEL_DRAW
+    
 
+class LearningPlayer(Player):
+
+    @DocInherit
+    def __init__(self):
+        super(LearningPlayer, self).__init__()
+        self.model = None
+
+    @DocInherit
+    @abstractmethod
+    def register_winner(self, winner_color):
+        pass
+
+    def copy(self, shared_weights=True):
+        """
+        Returns a clean copy of the player and all its attributes.
+
+        :param shared_weights: If True, the returned player shares a Model and therefore the weights with the original player
+        :return: A clean copy of the player and all its attributes.
+        """
+        return self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
+    
 
 class Strategy(ABC):
     """
@@ -167,6 +192,24 @@ class Strategy(ABC):
     def update(self, training_labels):
         pass
 
+    def copy(self, shared_weights=True):
+        if shared_weights:
+            strategy = self.__class__(model=self.model, lr=self.lr)
+        else:
+            strategy = self.__class__(model=self.model.copy(), lr=self.lr)
+
+        strategy.train = deepcopy(self.train)
+        strategy.training_samples = deepcopy(self.training_samples)
+        return strategy
+
 
 class Model(torch.nn.Module):
-    pass
+
+    def __xavier_initialization__(self):
+        for module in self.modules():
+            if isinstance(module, torch.nn.Conv2d) or isinstance(module, torch.nn.Linear):
+                torch.nn.init.xavier_normal(module.weight.data)
+                # torch.nn.init.xavier_normal(module.bias.data)
+
+    def copy(self):
+        return deepcopy(self)

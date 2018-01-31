@@ -48,8 +48,7 @@ class TicTacToe:
             player_losses = []
             for player in simulation_players:
                 loss = player.register_winner(winner.original_color)
-                if loss:
-                    player_losses.append(loss)
+                player_losses.append(loss)
 
             losses.append(np.mean(player_losses))
             results.append(winner.original_color)

@@ -4,7 +4,7 @@ from datetime import datetime
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.players.base_players import evaluate_against_base_players
+from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
 
 

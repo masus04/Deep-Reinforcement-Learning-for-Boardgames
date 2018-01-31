@@ -13,10 +13,6 @@ class RandomPlayer(Player):
         valid_moves = board.get_valid_moves()
         return choice(valid_moves)
 
-    def register_winner(self, winner_color):
-        """ End of episode callback. @return the accumulated loss for the episode if available"""
-        pass
-
 
 class ExperiencedPlayer(Player):
     """ Wins games, blocks opponent, uses Heuristic Table """
@@ -64,26 +60,3 @@ class ExpertPlayer(Player):
 
     def get_move(self, board):
         pass
-
-    def register_winner(self, winner_color):
-        """ End of episode callback. @return the accumulated loss for the episode if available"""
-        pass
-
-
-def evaluate_against_base_players(player):
-    """ Standardized evaluation against base players. @return an evaluation score (0, 100) """
-
-    EVALUATION_PLAYERS = (RandomPlayer(), ExperiencedPlayer())
-
-    try:
-        player.strategy.train = True
-    except AttributeError:
-        pass
-
-    accumulated_results = []
-    for e_player in EVALUATION_PLAYERS:
-        simulation = TicTacToe([player, e_player])
-        results, losses = simulation.run_simulations(config.EVALUATION_GAMES)
-        accumulated_results.append(results)
-
-    return np.mean(accumulated_results)

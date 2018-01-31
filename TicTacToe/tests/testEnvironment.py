@@ -8,6 +8,7 @@ import TicTacToe.config as config
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.board import TicTacToeBoard
 import TicTacToe.players.base_players as ttt_players
+from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
 
 
@@ -135,11 +136,11 @@ class TestEnvironment(unittest.TestCase):
 
     def testEvaluation(self):
         start = datetime.now()
-        score = ttt_players.evaluate_against_base_players(ttt_players.RandomPlayer())
+        score = evaluate_against_base_players(ttt_players.RandomPlayer())
         print("Evaluating RandomPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
         start = datetime.now()
-        ttt_players.evaluate_against_base_players(ttt_players.ExperiencedPlayer())
+        evaluate_against_base_players(ttt_players.ExperiencedPlayer())
         print("Evaluating ExpertPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
 
