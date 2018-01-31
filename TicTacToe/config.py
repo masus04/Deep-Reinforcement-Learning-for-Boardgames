@@ -1,3 +1,4 @@
+from doc_inherit_decorator import DocInherit
 
 # Black > White because these are also used as rewards and for scoring.
 BLACK = 2

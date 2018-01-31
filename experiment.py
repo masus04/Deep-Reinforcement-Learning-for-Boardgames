@@ -2,6 +2,7 @@ import os
 import torch
 from abc import ABC, abstractmethod
 
+import TicTacToe.config as config
 from plotting import Plotter
 
 
@@ -40,8 +41,8 @@ class Experiment(ABC):
             raise Exception("__plotter__ not initialized, Experiment's super() must be called")
         self.last_plot = self.__plotter__.plot(title)
 
-    def plot_and_save(self, file_name):
-        self.plot_scores(file_name)
+    def plot_and_save(self, file_name, plot_title=""):
+        self.plot_scores(plot_title if plot_title else file_name)
 
         if not os.path.exists(self.path):
             os.makedirs(self.path)
@@ -55,3 +56,17 @@ class Experiment(ABC):
 
         torch.save(player, self.path + filename)
 
+
+class AlternatingColorIterator:
+    """
+    Returns Black and White alternatingly, starting with WHITE
+    """
+    def __init__(self):
+        self.colors = [config.BLACK, config.WHITE]
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.colors = list(reversed(self.colors))
+        return self.colors[0]

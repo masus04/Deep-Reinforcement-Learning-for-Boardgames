@@ -1,6 +1,7 @@
 
 import torch
 import torch.nn.functional as F
+from torch.autograd.variable import torch
 from torch.distributions import Categorical
 from torch.autograd import Variable
 from copy import deepcopy
@@ -32,6 +33,7 @@ class ReinforcePlayer(abstract.Player):
 class PGStrategy(abstract.Strategy):
 
     def __init__(self, lr, model=None):
+        super(PGStrategy, self).__init__()
         self.lr = lr
         self.model = model if model else PGModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
@@ -81,12 +83,15 @@ class PGModel(abstract.Model):
         super(PGModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        board_states = self.board_size**2**3
+        game_states = self.board_size**2**3
+        intermediate_size = 128
 
-        self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=board_states)
-        self.fc2 = torch.nn.Linear(in_features=board_states, out_features=self.board_size**2)
-        # self.fc2 = torch.nn.Linear(in_features=board_states, out_features=board_states)
-        # self.fc3 = torch.nn.Linear(in_features=board_states, out_features=self.board_size ** 2)
+        self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
+        # self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size**2)
+        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
+
+        self.__xavier_initialization__()
 
     def copy(self):
         return deepcopy(self)
@@ -94,9 +99,17 @@ class PGModel(abstract.Model):
     def forward(self, input):
         x = input.view(-1, self.board_size**2)
         x = F.relu(self.fc1(x))
-        x = F.sigmoid(self.fc2(x))
-        # x = F.relu(self.fc2(x))
-        # x = F.sigmoid(self.fc3(x))
+        # x = self.fc2(x)
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
 
         x = F.softmax(x, dim=1)
         return x
+
+    def __xavier_initialization__(self):
+        for module in self.modules():
+            if isinstance(module, torch.nn.Conv2d) or isinstance(module, torch.nn.Linear):
+                torch.nn.init.xavier_normal(module.weight.data)
+                # torch.nn.init.xavier_normal(module.bias.data)
+
+

@@ -3,34 +3,81 @@ from abc import ABC, abstractmethod
 
 import TicTacToe.config as config
 
-class Board(ABC):
 
+class Board(ABC):
+    """
+    Represents an interface for the board of any game board used in this package.
+    """
     @abstractmethod
     def get_valid_moves(self, color):
+        """ Returns a list of valid moves for the player represented with :param color.
+
+        :param color: The color used to represent the player for which to search valid moves
+        :return: A list valid moves. The representation of moves is determined by the implemented game.
+        """
         pass
 
     @abstractmethod
     def apply_move(self, move, color):
+        """
+        Applies a move to the board including all effects to the rest of the board the move may have.
+
+        The move can be illegal, depending on the game implementation. But if so, this method should handle the consequences.
+
+        :param move: The move to be applied
+        :param color: The color used to represent the player which performs the move
+        :return: self
+        """
         pass
 
     @abstractmethod
     def game_won(self):
+        """
+        Checks if the game has ended. If so, return the winner.
+
+        :return: The winner. None if the game is not yet over.
+        """
         pass
 
     @abstractmethod
     def get_representation(self, color):
+        """
+        Generates a representation of the board in which black is always the current player.
+
+        :param color: The color used to represent the player in game
+        :return: A copy of the (modified) game state
+        """
         pass
 
     @abstractmethod
     def get_legal_moves_map(self, color):
+        """
+        Generates a map of the game state with 0 everywhere except for the tiles where moves are valid.
+
+        This is useful for matrix operations on the board representation
+
+        :param color: The color used to represent the player
+        :return: A board state where only legal moves are nonzero
+        """
         pass
 
     @abstractmethod
     def copy(self):
+        """
+        Returns a copy of the board and its state so that further manipulations do not interfere with the original object.
+
+        :return: a copy of the board and its state.
+        """
         pass
 
     @staticmethod
     def other_color(color):
+        """
+        Determines the opponents color depending on the given color. Empty if :param color == Empty.
+
+        :param color: The color used to represent the player
+        :return: The color of the opposing player
+        """
         if color == config.BLACK:
             return config.WHITE
         if color == config.WHITE:
@@ -41,25 +88,56 @@ class Board(ABC):
 
 
 class BoardException(Exception):
+    """
+    BoardException is raised if Board encounters an illegal state.
+    """
     pass
 
 
 class Player(ABC):
+    """
+    Abstract base class for all players of any game used in this package. Each player implements its own strategy.
+
+    Players are hooked into their specific game frameworks. The game defines the format of the Board and move.
+    """
 
     color = None
     original_color = None
 
     @abstractmethod
     def get_move(self, board):
+        """
+        Core method of the player: given a board provide the next move to apply to it following a strategy given by the player.
+
+        :param board: The board for which to decide on a move to take.
+        :return: a move in a format defined by the game implementation.
+        """
         pass
 
     def register_winner(self, winner_color):
+        """
+        Callback method which is called after a game has ended. Announces the winner of the game.
+
+        :param winner_color: The color used to represent the winner of the game that just finished.
+        :return: A loss measure for the whole game if available. This is used mostly for plotting statistics.
+        """
         pass
 
     def save(self):
+        """
+        Save the current player including the state of training if applicable.
+
+        :return: None
+        """
         pass
 
     def get_label(self, winner_color):
+        """
+        Produce a label given the players current state and the winner's color.
+
+        :param winner_color: The color used to represent the winner
+        :return: A label that can be used in training.
+        """
         if self.original_color == winner_color:
             return config.LABEL_WIN
         if Board.other_color(self.color) == winner_color:
@@ -68,6 +146,11 @@ class Player(ABC):
 
 
 class Strategy(ABC):
+    """
+    Abstract Base class for all complex strategies used by any player.
+
+    The strategy contains and trains a model that is capable of
+    """
 
     def __init__(self):
         self.lr = None

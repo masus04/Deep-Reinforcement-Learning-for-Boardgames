@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 import TicTacToe.config as config
-from experiment import Experiment
+from experiment import Experiment, AlternatingColorIterator
 from TicTacToe.players.reinforcePlayer import PGStrategy
 from TicTacToe.players.base_players import ExperiencedPlayer, RandomPlayer
 from TicTacToe.environment.board import TicTacToeBoard
@@ -55,23 +55,11 @@ class TrainPGStrategySupervised(Experiment):
             Printer.print_episode(i+1, episodes, datetime.now() - start)
 
 
-class AlternatingColorIterator:
-    def __init__(self):
-        self.colors = [config.BLACK, config.WHITE]
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        self.colors = list(reversed(self.colors))
-        return self.colors[-1]
-
-
 if __name__ == '__main__':
 
     GAMES = 20
     EPISODES = 500
-    LR = 1e-4
+    LR = 1e-5
 
     experiment = TrainPGStrategySupervised()
     experiment.run(games=GAMES, episodes=EPISODES, lr=LR)

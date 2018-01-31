@@ -12,18 +12,20 @@ class SupervisedCrossValidation(Experiment):
 
     def run(self, iterations, lr_boundaries):
 
-        GAMES = 20
-        EPISODES = 100
+        GAMES = 1
+        EPISODES = 100000
 
         nested_experiment = TrainPGStrategySupervised()
 
         for i in range(iterations):
             LR = 10 ** uniform(lr_boundaries[0], lr_boundaries[1])
 
+            print("\nIteration %s/% - lr: %s" % (i+1, iterations, LR))
+
             nested_experiment.run(games=GAMES, episodes=EPISODES, lr=LR)
-            nested_experiment.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % LR)
+            nested_experiment.plot_and_save(file_name="TrainReinforcePlayerWithSharedNetwork lr: %s" % LR, plot_title="Lr: %s - %s Games - %s episodes" % (LR, GAMES, EPISODES))
 
 
 if __name__ == '__main__':
     experiment = SupervisedCrossValidation()
-    experiment.run(10, (-3, -7))
+    experiment.run(5, (-4.5, -6))

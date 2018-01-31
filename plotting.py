@@ -31,10 +31,12 @@ class Plotter:
         line1_name = "losses"
         line1_values = self.losses.get_values()
 
+        line2_values = self.scores.get_values()
         line2_name = "score"
-        line2_values = self.__scale__(self.scores.get_values(), len(line1_values))
+        if len(line2_values) != 0 and len(line1_values) > len(line2_values):
+            line2_values = self.__scale__(line2_values, len(line1_values))
 
-        if len(line1_values) == 0 or len(line2_values) == 0:
+        if len(line1_values) == 0 and len(line2_values) == 0:
             raise Exception("Cannot plot empty values")
 
         line1 = pd.Series(line1_values, name=line1_name)
@@ -102,8 +104,11 @@ class DataResolutionManager:
 class Printer:
 
     @staticmethod
-    def print_episode(episode, total_episodes, time_taken=None):
-        Printer.print_inplace("Episode %s/%s" % (episode, total_episodes), 100 * episode // total_episodes, time_taken)
+    def print_episode(episode, total_episodes, time_taken=None, print_every_iteration=False):
+        """ Prints progress on the current episode.
+            Only prints full percentages unless specified otherwise using the @print_every_iteration flag"""
+        if print_every_iteration or 100 * episode/total_episodes % 1 == 0:
+            Printer.print_inplace("Episode %s/%s" % (episode, total_episodes), 100 * episode // total_episodes, time_taken)
 
     @staticmethod
     def print_inplace(text, percentage, time_taken=None, comment=""):

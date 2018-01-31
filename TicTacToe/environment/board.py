@@ -1,12 +1,15 @@
 import numpy as np
 
+
 from abstractClasses import Board, BoardException
 import TicTacToe.config as config
 from TicTacToe.config import BLACK, WHITE, EMPTY
 
 
 class TicTacToeBoard(Board):
-
+    """
+    Represents a board of TicTacToe and all actions that can be taken on it.
+    """
     def __init__(self, board=None):
         self.board_size = board.board_size if board else config.BOARD_SIZE
         self.board = board.board.copy() if board else np.full((self.board_size, self.board_size), EMPTY, dtype=np.float64)
