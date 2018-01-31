@@ -11,20 +11,25 @@ from plotting import Printer
 
 class TrainPGStrategySupervised(TicTacToeBaseExperiment):
 
-    def __init__(self):
+    def __init__(self, games, episodes):
         super(TrainPGStrategySupervised, self).__init__(os.path.dirname(os.path.abspath(__file__)))
 
-    def run(self, games, test_games, episodes, lr):
+        self.games = games
+        self.episodes = episodes
+
+    def run(self, lr):
+
+        TEST_GAMES = 10
 
         strategy = PGStrategy(lr=lr)
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
         expert.color = config.BLACK
 
-        training_set = self.generate_supervised_training_data(games, expert)
-        test_set = self.generate_supervised_training_data(test_games, expert)
+        training_set = self.generate_supervised_training_data(self.games, expert)
+        test_set = self.generate_supervised_training_data(TEST_GAMES, expert)
 
         start = datetime.now()
-        for game in range(episodes):
+        for episode in range(self.episodes):
             acc_reward = 0
             acc_test_reward = 0
             acc_loss = 0
@@ -39,28 +44,27 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
 
             for sample, expert_move in test_set:
                 strategy_move = strategy.evaluate(sample)
-                acc_test_reward = config.BLACK if expert_move == strategy_move else config.WHITE
+                reward = config.BLACK if expert_move == strategy_move else config.WHITE
 
-                acc_reward += acc_test_reward
+                acc_test_reward += reward
 
-            self.add_scores(acc_reward/len(training_set), acc_test_reward/len(test_set))
-            self.add_losses([acc_loss/len(training_set)])
+            self.add_scores(acc_reward/len(test_set), acc_test_reward/len(test_set))
+            self.add_losses([acc_loss/len(test_set)])
 
-            if (game+1) % 500 == 0:
-                self.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % lr, "Lr: %s - %s Games" % (lr, game+1))
+            if (episode+1) % 500 == 0:
+                self.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % lr, "Lr: %s - %s Games - %s Episodes" % (lr, self.games, episode+1))
 
-            Printer.print_episode(game+1, episodes, datetime.now() - start)
+            Printer.print_episode(episode+1, self.episodes, datetime.now() - start)
 
 
 if __name__ == '__main__':
 
     GAMES = 20
-    TEST_GAMES = 10
     EPISODES = 1000
     LR = 1e-5
 
-    experiment = TrainPGStrategySupervised()
-    experiment.run(games=GAMES, test_games=TEST_GAMES, episodes=EPISODES, lr=LR)
-    experiment.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % LR, "Lr: %s - %s Games" % (LR, GAMES))
+    experiment = TrainPGStrategySupervised(games=GAMES, episodes=EPISODES)
+    experiment.run(lr=LR)
+    experiment.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % LR, "Lr: %s - %s Games - %s Episodes" % (LR, GAMES, EPISODES))
 
     print("Successively trained on %s games" % experiment.__plotter__.num_episodes)
