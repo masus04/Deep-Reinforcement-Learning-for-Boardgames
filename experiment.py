@@ -31,10 +31,10 @@ class Experiment(ABC):
         for l in losses:
             self.__plotter__.add_loss(l)
 
-    def add_score(self, score):
+    def add_scores(self, score, second_score=None):
         if not self.__plotter__:
             raise Exception("__plotter__ not initialized, Experiment's super() must be called")
-        self.__plotter__.add_score(score)
+        self.__plotter__.add_score(score, second_score)
 
     def plot_scores(self, title):
         if not self.__plotter__:
@@ -56,17 +56,16 @@ class Experiment(ABC):
 
         torch.save(player, self.path + filename)
 
+    class AlternatingColorIterator:
+        """
+        Returns Black and White alternatingly, starting with WHITE
+        """
+        def __init__(self):
+            self.colors = [config.BLACK, config.WHITE]
 
-class AlternatingColorIterator:
-    """
-    Returns Black and White alternatingly, starting with WHITE
-    """
-    def __init__(self):
-        self.colors = [config.BLACK, config.WHITE]
+        def __iter__(self):
+            return self
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        self.colors = list(reversed(self.colors))
-        return self.colors[0]
+        def __next__(self):
+            self.colors = list(reversed(self.colors))
+            return self.colors[0]

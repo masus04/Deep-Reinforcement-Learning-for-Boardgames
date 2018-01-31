@@ -40,7 +40,7 @@ class TrainPGSupervisedContinuous(Experiment):
                 board.apply_move(move, color_iterator.__next__())
 
             self.add_losses([acc_loss / 9])
-            self.add_score(acc_reward / 9)
+            self.add_scores(acc_reward / 9)
             acc_loss = 0
             acc_reward = 0
             Printer.print_episode(game + 1, games, datetime.now() - start)

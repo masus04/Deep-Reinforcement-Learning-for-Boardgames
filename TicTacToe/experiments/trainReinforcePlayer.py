@@ -38,7 +38,7 @@ class TrainReinforcePlayer(Experiment):
             # evaluate
             self.player1.strategy.train = False
             result = evaluate_against_base_players(self.player1)
-            self.add_score(result)    # only evaluation results are interesting
+            self.add_scores(result)    # only evaluation results are interesting
 
             Printer.print_episode(episode+1, self.evaluations, datetime.now() - start_time)
 
