@@ -62,6 +62,13 @@ class ExpertPlayer(Player):
     """ Never loses, only draws """
     pass
 
+    def get_move(self, board):
+        pass
+
+    def register_winner(self, winner_color):
+        """ End of episode callback. @return the accumulated loss for the episode if available"""
+        pass
+
 
 def evaluate_against_base_players(player):
     """ Standardized evaluation against base players. @return an evaluation score (0, 100) """

@@ -18,30 +18,34 @@ class Plotter:
         self.num_episodes = 0
         self.losses = DataResolutionManager([], storage_size=HISTORY_SIZE)
         self.scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
+        self.second_scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
 
     def add_loss(self, loss):
         self.losses.append(loss)
 
-    def add_score(self, score):
+    def add_score(self, score, second_score=None):
         self.num_episodes += 1
         self.scores.append(score)
+        if second_score is not None:
+            self.second_scores.append(second_score)
 
-    def plot(self, title):
+    def plot(self, title, line1_name="loss", line2_name="score", line3_name="validation_score"):
 
-        line1_name = "losses"
         line1_values = self.losses.get_values()
 
         line2_values = self.scores.get_values()
-        line2_name = "score"
-        if len(line2_values) != 0 and len(line1_values) > len(line2_values):
-            line2_values = self.__scale__(line2_values, len(line1_values))
+        line2_values = self.__scale__(line2_values, len(line1_values))
+
+        line3_values = self.second_scores.get_values()
+        line3_values = self.__scale__(line3_values, len(line1_values))
 
         if len(line1_values) == 0 and len(line2_values) == 0:
-            raise Exception("Cannot plot empty values")
+            raise Exception("Cannot plot empty values losses and scores")
 
         line1 = pd.Series(line1_values, name=line1_name)
         line2 = pd.Series(line2_values, name=line2_name)
-        df = pd.DataFrame([line1, line2])
+        line3 = pd.Series(line3_values, name=line3_name)
+        df = pd.DataFrame([line1, line2, line3])
         df = df.transpose()
         df.plot(legend=True, figsize=(16, 9))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
 
@@ -52,10 +56,11 @@ class Plotter:
 
     @staticmethod
     def __scale__(lst, length):
-        old_indices = np.arange(0, len(lst))
-        new_indices = np.linspace(0, len(lst) - 1, length)
-        spl = UnivariateSpline(old_indices, lst, k=1, s=0)
-        lst = spl(new_indices)
+        if len(lst) != 0 and length > len(lst):
+            old_indices = np.arange(0, len(lst))
+            new_indices = np.linspace(0, len(lst) - 1, length)
+            spl = UnivariateSpline(old_indices, lst, k=1, s=0)
+            lst = spl(new_indices)
 
         return lst
 
