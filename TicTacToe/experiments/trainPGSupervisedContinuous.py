@@ -51,7 +51,7 @@ class TrainPGSupervisedContinuous(Experiment):
             self.add_scores(acc_reward / 9)
 
             if not silent:
-                if Printer.print_episode(game + 1, self.episodes, datetime.now() - start):
+                if Printer.print_episode(game + 1, self.games, datetime.now() - start):
                     self.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % lr, "Lr: %s - %s Games - Final reward: %s" % (lr, game+1, acc_reward))
 
         return acc_reward/9
