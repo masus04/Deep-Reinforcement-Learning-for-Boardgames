@@ -16,6 +16,10 @@ class TrainPGSupervisedContinuous(Experiment):
 
         self.games = games
 
+    def reset(self):
+        self.__init__(games=self.games)
+        return self
+
     def run(self, lr, silent=False):
 
         strategy = PGStrategy(lr=lr)

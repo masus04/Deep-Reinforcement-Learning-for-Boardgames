@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn.functional as F
 from torch.autograd.variable import torch
@@ -34,7 +33,7 @@ class PGStrategy(abstract.Strategy):
     def __init__(self, lr, model=None):
         super(PGStrategy, self).__init__()
         self.lr = lr
-        self.model = model if model else PGModel()
+        self.model = model if model else PGLinearModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
     def evaluate(self, board_sample):
@@ -66,28 +65,60 @@ class PGStrategy(abstract.Strategy):
             return loss.data[0]
 
 
-class PGModel(abstract.Model):
+class PGLinearModel(abstract.Model):
 
     def __init__(self):
-        super(PGModel, self).__init__()
+        super(PGLinearModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        game_states = self.board_size**2**3
         intermediate_size = 128
+        p = 0.1
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
-        # self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size**2)
+        self.dropout1 = torch.nn.Dropout(p=p)
         self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.dropout2 = torch.nn.Dropout(p=p)
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
+
 
         self.__xavier_initialization__()
 
     def forward(self, input):
         x = input.view(-1, self.board_size**2)
         x = F.relu(self.fc1(x))
-        # x = self.fc2(x)
+        x = self.dropout1(x)
         x = F.relu(self.fc2(x))
+        x = self.dropout2(x)
         x = self.fc3(x)
 
+        x = F.softmax(x, dim=1)
+        return x
+
+
+class PGConvModel(abstract.Model):
+
+    def __init__(self):
+        super(PGConvModel, self).__init__()
+
+        self.board_size = config.BOARD_SIZE
+        self.conv_channels = 8
+
+        # Create representation
+        self.conv1 = torch.nn.Conv2d(in_channels=1, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv2 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv3 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+
+        # Evaluate and output move possibilities
+        self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=1)
+
+        self.__xavier_initialization__()
+
+    def forward(self, input):
+        x = F.relu(self.conv1(input))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+
+        x = self.reduce(x)
+        x = x.view(-1, self.board_size**2)
         x = F.softmax(x, dim=1)
         return x

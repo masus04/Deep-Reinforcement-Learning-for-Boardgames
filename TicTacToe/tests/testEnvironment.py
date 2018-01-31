@@ -120,17 +120,15 @@ class TestEnvironment(unittest.TestCase):
 
     def testPlotter(self):
         plotter = Plotter()
-        plotter.add_loss(5)
-        plotter.add_loss(4)
-        plotter.add_loss(2)
-        plotter.add_loss(1)
-        plotter.add_score(1)
-        plotter.add_score(1.5)
-        plotter.add_score(2)
-        plotter.add_score(2.5)
 
-        plt = plotter.plot("testPlot")
-        plt.savefig("testPlot")
+        max = 3000
+        for i in range(max):
+            plotter.add_loss(max-i)
+            plotter.add_score(i)
+
+            if (i+1) % 500 == 0:
+                plt = plotter.plot("Iteration: %s" % (i+1))
+                plt.savefig("testPlot")
 
         self.assertTrue(os.path.exists("testPlot.png"))
 

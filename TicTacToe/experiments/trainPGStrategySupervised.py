@@ -17,6 +17,10 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
         self.games = games
         self.episodes = episodes
 
+    def reset(self):
+        self.__init__(games=self.games, episodes=self.episodes)
+        return self
+
     def run(self, lr, silent=False):
 
         TEST_GAMES = 1
@@ -66,7 +70,7 @@ if __name__ == '__main__':
 
     GAMES = 2
     EPISODES = 40000 // GAMES
-    LR = 1e-5
+    LR = 2e-5
 
     experiment = TrainPGStrategySupervised(games=GAMES, episodes=EPISODES)
     experiment.run(lr=LR)

@@ -1,9 +1,7 @@
-from docInheritDecorator import DocInherit
-
 # Black > White because these are also used as rewards and for scoring.
 BLACK = 1
 WHITE = -1
-EMPTY = 1e-3
+EMPTY = 0.5
 
 LABEL_WIN = BLACK
 LABEL_LOSS = WHITE

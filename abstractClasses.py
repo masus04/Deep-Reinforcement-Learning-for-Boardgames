@@ -3,7 +3,6 @@ from copy import deepcopy
 from abc import ABC, abstractmethod
 
 import TicTacToe.config as config
-from docInheritDecorator import DocInherit
 
 
 class Board(ABC):
@@ -122,7 +121,7 @@ class Player(ABC):
         Callback method which is called after a game has ended. Announces the winner of the game.
 
         :param winner_color: The color used to represent the winner of the game that just finished.
-        :return: A loss measure for the whole game if available, else 0. This is used mostly for plotting statistics.
+        :return: A loss measure for the whole game if available. This is used mostly for plotting statistics.
         """
         return 0
 
@@ -150,12 +149,10 @@ class Player(ABC):
 
 class LearningPlayer(Player):
 
-    @DocInherit
     def __init__(self):
         super(LearningPlayer, self).__init__()
         self.model = None
 
-    @DocInherit
     @abstractmethod
     def register_winner(self, winner_color):
         pass
@@ -165,10 +162,12 @@ class LearningPlayer(Player):
         Returns a clean copy of the player and all its attributes.
 
         :param shared_weights: If True, the returned player shares a Model and therefore the weights with the original player
-        :return: A clean copy of the player and all its attributes.
+        :return:
         """
         return self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
     
+
+
 
 class Strategy(ABC):
     """

@@ -21,6 +21,10 @@ class Experiment(ABC):
     def run(self):
         pass
 
+    @abstractmethod
+    def reset(self):
+        pass
+
     @staticmethod
     def load_player(player_name):
         raise NotImplementedError("Implement this when needed")

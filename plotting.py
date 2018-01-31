@@ -10,6 +10,7 @@ import pandas as pd
 
 import TicTacToe.config as config
 
+
 class Plotter:
 
     def __init__(self):
@@ -24,6 +25,7 @@ class Plotter:
         self.losses.append(loss)
 
     def add_score(self, score, second_score=None):
+
         self.num_episodes += 1
         self.scores.append(score)
         if second_score is not None:
@@ -45,9 +47,13 @@ class Plotter:
         line1 = pd.Series(line1_values, name=line1_name)
         line2 = pd.Series(line2_values, name=line2_name)
         line3 = pd.Series(line3_values, name=line3_name)
+
         df = pd.DataFrame([line1, line2, line3])
         df = df.transpose()
-        df.plot(legend=True, figsize=(16, 9))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
+        ax = df.plot(legend=True, figsize=(16, 9))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
+
+        ax.xaxis.set_ticks([i * len(self.losses.get_values()) / 10 for i in range(11)])
+        ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
 
         plt.title(title)
         plt.xlabel = "Episodes"
@@ -105,6 +111,12 @@ class DataResolutionManager:
             return self.values
         else:
             return self.values + [sum(self.buffer) / len(self.buffer)]
+
+    def get_real_length(self):
+        return len(self.values) * self.compression_factor + len(self.buffer)
+
+    def __str__(self):
+        return self.get_values().__str__()
 
 
 class Printer:
