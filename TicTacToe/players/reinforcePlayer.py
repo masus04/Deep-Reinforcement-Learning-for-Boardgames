@@ -76,10 +76,7 @@ class PGLinearModel(abstract.Model):
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
         self.dropout1 = torch.nn.Dropout(p=self.p_dropout)
-        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.dropout2 = torch.nn.Dropout(p=self.p_dropout)
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
-
 
         self.__xavier_initialization__()
 
@@ -88,9 +85,6 @@ class PGLinearModel(abstract.Model):
         x = F.relu(self.fc1(x))
         if self.p_dropout > 0:
             x = self.dropout1(x)
-        x = F.relu(self.fc2(x))
-        if self.p_dropout > 0:
-            x = self.dropout2(x)
         x = self.fc3(x)
 
         x = F.softmax(x, dim=1)
@@ -111,7 +105,7 @@ class PGConvModel(abstract.Model):
         self.conv3 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
 
         # Evaluate and output move possibilities
-        self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=1)
+        self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=0)
 
         self.__xavier_initialization__()
 
