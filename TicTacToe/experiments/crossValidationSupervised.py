@@ -33,5 +33,6 @@ if __name__ == '__main__':
     GAMES = 2
     EPISODES = 40000 // GAMES
 
-    experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
+    # experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
+    experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=GAMES * EPISODES))
     experiment.run(5, -4.5, -5)
