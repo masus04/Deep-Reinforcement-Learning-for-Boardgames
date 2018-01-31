@@ -59,8 +59,8 @@ class TrainPGSupervisedContinuous(Experiment):
 
 if __name__ == '__main__':
 
-    GAMES = 15000
-    LR = 10**-4
+    GAMES = 100000
+    LR = 2e-5
 
     experiment = TrainPGSupervisedContinuous(games=GAMES)
     reward = experiment.run(lr=LR)
