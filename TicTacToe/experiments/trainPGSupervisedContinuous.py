@@ -16,7 +16,7 @@ class TrainPGSupervisedContinuous(Experiment):
 
         self.games = games
 
-    def run(self, lr):
+    def run(self, lr, silent=False):
 
         strategy = PGStrategy(lr=lr)
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
@@ -26,10 +26,11 @@ class TrainPGSupervisedContinuous(Experiment):
         color_iterator = Experiment.AlternatingColorIterator()
 
         start = datetime.now()
-        acc_reward = 0
-        acc_loss = 0
         for game in range(self.games):
+            acc_reward = 0
+            acc_loss = 0
             board = TicTacToeBoard()
+
             for i in range(9):
                 expert_move = expert.get_move(board)
                 strategy_move = strategy.evaluate(board.board)
@@ -44,21 +45,20 @@ class TrainPGSupervisedContinuous(Experiment):
 
             self.add_losses([acc_loss / 9])
             self.add_scores(acc_reward / 9)
-            acc_loss = 0
-            acc_reward = 0
-            Printer.print_episode(game + 1, self.games, datetime.now() - start)
 
-            if (game+1) % 1000 == 0:
-                self.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % lr, "Lr: %s - %s Games" % (lr, game+1))
+            if not silent:
+                if Printer.print_episode(game + 1, self.episodes, datetime.now() - start):
+                    self.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % lr, "Lr: %s - %s Games - Final reward: %s" % (lr, game+1, acc_reward))
+
+        return acc_reward/9
 
 
 if __name__ == '__main__':
 
     GAMES = 15000
-    LR = 10**-5
+    LR = 10**-4
 
     experiment = TrainPGSupervisedContinuous(games=GAMES)
-    experiment.run(lr=LR)
-    experiment.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % LR, "Lr: %s - %s Games" % (LR, GAMES))
+    reward = experiment.run(lr=LR)
 
     print("Successively trained on %s games" % experiment.__plotter__.num_episodes)

@@ -51,6 +51,7 @@ class Plotter:
 
         plt.title(title)
         plt.xlabel = "Episodes"
+        plt.grid()
 
         return plt
 
@@ -110,10 +111,22 @@ class Printer:
 
     @staticmethod
     def print_episode(episode, total_episodes, time_taken=None, print_every_iteration=False):
+        """
+        Prints progress every full percent of the episode.
+
+        :param episode: The current episode number
+        :param total_episodes: The total episode number
+        :param time_taken: A datetime diff eg. start_time - datetime.now()
+        :param print_every_iteration: Flag that lets progress be printed every episode instead of only on full percentages
+        :return: True if progress was printed, False otherwise
+        """
         """ Prints progress on the current episode.
             Only prints full percentages unless specified otherwise using the @print_every_iteration flag"""
         if print_every_iteration or 100 * episode/total_episodes % 1 == 0:
             Printer.print_inplace("Episode %s/%s" % (episode, total_episodes), 100 * episode // total_episodes, time_taken)
+            return True
+
+        return False
 
     @staticmethod
     def print_inplace(text, percentage, time_taken=None, comment=""):
