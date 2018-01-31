@@ -21,7 +21,8 @@ class SupervisedCrossValidation(Experiment):
         for i in range(iterations):
             LR = 10 ** uniform(lr_lower_boundary, lr_upper_boundary)
 
-            print("\nIteration %s/% - lr: %s" % (i+1, iterations, LR))
+            print("\nIteration %s/%s" % (i+1, iterations))
+            print("Running CrossValidation for %s with lr: %s" % (self.nested_experiment.__class__.__name__, LR))
 
             self.nested_experiment.reset().run(lr=LR)
 
@@ -31,8 +32,8 @@ if __name__ == '__main__':
     AVAILABLE_EXPERIMENTS = TrainPGStrategySupervised, TrainPGSupervisedContinuous
 
     GAMES = 2
-    EPISODES = 40000 // GAMES
+    EPISODES = 100000
 
-    # experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
-    experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=GAMES * EPISODES))
-    experiment.run(5, -4.5, -5)
+    experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
+    # experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=EPISODES))
+    experiment.run(10, -4, -5)

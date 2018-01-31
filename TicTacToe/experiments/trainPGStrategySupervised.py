@@ -23,6 +23,7 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
 
     def run(self, lr, silent=False):
 
+        print("Training PGStrategy supervised on %s games for %s Episodes - LR: %s" % (self.games, self.episodes, lr))
         TEST_GAMES = 1
 
         strategy = PGStrategy(lr=lr)
@@ -68,8 +69,8 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 2
-    EPISODES = 40000 // GAMES
+    GAMES = 20
+    EPISODES = 100000
     LR = 2e-5
 
     experiment = TrainPGStrategySupervised(games=GAMES, episodes=EPISODES)
