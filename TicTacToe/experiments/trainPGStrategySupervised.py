@@ -76,4 +76,4 @@ if __name__ == '__main__':
     experiment = TrainPGStrategySupervised(games=GAMES, episodes=EPISODES)
     experiment.run(lr=LR)
 
-    print("Successively trained on %s games" % experiment.__plotter__.num_episodes)
+    print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)
