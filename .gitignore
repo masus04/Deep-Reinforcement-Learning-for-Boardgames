@@ -112,3 +112,6 @@ functions.o
 # plots
 *.png
 networkSpecs.txt
+
+# results from remote
+/results

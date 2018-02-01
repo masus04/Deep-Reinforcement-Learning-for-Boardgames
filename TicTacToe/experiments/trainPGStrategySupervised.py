@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     GAMES = 20
     EPISODES = 100000
-    LR = 2e-5
+    LR = 1e-4
 
     experiment = TrainPGStrategySupervised(games=GAMES, episodes=EPISODES)
     experiment.run(lr=LR)

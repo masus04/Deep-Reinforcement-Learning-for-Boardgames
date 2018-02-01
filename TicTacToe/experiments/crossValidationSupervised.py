@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
     # experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=EPISODES))
-    results = experiment.run(10, -4, -5)
+    results = experiment.run(5, -3, -4)
 
     print("\nReward(s) - LR:")
     print("%s - %s" % (results[0], results[1]))
