@@ -15,7 +15,6 @@ class Experiment(ABC):
         self.last_plot = None
 
         self.path = "%s/%s/" % (experiment_path, self.experiment_name)
-        print(self.path)
 
     @abstractmethod
     def run(self):
