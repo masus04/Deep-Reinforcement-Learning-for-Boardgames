@@ -42,9 +42,10 @@ if __name__ == '__main__':
 
     experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
     # experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=EPISODES))
-    results = experiment.run(5, -3, -4)
+    results = experiment.run(5, -1, -3)
 
     print("\nReward(s) - LR:")
-    print("%s - %s" % (results[0], results[1]))
+    for res in results:
+        print("%s - %s" % (res[0], res[1]))
 
     print("\nCrossvalidation complete, took: %s" % (datetime.now() - start))
