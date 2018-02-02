@@ -1,6 +1,5 @@
 import torch
 import torch.nn.functional as F
-from torch.autograd.variable import torch
 from torch.distributions import Categorical
 from torch.autograd import Variable
 import numpy as np
