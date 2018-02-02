@@ -1,3 +1,5 @@
+import  torch
+from torch.autograd import Variable
 from datetime import datetime
 
 # Encoding parameters
@@ -30,3 +32,10 @@ def get_color_from_player_number(code):
 
 def time_diff(start):
     return str(datetime.now()-start).split(".")[0]
+
+
+def make_variable(lst):
+    var = Variable(torch.FloatTensor(lst))
+    if torch.cuda.is_available():
+        var = var.cuda(0)
+    return var

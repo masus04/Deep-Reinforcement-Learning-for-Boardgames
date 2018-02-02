@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
-from torch.autograd import Variable
 import numpy as np
 from copy import deepcopy
 
@@ -11,11 +10,11 @@ import abstractClasses as abstract
 
 class ReinforcePlayer(abstract.LearningPlayer):
 
-    def __init__(self, strategy, lr):
+    def __init__(self, strategy, lr, batch_size=1):
         super(ReinforcePlayer, self).__init__()
 
         if issubclass(strategy, abstract.Strategy):
-            self.strategy = strategy(lr=lr)
+            self.strategy = strategy(lr=lr, batch_size=batch_size)
         elif issubclass(strategy.__class__, abstract.Strategy):
             self.strategy = strategy
         else:
@@ -34,15 +33,18 @@ class ReinforcePlayer(abstract.LearningPlayer):
 
 class PGStrategy(abstract.Strategy):
 
-    def __init__(self, lr, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, batch_size, gamma=config.GAMMA,  model=None):
         super(PGStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
+        self.batch_size = batch_size
         self.model = model if model else PGLinearModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
+        self.batches = []
+
     def evaluate(self, board_sample):
-        input = Variable(torch.FloatTensor([board_sample]))
+        input = config.make_variable(torch.FloatTensor([board_sample]))
         probs = self.model(input)
 
         if probs.sum().data[0] <= 0:
@@ -65,15 +67,20 @@ class PGStrategy(abstract.Strategy):
             raise abstract.PlayerException("log_probs length must be equal to rewards length. Got %s - %s" % (len(self.log_probs), len(self.rewards)))
 
         rewards = self.discount_rewards(self.rewards, self.gamma)
-        rewards = Variable(torch.FloatTensor(rewards))
+        rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
         policy_losses = [(-log_prob * reward) for log_prob, reward in zip(self.log_probs, rewards)]
 
         self.optimizer.zero_grad()
         policy_loss = torch.cat(policy_losses).sum()/len(policy_losses)
-        policy_loss.backward()
-        self.optimizer.step()
+        self.batches.append(policy_loss)
+
+        if len(self.batches) >= self.batch_size:
+            batch_loss = torch.cat(self.batches).sum()/len(self.batches)
+            batch_loss.backward()
+            self.optimizer.step()
+            del self.batches[:]
 
         del self.rewards[:]
         del self.log_probs[:]
@@ -112,6 +119,9 @@ class PGLinearModel(abstract.Model):
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
 
         self.__xavier_initialization__()
+
+        if torch.cuda.is_available():
+            self.cuda(0)
 
     def forward(self, input):
         x = input.view(-1, self.board_size**2)
