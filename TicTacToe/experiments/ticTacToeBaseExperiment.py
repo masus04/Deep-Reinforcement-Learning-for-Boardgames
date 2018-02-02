@@ -32,7 +32,7 @@ class TicTacToeBaseExperiment(Experiment):
             for i in range(9):
                 # generate training pair
                 expert_move = labeling_strategy.get_move(board)
-                training_set.append((board.board.copy(), expert_move))
+                training_set.append((board.copy(), expert_move))
 
                 # prepare for next sample
                 move = generator.get_move(board)

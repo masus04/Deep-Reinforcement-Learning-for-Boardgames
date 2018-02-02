@@ -14,7 +14,7 @@ def evaluate_against_base_players(player):
     # Store original training values
     if issubclass(player.__class__, LearningPlayer):
         training_values = player.strategy.train, player.strategy.model.training
-        player.strategy.train, player.strategy.model.training = False
+        player.strategy.train, player.strategy.model.training = False, False
 
     accumulated_rewards = []
     for e_player in EVALUATION_PLAYERS:

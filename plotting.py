@@ -25,9 +25,10 @@ class Plotter:
         self.losses.append(loss)
 
     def add_score(self, score, second_score=None):
+        if score is not None:
+            self.num_episodes += 1
+            self.scores.append(score)
 
-        self.num_episodes += 1
-        self.scores.append(score)
         if second_score is not None:
             self.second_scores.append(second_score)
 
@@ -63,7 +64,7 @@ class Plotter:
 
     @staticmethod
     def __scale__(lst, length):
-        if len(lst) != 0 and length > len(lst):
+        if len(lst) > 1 and length > len(lst):
             old_indices = np.arange(0, len(lst))
             new_indices = np.linspace(0, len(lst) - 1, length)
             spl = UnivariateSpline(old_indices, lst, k=1, s=0)

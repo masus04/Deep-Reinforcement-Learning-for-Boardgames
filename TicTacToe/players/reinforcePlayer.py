@@ -3,6 +3,7 @@ import torch.nn.functional as F
 from torch.autograd.variable import torch
 from torch.distributions import Categorical
 from torch.autograd import Variable
+import numpy as np
 from copy import deepcopy
 
 import TicTacToe.config as config
@@ -22,17 +23,22 @@ class ReinforcePlayer(abstract.LearningPlayer):
             raise Exception("ReinforcePlayer takes as a strategy argument a subclass of %s, received %s" % (abstract.Model, strategy))
 
     def get_move(self, board):
+        if self.strategy.train:
+            self.num_moves += 1
         return self.strategy.evaluate(board.get_representation(self.color))
 
     def register_winner(self, winner_color):
-        return self.strategy.update(self.get_label(winner_color))
+        self.strategy.rewards += ([self.get_label(winner_color)] * self.num_moves)
+        self.num_moves = 0
+        return self.strategy.update()
 
 
 class PGStrategy(abstract.Strategy):
 
-    def __init__(self, lr, model=None):
+    def __init__(self, lr, gamma=config.GAMMA, model=None):
         super(PGStrategy, self).__init__()
         self.lr = lr
+        self.gamma = gamma
         self.model = model if model else PGLinearModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -40,29 +46,57 @@ class PGStrategy(abstract.Strategy):
         input = Variable(torch.FloatTensor([board_sample]))
         probs = self.model(input)
 
+        if probs.sum().data[0] <= 0:
+            print(probs.data)
+
         distribution = Categorical(probs)
         action = distribution.sample()
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
         log_prob = distribution.log_prob(action)
         if self.train:
-            self.training_samples.append(log_prob)
+            self.log_probs.append(log_prob)
         return move
 
-    def update(self, training_label):
-        if self.train:
+    def update(self):
+        if not self.train:
+            return 0
 
-            self.optimizer.zero_grad()
-            label = Variable(torch.FloatTensor([training_label]))
+        if len(self.log_probs) != len(self.rewards):
+            raise abstract.PlayerException("log_probs length must be equal to rewards length. Got %s - %s" % (len(self.log_probs), len(self.rewards)))
 
-            loss = -torch.cat(self.training_samples).sum()
-            policy_loss = loss * label
-            policy_loss.backward()
+        rewards = self.discount_rewards(self.rewards, self.gamma)
+        rewards = Variable(torch.FloatTensor(rewards))
+        # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
-            self.training_samples = []
-            self.optimizer.step()
+        policy_losses = [(-log_prob * reward) for log_prob, reward in zip(self.log_probs, rewards)]
 
-            return loss.data[0]
+        self.optimizer.zero_grad()
+        policy_loss = torch.cat(policy_losses).sum()/len(policy_losses)
+        policy_loss.backward()
+        self.optimizer.step()
+
+        del self.rewards[:]
+        del self.log_probs[:]
+
+        return abs(policy_loss.data[0])
+
+    @staticmethod
+    def discount_rewards(rewards, discount_factor):
+        if discount_factor <= 0:
+            return deepcopy(rewards)
+
+        running_reward = 0
+        discounted_rewards = []
+        for r in rewards[::-1]:
+            running_reward = config.GAMMA * running_reward + r
+            discounted_rewards.insert(0, running_reward)
+
+        return discounted_rewards
+
+    @staticmethod
+    def normalize_rewards(rewards):
+        return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
 
 
 class PGLinearModel(abstract.Model):

@@ -17,7 +17,7 @@ class Experiment(ABC):
         self.path = "%s/%s/" % (experiment_path, self.experiment_name)
 
     @abstractmethod
-    def run(self):
+    def run(self, silent=False):
         pass
 
     @abstractmethod
@@ -28,11 +28,10 @@ class Experiment(ABC):
     def load_player(player_name):
         raise NotImplementedError("Implement this when needed")
 
-    def add_losses(self, losses):
+    def add_loss(self, loss):
         if not self.__plotter__:
             raise Exception("__plotter__ not initialized, Experiment's super() must be called")
-        for l in losses:
-            self.__plotter__.add_loss(l)
+        self.__plotter__.add_loss(loss)
 
     def add_scores(self, score, second_score=None):
         if not self.__plotter__:

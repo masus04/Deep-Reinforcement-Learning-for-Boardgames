@@ -1,20 +1,22 @@
 import os
 from datetime import datetime
+from random import random
 
 import TicTacToe.config as config
-from experiment import Experiment
-from TicTacToe.players.reinforcePlayer import PGStrategy
+from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
+from TicTacToe.players.reinforcePlayer import PGStrategy, ReinforcePlayer
 from TicTacToe.players.base_players import ExperiencedPlayer, RandomPlayer
 from TicTacToe.environment.board import TicTacToeBoard
 from plotting import Printer
 
 
-class TrainPGSupervisedContinuous(Experiment):
+class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
-    def __init__(self, games):
+    def __init__(self, games, evaluation_period):
         super(TrainPGSupervisedContinuous, self).__init__(os.path.dirname(os.path.abspath(__file__)))
 
         self.games = games
+        self.evaluation_period = evaluation_period
 
     def reset(self):
         self.__init__(games=self.games)
@@ -22,48 +24,78 @@ class TrainPGSupervisedContinuous(Experiment):
 
     def run(self, lr, silent=False):
 
-        strategy = PGStrategy(lr=lr)
+        EVALUATION_GAMES = 10
+
+        player = ReinforcePlayer(strategy=PGStrategy, lr=lr)
+        player.color = config.BLACK
+
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
         expert.color = config.BLACK
 
         generator = RandomPlayer()
-        color_iterator = Experiment.AlternatingColorIterator()
+        color_iterator = self.AlternatingColorIterator()
+
+        validation_set = self.generate_supervised_training_data(EVALUATION_GAMES, ExperiencedPlayer(deterministic=True, block_mid=True))
 
         print("Training ReinforcedPlayer supervised continuously with LR: %s" % lr)
         start = datetime.now()
+        rewards = []
         for game in range(self.games):
-            acc_reward = 0
-            acc_loss = 0
             board = TicTacToeBoard()
 
             for i in range(9):
                 expert_move = expert.get_move(board)
-                strategy_move = strategy.evaluate(board.board)
+                player_move = player.get_move(board)
 
-                reward = config.BLACK if expert_move == strategy_move else config.WHITE
-                acc_loss += strategy.update(reward)
-                acc_reward += reward
+                reward = config.BLACK if expert_move == player_move else config.WHITE
+                rewards.append(reward)
 
                 # prepare for next sample
                 move = generator.get_move(board)
                 board.apply_move(move, color_iterator.__next__())
 
-            self.add_losses([acc_loss / 9])
-            self.add_scores(acc_reward / 9)
+            # Player.register_winner stand in because it does not allow more than one label
+            for reward in rewards:
+                player.strategy.rewards.append(reward)
+            player.num_moves = 0
+            loss = player.strategy.update()
+
+            average_reward = sum(rewards) / 9
+            del rewards[:]
+            self.add_loss(loss)
+            self.add_scores(average_reward)
+
+            if game % EVALUATION_PERIOD == 0:
+                test_rewards = []
+                for board, expert_move in validation_set:
+                    # Evaluation mode
+                    player.strategy.train, player.strategy.model.training = False, False
+                    strategy_move = player.get_move(board)
+                    player.strategy.train, player.strategy.model.training = True, True
+
+                    test_reward = config.BLACK if expert_move == strategy_move else config.WHITE
+                    test_rewards.append(test_reward)
+
+                average_test_reward = sum(test_rewards) / len(test_rewards)
+                del test_rewards[:]
+                self.add_scores(None, average_test_reward)
 
             if not silent:
                 if Printer.print_episode(game + 1, self.games, datetime.now() - start):
-                    self.plot_and_save("TrainReinforcePlayerWithSharedNetwork lr: %s" % lr, "Lr: %s - %s Games - Final reward: %s" % (lr, game+1, acc_reward))
+                    plot_name = "Supervised Continuous lr: %s" % lr
+                    plot_info = "%s Games - Final reward: %s \nTime: %s" % (game+1, average_reward, config.time_diff(start))
+                    self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
 
-        return acc_reward/9
+        return average_reward
 
 
 if __name__ == '__main__':
 
-    GAMES = 100000
-    LR = 2e-5
+    GAMES = 10000
+    LR = random()*1e-9 + 4e-5
+    EVALUATION_PERIOD = 100
 
-    experiment = TrainPGSupervisedContinuous(games=GAMES)
+    experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
     reward = experiment.run(lr=LR)
 
     print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)

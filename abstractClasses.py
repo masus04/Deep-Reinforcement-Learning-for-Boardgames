@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from copy import deepcopy
 from abc import ABC, abstractmethod
 
@@ -105,6 +106,7 @@ class Player(ABC):
         super(Player, self).__init__()
         self.color = None
         self.original_color = None
+        self.num_moves = 0
 
     @abstractmethod
     def get_move(self, board):
@@ -167,6 +169,8 @@ class LearningPlayer(Player):
         return self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
     
 
+class PlayerException(Exception):
+    pass
 
 
 class Strategy(ABC):
@@ -180,7 +184,8 @@ class Strategy(ABC):
         self.lr = None
         self.model = None
         self.optimizer = None
-        self.training_samples = []
+        self.rewards = []
+        self.log_probs = []
         self.train = True
 
     @abstractmethod
@@ -188,7 +193,7 @@ class Strategy(ABC):
         pass
 
     @abstractmethod
-    def update(self, training_labels):
+    def update(self):
         pass
 
     def copy(self, shared_weights=True):
@@ -198,7 +203,7 @@ class Strategy(ABC):
             strategy = self.__class__(model=self.model.copy(), lr=self.lr)
 
         strategy.train = deepcopy(self.train)
-        strategy.training_samples = deepcopy(self.training_samples)
+        strategy.log_probs = deepcopy(self.log_probs)
         return strategy
 
 
