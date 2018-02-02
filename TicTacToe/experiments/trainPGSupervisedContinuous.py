@@ -19,7 +19,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         self.evaluation_period = evaluation_period
 
     def reset(self):
-        self.__init__(games=self.games)
+        self.__init__(games=self.games, evaluation_period=self.evaluation_period)
         return self
 
     def run(self, lr, batch_size=1, silent=False):
@@ -65,7 +65,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
             self.add_loss(loss)
             self.add_scores(average_reward)
 
-            if game % EVALUATION_PERIOD == 0:
+            if game % self.evaluation_period == 0:
                 test_rewards = []
                 for board, expert_move in validation_set:
                     # Evaluation mode
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     GAMES = 10000
     LR = random()*1e-9 + 4e-4
-    BATCH_SIZE = 32
+    BATCH_SIZE = 8
 
     EVALUATION_PERIOD = 100
 
