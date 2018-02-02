@@ -120,7 +120,7 @@ class PGLinearModel(abstract.Model):
 
         self.__xavier_initialization__()
 
-        if torch.cuda.is_available():
+        if config.CUDA:
             self.cuda(0)
 
     def forward(self, input):
