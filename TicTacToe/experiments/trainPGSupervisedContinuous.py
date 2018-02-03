@@ -19,14 +19,14 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         self.evaluation_period = evaluation_period
 
     def reset(self):
-        self.__init__(games=self.games)
+        self.__init__(games=self.games, evaluation_period=self.evaluation_period)
         return self
 
-    def run(self, lr, silent=False):
+    def run(self, lr, batch_size=1, silent=False):
 
         EVALUATION_GAMES = 10
 
-        player = ReinforcePlayer(strategy=PGStrategy, lr=lr)
+        player = ReinforcePlayer(strategy=PGStrategy, lr=lr, batch_size=batch_size)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
@@ -65,7 +65,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
             self.add_loss(loss)
             self.add_scores(average_reward)
 
-            if game % EVALUATION_PERIOD == 0:
+            if game % self.evaluation_period == 0:
                 test_rewards = []
                 for board, expert_move in validation_set:
                     # Evaluation mode
@@ -82,7 +82,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
             if not silent:
                 if Printer.print_episode(game + 1, self.games, datetime.now() - start):
-                    plot_name = "Supervised Continuous lr: %s" % lr
+                    plot_name = "Supervised Continuous lr: %s batch size: %s" % (lr, batch_size)
                     plot_info = "%s Games - Final reward: %s \nTime: %s" % (game+1, average_reward, config.time_diff(start))
                     self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
 
@@ -92,10 +92,12 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 10000
-    LR = random()*1e-9 + 4e-5
+    LR = random()*1e-9 + 4e-4
+    BATCH_SIZE = 8
+
     EVALUATION_PERIOD = 100
 
     experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
-    reward = experiment.run(lr=LR)
+    reward = experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
     print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)

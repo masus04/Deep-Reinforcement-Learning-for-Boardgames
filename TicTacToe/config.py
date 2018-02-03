@@ -1,3 +1,5 @@
+import  torch
+from torch.autograd import Variable
 from datetime import datetime
 
 # Encoding parameters
@@ -19,6 +21,7 @@ EVALUATION_GAMES = 40
 # Network parameters
 GAMMA = 0  # 0.99  # Reward discounting factor
 
+CUDA = torch.cuda.is_available()
 
 def get_color_from_player_number(code):
     if code == BLACK:
@@ -30,3 +33,10 @@ def get_color_from_player_number(code):
 
 def time_diff(start):
     return str(datetime.now()-start).split(".")[0]
+
+
+def make_variable(lst):
+    var = Variable(torch.FloatTensor(lst))
+    if CUDA:
+        var = var.cuda(0)
+    return var
