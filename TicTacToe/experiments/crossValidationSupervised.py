@@ -39,11 +39,11 @@ if __name__ == '__main__':
     start = datetime.now()
 
     GAMES = 2
-    EPISODES = 100000
+    EPISODES = 1000000
     BATCH_SIZE = 32
 
     # experiment = SupervisedCrossValidation(TrainPGStrategySupervised(games=GAMES, episodes=EPISODES))
-    experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=EPISODES, evaluation_period=1000), BATCH_SIZE)
+    experiment = SupervisedCrossValidation(TrainPGSupervisedContinuous(games=EPISODES, evaluation_period=1000), batch_size=BATCH_SIZE)
     results = experiment.run(5, -3, -5)
 
     print("\nReward(s) - LR:")

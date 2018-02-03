@@ -21,7 +21,8 @@ EVALUATION_GAMES = 40
 # Network parameters
 GAMMA = 0  # 0.99  # Reward discounting factor
 
-CUDA = torch.cuda.is_available()
+CUDA = False  # torch.cuda.is_available() # Cuda is slower, probably because of small models
+
 
 def get_color_from_player_number(code):
     if code == BLACK:
