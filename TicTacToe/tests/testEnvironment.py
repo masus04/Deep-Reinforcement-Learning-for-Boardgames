@@ -149,7 +149,7 @@ class TestEnvironment(unittest.TestCase):
 
         start = datetime.now()
         simulation.run_simulations(N)
-        print("Simulating %s random games took %s" % (N, config.time_diff(start)))
+        print("Simulating %s random games took %s" % (N, datetime.now()-start))
 
 if __name__ == '__main__':
     unittest.main()
