@@ -1,5 +1,5 @@
 import numpy as np
-
+from numba import njit, float64, intp, boolean
 
 from abstractClasses import Board, BoardException
 import TicTacToe.config as config
@@ -16,13 +16,7 @@ class TicTacToeBoard(Board):
         self.illegal_move = None
 
     def get_valid_moves(self, color=None):
-        legal_moves = []
-        for i in range(self.board_size):
-            for j in range(self.board_size):
-                if self.board[i][j] == EMPTY:
-                    legal_moves.append((i, j))
-
-        return legal_moves
+        return _get_valid_moves(self.board, self.board_size)
 
     def apply_move(self, move, color):
         if color is None:
@@ -39,32 +33,14 @@ class TicTacToeBoard(Board):
         if self.illegal_move is not None:
             return self.other_color(self.illegal_move)
 
-        if not self.get_valid_moves():
+        valid_moves = self.get_valid_moves()
+        if not valid_moves:
             return EMPTY
 
-        for i in range(self.board_size):
-            for j in range(self.board_size):
-                # Make use of symmetry, only check bottom right half of directions
-                for direction in [[1, 0], [-1, 1], [0, 1], [1, 1]]:
-                    if self.__recursive_game_won__((i, j), direction, BLACK, 0):
-                        return BLACK
-                    if self.__recursive_game_won__((i, j), direction, WHITE, 0):
-                        return WHITE
-        return False
-
-    def __recursive_game_won__(self, position, direction, color, depth):
-        if depth >= config.WIN_LINE_LENGTH:
-            return True
-        if self.in_bounds(position) and self.board[position[0]][position[1]] == color:
-            next_p = (position[0] + direction[0], position[1] + direction[1])
-            return self.__recursive_game_won__(next_p, direction, color, depth+1)
-        return False
+        return game_won(self.board, self.board_size, valid_moves)
 
     def in_bounds(self, position):
-        for p in position:
-            if not (p >= 0 and p < self.board_size):
-                return False
-        return True
+        return _in_bounds(position, self.board_size)
 
     def get_representation(self, color):
         if color == BLACK:
@@ -106,3 +82,45 @@ class TicTacToeBoard(Board):
                 elif tile == config.WHITE:
                     white += 1
         return black, white
+
+
+# --- numba ---
+
+@njit
+def _get_valid_moves(board, board_size):
+    legal_moves = []
+    for i in range(board_size):
+        for j in range(board_size):
+            if board[i][j] == EMPTY:
+                legal_moves.append((i, j))
+    return legal_moves
+
+@njit
+def game_won(board, board_size, valid_moves):
+    for i in range(board_size):
+        for j in range(board_size):
+            # Make use of symmetry, only check bottom right half of directions
+            for direction in [(1, 0), (-1, 1), (0, 1), (1, 1)]:
+                if __recursive_game_won__(board, board_size, (i, j), direction, BLACK, 0):
+                    return BLACK
+                if __recursive_game_won__(board, board_size, (i, j), direction, WHITE, 0):
+                    return WHITE
+    return False
+
+
+@njit
+def __recursive_game_won__(board, board_size, position, direction, color, depth):
+    if depth >= config.WIN_LINE_LENGTH:
+        return True
+    if _in_bounds(position, board_size) and board[position[0]][position[1]] == color:
+        next_p = (position[0] + direction[0], position[1] + direction[1])
+        return __recursive_game_won__(board, board_size, next_p, direction, color, depth+1)
+    return False
+
+
+@njit
+def _in_bounds(position, board_size):
+    for p in position:
+        if not (p >= 0 and p < board_size):
+            return False
+    return True
