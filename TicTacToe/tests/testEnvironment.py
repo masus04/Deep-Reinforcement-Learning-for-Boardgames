@@ -141,6 +141,15 @@ class TestEnvironment(unittest.TestCase):
         evaluate_against_base_players(ttt_players.ExperiencedPlayer())
         print("Evaluating ExpertPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
+    def testPerformance(self):
+        p1 = ttt_players.RandomPlayer()
+        p2 = ttt_players.RandomPlayer()
+        simulation = TicTacToe([p1, p2])
+        N = 15000
+
+        start = datetime.now()
+        simulation.run_simulations(N)
+        print("Simulating %s random games took %s" % (N, config.time_diff(start)))
 
 if __name__ == '__main__':
     unittest.main()
