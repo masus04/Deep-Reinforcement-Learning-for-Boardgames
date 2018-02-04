@@ -97,12 +97,8 @@ class TicTacToeBoard(Board):
 
     def count_stones(self):
         """ returns a tuple (num_black_stones, num_white_stones)"""
-        black = 0
-        white = 0
-        for col in self.board:
-            for tile in col:
-                if tile == config.BLACK:
-                    black += 1
-                elif tile == config.WHITE:
-                    white += 1
+
+        black = (self.board == np.full((self.board_size, self.board_size), BLACK, dtype=np.float64)).sum()
+        white = (self.board == np.full((self.board_size, self.board_size), WHITE, dtype=np.float64)).sum()
+
         return black, white

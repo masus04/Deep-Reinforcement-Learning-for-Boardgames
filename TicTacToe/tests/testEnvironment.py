@@ -65,6 +65,17 @@ class TestEnvironment(unittest.TestCase):
             rep = boards[i].get_representation(config.WHITE)
             self.assertTrue((rep == inverses[i].board).all(), msg="Inverting board failed")
 
+    def test_Board_CountStones(self):
+        board = TicTacToeBoard()
+        board.apply_move((0, 0), config.BLACK)
+        board.apply_move((1, 1), config.WHITE)
+        board.apply_move((2, 2), config.BLACK)
+
+        board.apply_move((1, 2), config.WHITE)
+        board.apply_move((1, 0), config.BLACK)
+
+        self.assertEqual((3, 2), board.count_stones())
+
     def testRandomPlayer(self):
         player1 = ttt_players.RandomPlayer()
         player2 = ttt_players.RandomPlayer()
@@ -140,6 +151,16 @@ class TestEnvironment(unittest.TestCase):
         start = datetime.now()
         evaluate_against_base_players(ttt_players.ExperiencedPlayer())
         print("Evaluating ExpertPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
+
+    def test_Performance(self):
+        p1 = ttt_players.RandomPlayer()
+        p2 = ttt_players.RandomPlayer()
+        simulation = TicTacToe([p1, p2])
+        N = 15000
+
+        start = datetime.now()
+        simulation.run_simulations(N)
+        print("Simulating %s random games took %s" % (N, datetime.now()-start))
 
 
 if __name__ == '__main__':
