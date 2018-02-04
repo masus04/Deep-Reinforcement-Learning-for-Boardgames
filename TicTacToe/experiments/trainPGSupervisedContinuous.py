@@ -91,9 +91,9 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 10000
-    LR = random()*1e-9 + 4e-4
-    BATCH_SIZE = 8
+    GAMES = 100000
+    BATCH_SIZE = 32
+    LR = random()*1e-9 + 1e-3
 
     EVALUATION_PERIOD = 100
 
