@@ -76,7 +76,7 @@ class TestEnvironment(unittest.TestCase):
 
         self.assertEqual((3, 2), board.count_stones())
 
-    def test_RandomPlayer(self):
+    def testRandomPlayer(self):
         player1 = ttt_players.RandomPlayer()
         player2 = ttt_players.RandomPlayer()
         simulation = TicTacToe([player1, player2])
