@@ -15,6 +15,9 @@ class TicTacToeBoard(Board):
         self.board = board.board.copy() if board else np.full((self.board_size, self.board_size), EMPTY, dtype=np.float64)
         self.illegal_move = None
 
+        # Vectorized element wise function
+        self.__get_representation__ = __generate_vectorized_get_representation__()
+
     def get_valid_moves(self, color=None):
         legal_moves = []
         for i in range(self.board_size):
@@ -71,21 +74,9 @@ class TicTacToeBoard(Board):
             return self.board.copy()
 
         if color == WHITE:
-            representation = []
-            for row in self.board:
-                new_row = []
-                for field in row:
-                    if field == EMPTY:
-                        new_row.append(EMPTY)
-                    elif field == BLACK:
-                        new_row.append(WHITE)
-                    else:
-                        new_row.append(BLACK)
-                representation.append(new_row)
-
-            return np.array(representation, dtype=np.float64)
-
-        raise BoardException("Illegal color provided: %s" % color)
+            return self.__get_representation__(self.board)
+        else:
+            raise BoardException("Illegal color provided: %s" % color)
 
     def get_legal_moves_map(self, color):
         legal_moves_map = np.zeros([self.board_size, self.board_size])
@@ -102,3 +93,24 @@ class TicTacToeBoard(Board):
         white = (self.board == np.full((self.board_size, self.board_size), WHITE, dtype=np.float64)).sum()
 
         return black, white
+
+
+def __generate_vectorized_get_representation__():
+    """
+    Generates a vectorized function(board_sample) that calculates a board representation element wise and in parallel.
+
+    Empirically this implementation is slightly slower than a loop based one for board size = 3 but almost twice as fast with board size = 8 which is the final target for this game.
+    These values obviously depend on the executing hardware.
+    :return: a function of (boardsample) that calculates a board representation
+    """
+
+    def __element_wise_representation__(board_sample):
+        if board_sample == config.EMPTY:
+            return config.EMPTY
+        if board_sample == config.BLACK:
+            return config.WHITE
+        if board_sample == config.WHITE:
+            return config.BLACK
+        raise BoardException("Board contains illegal colors")
+
+    return np.vectorize(__element_wise_representation__, otypes=[np.float])
