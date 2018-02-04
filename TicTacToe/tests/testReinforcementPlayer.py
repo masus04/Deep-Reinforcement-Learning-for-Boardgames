@@ -14,12 +14,12 @@ class TestReinforcePlayer(unittest.TestCase):
 
     def testDummyForwardPass(self):
         board = TicTacToeBoard()
-        value_function = reinforcePlayer.PGStrategy(lr=0.001)
+        value_function = reinforcePlayer.PGStrategy(lr=0.001, batch_size=1)
         value_function.evaluate(board.board)
 
     def testDummyUpdate(self):
         board = TicTacToeBoard()
-        value_function = reinforcePlayer.PGStrategy(lr=0.001)
+        value_function = reinforcePlayer.PGStrategy(lr=0.001, batch_size=1)
         value_function.evaluate(board.board)
 
         move = RandomPlayer.get_move(board)
