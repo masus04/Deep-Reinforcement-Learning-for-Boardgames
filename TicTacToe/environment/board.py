@@ -52,7 +52,7 @@ class TicTacToeBoard(Board):
         return TicTacToeBoard(self)
 
     def count_stones(self):
-        return __count_stones__(self.board)
+        return __count_stones__(self.board, self.board_size)
 
 
 """   ---  Numba implementations  ---   '''
@@ -103,7 +103,7 @@ def __in_bounds__(position, board_size):
     return True
 
 
-@njit
+#@njit
 def __get_representation__(board, color):
     if color == BLACK:
         return board.copy()
@@ -134,14 +134,10 @@ def __get_legal_moves_map__(board_size, valid_moves):
 
 
 @njit
-def __count_stones__(board):
+def __count_stones__(board, board_size):
     """ returns a tuple (num_black_stones, num_white_stones)"""
-    black = 0
-    white = 0
-    for col in board:
-        for tile in col:
-            if tile == config.BLACK:
-                black += 1
-            elif tile == config.WHITE:
-                white += 1
+
+    black = (board == np.full((board_size, board_size), BLACK, dtype=np.float64)).sum()
+    white = (board == np.full((board_size, board_size), WHITE, dtype=np.float64)).sum()
+
     return black, white
