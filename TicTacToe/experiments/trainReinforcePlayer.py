@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from random import random
 
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 
     GAMES = 10000000
     EVALUATIONS = 1000
-    LR = 10**-2
+    LR = random()+1e-9 + 1e-3
     BATCH_SIZE = 32
 
     experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS)
