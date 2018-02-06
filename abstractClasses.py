@@ -166,7 +166,9 @@ class LearningPlayer(Player):
         :param shared_weights: If True, the returned player shares a Model and therefore the weights with the original player
         :return:
         """
-        return self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
+        player = self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
+        player.color = self.color
+        return
     
 
 class PlayerException(Exception):
