@@ -16,7 +16,7 @@ class TestEnvironment(unittest.TestCase):
 
     TEST_EPISODES = 20
 
-    def testBoardValidMoves(self):
+    def test_Board_ApplyValidMoves(self):
         board = TicTacToeBoard()
         self.assertEqual(set(board.get_valid_moves(config.BLACK)), set([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]), msg="Valid moves incorrect")
         self.assertEqual(set(board.get_valid_moves(config.WHITE)), set([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]), msg="Valid moves incorrect")
@@ -24,7 +24,7 @@ class TestEnvironment(unittest.TestCase):
         self.assertEqual(set(board.get_valid_moves(config.BLACK)), set([(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)]), msg="Valid moves incorrect")
         self.assertEqual(set(board.get_valid_moves(config.WHITE)), set([(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)]), msg="Valid moves incorrect")
 
-    def testBoardApplyIllegalMove(self):
+    def test_Board_ApplyIllegalMove(self):
         board = TicTacToeBoard()
         board.apply_move((1, 1), config.BLACK)
         self.assertEqual(board.illegal_move, None)
@@ -32,7 +32,7 @@ class TestEnvironment(unittest.TestCase):
         board.apply_move((1, 1), config.BLACK)
         self.assertEqual(board.illegal_move, config.BLACK)
 
-    def testBoardGameWon(self):
+    def test_Board_GameWon(self):
         board = TicTacToeBoard()
         self.assertFalse(board.game_won(), msg="Empty Board")
         board.apply_move((0, 0), config.BLACK)
@@ -43,7 +43,7 @@ class TestEnvironment(unittest.TestCase):
         board.apply_move((2, 0), config.BLACK)
         self.assertTrue(board.game_won(), msg="Black Won")
 
-    def testBoardRepresentation(self):
+    def test_Board_Representation(self):
         random_player = ttt_players.RandomPlayer()
         boards = []
         inverses = []
@@ -92,7 +92,7 @@ class TestEnvironment(unittest.TestCase):
                 self.assertEqual(black_stones+white_stones, simulation.board.board_size**2)
         print("Average Result Random vs Random: %s" % np.mean(results))
 
-    def testExperiencedPlayer(self):
+    def test_ExperiencedPlayer(self):
         player1 = ttt_players.ExperiencedPlayer()
         player2 = ttt_players.ExperiencedPlayer()
         simulation = TicTacToe([player1, player2])
@@ -108,28 +108,28 @@ class TestEnvironment(unittest.TestCase):
                 self.assertEqual(black_stones+white_stones, simulation.board.board_size**2)
         print("Average Result Experienced vs Experienced: %s" % np.mean(results))
 
-    def testExperiencedVsRandom(self):
+    def test_ExperiencedVsRandom(self):
         player1 = ttt_players.ExperiencedPlayer()
         player2 = ttt_players.RandomPlayer()
         simulation = TicTacToe([player1, player2])
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced vs Random: %s" % np.mean(results))
 
-    def testExperiencedBlockVsRandom(self):
+    def test_ExperiencedBlockVsRandom(self):
         player1 = ttt_players.ExperiencedPlayer(block_mid=True)
         player2 = ttt_players.RandomPlayer()
         simulation = TicTacToe([player1, player2])
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced(block) vs Random: %s" % np.mean(results))
 
-    def testBlockMid(self):
+    def test_BlockMid(self):
         player1 = ttt_players.ExperiencedPlayer(block_mid=True)
         player2 = ttt_players.ExperiencedPlayer(block_mid=False)
         simulation = TicTacToe([player1, player2])
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced(block) vs Experienced(): %s" % np.mean(results))
 
-    def testPlotter(self):
+    def test_Plotter(self):
         plotter = Plotter()
 
         max = 3000
@@ -143,7 +143,7 @@ class TestEnvironment(unittest.TestCase):
 
         self.assertTrue(os.path.exists("testPlot.png"))
 
-    def testEvaluation(self):
+    def test_Evaluation(self):
         start = datetime.now()
         score = evaluate_against_base_players(ttt_players.RandomPlayer())
         print("Evaluating RandomPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
