@@ -37,13 +37,10 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         start = datetime.now()
 
         WORKERS = 4
+        player.strategy.model.share_memory()
+        pool = Pool(processes=WORKERS)
         for batch in range(1, self.batches+1):
-            player.strategy.model.share_memory()
-            pool = Pool(processes=WORKERS)
-            results = pool.map_async(self.multiprocessing_train, [player.copy(shared_weights=True) for i in range(batch_size)])
-            results = results.get()
-            pool.close()
-            pool.join()
+            results = pool.map_async(self.multiprocessing_train, [player.copy(shared_weights=True) for i in range(batch_size)]).get()
 
             batch_reward = 0
             for r in results:
@@ -68,6 +65,8 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
             if not silent:
                 Printer.print_episode(batch, self.batches, datetime.now() - start)
 
+        pool.close()
+        pool.join()
         # Only plot in the end because it messes up Multiprocessing
         plot_name = "Supervised Continuous lr: %s batch size: %s" % (lr, batch_size)
         plot_info = "%s Batches - Final reward: %s \nTime: %s" % (batch, batch_reward, config.time_diff(start))
