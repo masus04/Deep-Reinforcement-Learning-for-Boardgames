@@ -168,7 +168,7 @@ class LearningPlayer(Player):
         """
         player = self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
         player.color = self.color
-        return
+        return player
     
 
 class PlayerException(Exception):

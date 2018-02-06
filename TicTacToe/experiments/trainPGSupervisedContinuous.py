@@ -37,10 +37,13 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         start = datetime.now()
 
         WORKERS = 4
-        pool = Pool(processes=WORKERS)
-        player.share_memory()
         for batch in range(1, self.batches+1):
-            results = pool.map_async(self.multiprocessing_train, [player.copy() for i in range(batch_size)]).get()
+            player.strategy.model.share_memory()
+            pool = Pool(processes=WORKERS)
+            results = pool.map_async(self.multiprocessing_train, [player.copy(shared_weights=True) for i in range(batch_size)])
+            results = results.get()
+            pool.close()
+            pool.join()
 
             batch_reward = 0
             for r in results:
@@ -63,17 +66,16 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
             self.add_scores(None, average_test_reward)
 
             if not silent:
-                if Printer.print_episode(batch, self.batches, datetime.now() - start):
-                    plot_name = "Supervised Continuous lr: %s batch size: %s" % (lr, batch_size)
-                    plot_info = "%s Batches - Final reward: %s \nTime: %s" % (batch, batch_reward, config.time_diff(start))
-                    self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
+                Printer.print_episode(batch, self.batches, datetime.now() - start)
 
-        pool.close()
+        # Only plot in the end because it messes up Multiprocessing
+        plot_name = "Supervised Continuous lr: %s batch size: %s" % (lr, batch_size)
+        plot_info = "%s Batches - Final reward: %s \nTime: %s" % (batch, batch_reward, config.time_diff(start))
+        self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
+
         return batch_reward
 
     def multiprocessing_train(self, player):
-        player = player.copy(shared_weights=True)
-
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
         expert.color = config.BLACK
 
@@ -104,13 +106,13 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    BATCHES = 2
+    BATCHES = 100
     BATCH_SIZE = 32
     LR = random()*1e-9 + 1e-3
 
     EVALUATION_PERIOD = 100
 
-    experiment = TrainPGSupervisedContinuous(batches=BATCH_SIZE, evaluation_period=EVALUATION_PERIOD)
+    experiment = TrainPGSupervisedContinuous(batches=BATCHES, evaluation_period=EVALUATION_PERIOD)
     reward = experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
     print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)
