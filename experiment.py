@@ -52,11 +52,11 @@ class Experiment(ABC):
         self.last_plot.savefig(self.path + file_name + ".png")
         self.last_plot.close("all")
 
-    def save_player(self, player, filename):
+    def save_player(self, player, description):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
-        torch.save(player, self.path + filename)
+        torch.save(player, self.path + player.__class__.__name__ + description)
 
     class AlternatingColorIterator:
         """
