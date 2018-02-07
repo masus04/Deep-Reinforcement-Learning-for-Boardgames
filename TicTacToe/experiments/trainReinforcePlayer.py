@@ -18,7 +18,7 @@ class TrainReinforcePlayer(Experiment):
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
 
     def reset(self):
-        self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_trainer)
+        self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
     def run(self, lr, batch_size, silent=False):
