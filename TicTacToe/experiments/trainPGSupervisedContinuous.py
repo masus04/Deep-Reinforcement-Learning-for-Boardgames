@@ -28,7 +28,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
         EVALUATION_GAMES = 10
 
-        player = ReinforcePlayer(strategy=PGStrategy, lr=lr, batch_size=batch_size)
+        player = ReinforcePlayer(strategy=PGStrategy, lr=lr)
         player.color = config.BLACK
 
         validation_set = self.generate_supervised_training_data(EVALUATION_GAMES, ExperiencedPlayer(deterministic=True, block_mid=True))
@@ -42,11 +42,14 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         for batch in range(1, self.batches+1):
             results = pool.map_async(self.multiprocessing_train, [player.copy(shared_weights=True) for i in range(batch_size)]).get()
 
-            batch_reward = 0
             for r in results:
-                self.add_loss(r[0])
-                self.add_scores(r[1])
-                batch_reward += r[1]
+                player.strategy.log_probs += r.strategy.log_probs
+                player.strategy.rewards += r.strategy.rewards
+
+            average_reward = sum(player.strategy.rewards) / len(player.strategy.rewards)
+            loss = player.strategy.update()
+            self.add_loss(loss)
+            self.add_scores(average_reward)
 
             test_rewards = []
             for board, expert_move in validation_set:
@@ -69,10 +72,10 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         pool.join()
         # Only plot in the end because it messes up Multiprocessing
         plot_name = "Supervised Continuous lr: %s batch size: %s" % (lr, batch_size)
-        plot_info = "%s Batches - Final reward: %s \nTime: %s" % (batch, batch_reward, config.time_diff(start))
+        plot_info = "%s Batches Time: %s" % (batch, config.time_diff(start))
         self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
 
-        return batch_reward
+        return
 
     def multiprocessing_train(self, player):
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
@@ -98,14 +101,13 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         for reward in rewards:
             player.strategy.rewards.append(reward)
         player.num_moves = 0
-        loss = player.strategy.update()
 
-        return loss, sum(rewards) / 9
+        return player
 
 
 if __name__ == '__main__':
 
-    BATCHES = 100
+    BATCHES = 1000
     BATCH_SIZE = 32
     LR = random()*1e-9 + 1e-3
 
