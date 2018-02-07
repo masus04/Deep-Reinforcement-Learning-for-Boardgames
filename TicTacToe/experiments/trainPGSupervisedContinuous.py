@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     GAMES = 100000
     BATCH_SIZE = 32
-    LR = random()*1e-9 + 2e-2
+    LR = random()*1e-9 + 1e-2
 
     EVALUATION_PERIOD = 100
 
