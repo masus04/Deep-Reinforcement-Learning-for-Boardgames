@@ -9,12 +9,12 @@ from plotting import Plotter
 class Experiment(ABC):
     """ Base class for running experiments. Provides a plotter as well as path handling. DO NOT FORGET TO CALL super()"""
 
-    def __init__(self, experiment_path):
+    def __init__(self):
         self.experiment_name = self.__class__.__name__
         self.__plotter__ = Plotter()
         self.last_plot = None
 
-        self.path = "%s/%s/" % (experiment_path, self.experiment_name)
+        self.path = config.TIC_TAC_TOE_DIR + "/experiments/%s/" % self.experiment_name
 
     @abstractmethod
     def run(self, silent=False):
@@ -26,7 +26,7 @@ class Experiment(ABC):
 
     @staticmethod
     def load_player(player_name):
-        raise NotImplementedError("Implement this when needed")
+        torch.load(config.TIC_TAC_TOE_DIR + "/experiments/PretrainLegalMoves/" + player_name)
 
     def add_loss(self, loss):
         if not self.__plotter__:
@@ -56,7 +56,7 @@ class Experiment(ABC):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
-        torch.save(player, self.path + player.__class__.__name__ + description)
+        torch.save(player, self.path + player.__class__.__name__ + " " + description + ".pth")
 
     class AlternatingColorIterator:
         """

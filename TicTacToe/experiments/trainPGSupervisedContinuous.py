@@ -13,7 +13,7 @@ from plotting import Printer
 class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
     def __init__(self, games, evaluation_period):
-        super(TrainPGSupervisedContinuous, self).__init__(os.path.dirname(os.path.abspath(__file__)))
+        super(TrainPGSupervisedContinuous, self).__init__()
 
         self.games = games
         self.evaluation_period = evaluation_period
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     GAMES = 100000
     BATCH_SIZE = 32
-    LR = random()*1e-9 + 1e-3
+    LR = random()*1e-9 + 2e-2
 
     EVALUATION_PERIOD = 100
 

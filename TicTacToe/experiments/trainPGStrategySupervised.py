@@ -13,7 +13,7 @@ from plotting import Printer
 class TrainPGStrategySupervised(TicTacToeBaseExperiment):
 
     def __init__(self, games, episodes):
-        super(TrainPGStrategySupervised, self).__init__(os.path.dirname(os.path.abspath(__file__)))
+        super(TrainPGStrategySupervised, self).__init__()
 
         self.games = games
         self.episodes = episodes
