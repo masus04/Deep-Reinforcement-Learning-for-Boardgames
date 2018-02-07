@@ -50,7 +50,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
 
             if game > termination_criterion and sum(rewards[-termination_criterion:])/termination_criterion == 1:
                 print("Reached training goal: %s games with only legal moves played -> terminating training." % termination_criterion)
-                self.save_player(self.player, " using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
+                self.save_player(self.player, "using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
                 return losses, rewards
 
         print("Reached max training_games (%s) -> terminating training" % self.max_games)

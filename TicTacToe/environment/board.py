@@ -82,6 +82,7 @@ class TicTacToeBoard(Board):
         legal_moves_map = np.zeros([self.board_size, self.board_size])
         for move in self.get_valid_moves(color):
             legal_moves_map[move[0]][move[1]] = 1
+        return legal_moves_map
 
     def copy(self):
         return TicTacToeBoard(self)
