@@ -31,13 +31,12 @@ class TrainReinforcePlayer(Experiment):
 
         self.simulation = TicTacToe([self.player1, self.player2])
 
-
+        games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
-
         for episode in range(1, self.evaluations+1):
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
-            games_per_evaluation = self.games // self.evaluations
+
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
 
