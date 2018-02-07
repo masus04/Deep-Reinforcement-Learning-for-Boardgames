@@ -62,10 +62,10 @@ if __name__ == '__main__':
     LR = random()*1e-9 + 1e-3
     BATCH_SIZE = 32
 
-    PLAYER = Experiment.load_player("ReinforcePlayer pretrained on legal moves for 100000 games")
+    PLAYER = Experiment.load_player("ReinforcePlayer pretrained on legal moves for 10000000 games")
 
     experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
-    print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)
+    print("Successfully trained on %s games, pretrained on %s" % experiment.__plotter__.num_episodes, "10000000")
 
