@@ -91,7 +91,7 @@ if __name__ == '__main__':
     MAX_GAMES = 1000000
     TERMINATION_CRITERION = 500
     BATCH_SIZE = 32
-    LR = random()*1e-9 + 1e-2
+    LR = random()*1e-9 + 1e-3
 
     EVALUATION_PERIOD = 100
 
