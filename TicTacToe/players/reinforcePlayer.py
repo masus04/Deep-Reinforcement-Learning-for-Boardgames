@@ -6,6 +6,7 @@ from copy import deepcopy
 
 import TicTacToe.config as config
 import abstractClasses as abstract
+from modules import LegalSoftMax
 
 
 class ReinforcePlayer(abstract.LearningPlayer):
@@ -23,7 +24,7 @@ class ReinforcePlayer(abstract.LearningPlayer):
     def get_move(self, board):
         if self.strategy.train:
             self.num_moves += 1
-        return self.strategy.evaluate(board.get_representation(self.color))
+        return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
 
     def register_winner(self, winner_color):
         self.strategy.rewards += ([self.get_label(winner_color)] * self.num_moves)
@@ -43,9 +44,10 @@ class PGStrategy(abstract.Strategy):
 
         self.batches = []
 
-    def evaluate(self, board_sample):
+    def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
-        probs = self.model(input)
+        legal_moves_map = config.make_variable(legal_moves_map)
+        probs = self.model(input, legal_moves_map)
 
         if probs.sum().data[0] <= 0:
             print(probs.data)
@@ -119,13 +121,14 @@ class PGLinearModel(abstract.Model):
         self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
         self.dropout2 = torch.nn.Dropout(p=self.p_dropout)
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
+        self.legal_softmax = LegalSoftMax()
 
         self.__xavier_initialization__()
 
         if config.CUDA:
             self.cuda(0)
 
-    def forward(self, input):
+    def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size**2)
         x = F.relu(self.fc1(x))
         if self.p_dropout > 0:
@@ -135,7 +138,8 @@ class PGLinearModel(abstract.Model):
             x = self.dropout2(x)
         x = self.fc3(x)
 
-        x = F.softmax(x, dim=1)
+        legal_moves_map = legal_moves_map.view(-1, self.board_size**2)
+        x = self.legal_softmax(x, legal_moves_map)
         return x
 
 
@@ -164,5 +168,4 @@ class PGConvModel(abstract.Model):
 
         x = self.reduce(x)
         x = x.view(-1, self.board_size**2)
-        x = F.softmax(x, dim=1)
         return x

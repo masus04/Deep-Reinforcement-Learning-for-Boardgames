@@ -46,11 +46,11 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
                     plot_info = "%sGames - Final reward: %s \nTime: %s" % (game, reward, config.time_diff(start))
                     self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
                     if (100*game/self.max_games) % 10 == 0:
-                        self.save_player(self.player, "pretrained on legal moves for %s games lr: %s" % (self.max_games, lr))
+                        self.save_player(self.player, "using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
 
             if game > termination_criterion and sum(rewards[-termination_criterion:])/termination_criterion == 1:
                 print("Reached training goal: %s games with only legal moves played -> terminating training." % termination_criterion)
-                self.save_player(self.player, " using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
+                self.save_player(self.player, "using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
                 return losses, rewards
 
         print("Reached max training_games (%s) -> terminating training" % self.max_games)

@@ -139,6 +139,7 @@ def __get_legal_moves_map__(board_size, valid_moves):
     legal_moves_map = np.zeros([board_size, board_size])
     for move in valid_moves:
         legal_moves_map[move[0]][move[1]] = 1
+    return legal_moves_map
 
 
 @njit
