@@ -11,5 +11,5 @@ class LegalSoftMax(Module):
         x = input.exp()
         x = x * legal_map
         x = x / x.sum()
-        
+
         return x

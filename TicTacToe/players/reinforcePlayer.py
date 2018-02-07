@@ -49,11 +49,14 @@ class PGStrategy(abstract.Strategy):
         legal_moves_map = config.make_variable(legal_moves_map)
         probs = self.model(input, legal_moves_map)
 
-        if probs.sum().data[0] <= 0:
-            print(probs.data)
-
-        distribution = Categorical(probs)
-        action = distribution.sample()
+        try:
+            distribution = Categorical(probs)
+            action = distribution.sample()
+        except RuntimeError:
+            print("sum(probs) <= 0: %s" % probs)
+            probs += legal_moves_map * 1e-9
+            distribution = Categorical(probs)
+            action = distribution.sample()
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
         log_prob = distribution.log_prob(action)
