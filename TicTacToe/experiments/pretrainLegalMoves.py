@@ -9,6 +9,7 @@ from TicTacToe.players.base_players import ExperiencedPlayer, RandomPlayer
 from TicTacToe.environment.board import TicTacToeBoard
 from plotting import Printer
 
+LAYERS = 3
 
 class PretrainLegalMoves(TicTacToeBaseExperiment):
     """
@@ -41,19 +42,19 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
 
             if not silent:
                 if Printer.print_episode(game, self.max_games, datetime.now() - start):
-                    plot_name = "Pretraining %s on legal moves\nlr: %s batch size: %s" % (self.player.__class__.__name__, lr, batch_size)
-                    plot_info = "%s Games - Final reward: %s \nTime: %s" % (game, reward, config.time_diff(start))
+                    plot_name = "Pretraining %s using %s layers on legal moves\nlr: %s batch size: %s" % (LAYERS, self.player.__class__.__name__, lr, batch_size)
+                    plot_info = "%sGames - Final reward: %s \nTime: %s" % (game, reward, config.time_diff(start))
                     self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
                     if (100*game/self.max_games) % 10 == 0:
                         self.save_player(self.player, "pretrained on legal moves for %s games lr: %s" % (self.max_games, lr))
 
             if game > termination_criterion and sum(rewards[-termination_criterion:])/termination_criterion == 1:
                 print("Reached training goal: %s games with only legal moves played -> terminating training." % termination_criterion)
-                self.save_player(self.player, "pretrained on legal moves for %s games lr: %s" % (self.max_games, lr))
+                self.save_player(self.player, " using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
                 return losses, rewards
 
         print("Reached max training_games (%s) -> terminating training" % self.max_games)
-        self.save_player(self.player, "pretrained on legal moves for %s games lr: %s" % (self.max_games, lr))
+        self.save_player(self.player, "using %s layers pretrained on legal moves for %s games lr: %s" % (LAYERS, self.max_games, lr))
         return losses, rewards
 
     def __run_episode__(self, generator):
@@ -90,11 +91,11 @@ if __name__ == '__main__':
     MAX_GAMES = 1000000
     TERMINATION_CRITERION = 500
     BATCH_SIZE = 32
-    LR = random()*1e-9 + 2e-2
+    LR = random()*1e-9 + 1e-2
 
     EVALUATION_PERIOD = 100
 
     experiment = PretrainLegalMoves(max_games=MAX_GAMES)
     reward = experiment.run(lr=LR, batch_size=BATCH_SIZE, termination_criterion=TERMINATION_CRITERION)
 
-    print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)
+    print("Successfully trained %s Layers on %s games" % (LAYERS, experiment.__plotter__.num_episodes))
