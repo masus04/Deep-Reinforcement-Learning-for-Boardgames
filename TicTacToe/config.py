@@ -1,6 +1,9 @@
-import  torch
+import torch
+import os
 from torch.autograd import Variable
 from datetime import datetime
+
+TIC_TAC_TOE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Encoding parameters
 # Black > White because these are also used as rewards and for scoring.

@@ -10,7 +10,7 @@ from TicTacToe.experiments.trainPGSupervisedContinuous import TrainPGSupervisedC
 class SupervisedCrossValidation(Experiment):
 
     def __init__(self, nested_experiment, batch_size):
-        super(SupervisedCrossValidation, self).__init__(os.path.dirname(os.path.abspath(__file__)))
+        super(SupervisedCrossValidation, self).__init__()
         self.nested_experiment = nested_experiment
         self.batch_size = batch_size
 

@@ -8,8 +8,8 @@ from experiment import Experiment
 
 class TicTacToeBaseExperiment(Experiment):
 
-    def __init__(self, experiment_path):
-        super(TicTacToeBaseExperiment, self).__init__(experiment_path)
+    def __init__(self):
+        super(TicTacToeBaseExperiment, self).__init__()
 
     def generate_supervised_training_data(self, games, labeling_strategy):
         """

@@ -11,18 +11,19 @@ from plotting import Printer
 
 class TrainReinforcePlayer(Experiment):
 
-    def __init__(self, games, evaluations):
-        super(TrainReinforcePlayer, self).__init__(os.path.dirname(os.path.abspath(__file__)))
+    def __init__(self, games, evaluations, pretrained_player=None):
+        super(TrainReinforcePlayer, self).__init__()
         self.games = games
         self.evaluations = evaluations
+        self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
 
     def reset(self):
-        self.__init__(games=self.games, evaluations=self.evaluations)
+        self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_trainer)
         return self
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = ReinforcePlayer(PGStrategy, lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else ReinforcePlayer(PGStrategy, lr=lr, batch_size=batch_size)
 
         # Player2 shares the same weights but does not change them.
         self.player2 = self.player1.copy(shared_weights=True)
@@ -61,7 +62,9 @@ if __name__ == '__main__':
     LR = random()*1e-9 + 1e-3
     BATCH_SIZE = 32
 
-    experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS)
+    PLAYER = Experiment.load_player("ReinforcePlayer pretrained on legal moves for 100000 games")
+
+    experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
     print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)
