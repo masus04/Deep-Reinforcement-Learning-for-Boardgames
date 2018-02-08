@@ -14,7 +14,7 @@ class Experiment(ABC):
         self.__plotter__ = Plotter()
         self.last_plot = None
 
-        self.path = config.TIC_TAC_TOE_DIR + "/experiments/%s/" % self.experiment_name
+        self.path = config.TIC_TAC_TOE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
 
     @abstractmethod
     def run(self, silent=False):
