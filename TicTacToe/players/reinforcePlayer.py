@@ -59,6 +59,7 @@ class PGStrategy(abstract.Strategy):
             distribution = Categorical(probs)
             action = distribution.sample()
         except RuntimeError:
+            self.model(input, legal_moves_map)
             raise PlayerException("sum(probs) <= 0:\n%s\n board:\n%s\nlegal moves:\n%s" % (probs, board_sample, legal_moves_map))
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
@@ -145,7 +146,11 @@ class PGLinearModel(abstract.Model):
         x = self.fc3(x)
 
         legal_moves_map = legal_moves_map.view(-1, self.board_size**2)
+        x = F.softmax(x, dim=1)
+        x * legal_moves_map
+        """
         x = self.legal_softmax(x, legal_moves_map)
+        """
         return x
 
 
