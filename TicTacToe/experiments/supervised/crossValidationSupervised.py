@@ -1,10 +1,9 @@
-import os
 from random import uniform
 from datetime import datetime
 
 from experiment import Experiment
-from TicTacToe.experiments.trainPGStrategySupervised import TrainPGStrategySupervised
-from TicTacToe.experiments.trainPGSupervisedContinuous import TrainPGSupervisedContinuous
+from TicTacToe.experiments.supervised.trainPGStrategySupervised import TrainPGStrategySupervised
+from TicTacToe.experiments.supervised.trainPGSupervisedContinuous import TrainPGSupervisedContinuous
 
 
 class SupervisedCrossValidation(Experiment):
