@@ -21,6 +21,10 @@ class Plotter:
         self.scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
         self.second_scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
 
+        self.line1_name = "loss"
+        self.line2_name = "score"
+        self.line3_name = "second_score"
+
     def add_loss(self, loss):
         self.losses.append(loss)
 
@@ -32,7 +36,7 @@ class Plotter:
         if second_score is not None:
             self.second_scores.append(second_score)
 
-    def plot(self, title, line1_name="loss", line2_name="score", line3_name="validation_score"):
+    def plot(self, title):
 
         line1_values = self.losses.get_values()
 
@@ -45,9 +49,9 @@ class Plotter:
         if len(line1_values) == 0 and len(line2_values) == 0:
             raise Exception("Cannot plot empty values losses and scores")
 
-        line1 = pd.Series(line1_values, name=line1_name)
-        line2 = pd.Series(line2_values, name=line2_name)
-        line3 = pd.Series(line3_values, name=line3_name)
+        line1 = pd.Series(line1_values, name=self.line1_name)
+        line2 = pd.Series(line2_values, name=self.line2_name)
+        line3 = pd.Series(line3_values, name=self.line3_name)
 
         df = pd.DataFrame([line1, line2, line3])
         df = df.transpose()

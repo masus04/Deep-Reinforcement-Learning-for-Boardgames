@@ -7,15 +7,41 @@ from TicTacToe.environment.game import TicTacToe
 
 
 class RandomPlayer(Player):
-
+    """
+    Applies a random valid move
+    """
     @staticmethod
     def get_move(board):
+        return choice(board.get_valid_moves())
+
+
+class DeterministicPlayer(Player):
+    """
+    Very simple deterministic player that always selects the first possible move.
+
+    This player is supposed to be as simple to beat as possible and should be used as a dummy opponent in training.
+    """
+    def get_move(self, board):
+        return board.get_valid_moves(self.color)[0]
+
+
+class NovicePlayer(Player):
+    """
+    Wins a game if possible in the next move, else applies a random move
+    """
+    def get_move(self, board):
+
+        for move in board.get_valid_moves(self.color):
+            afterstate = board.copy().apply_move(move, self.color)
+            if afterstate.game_won() == self.color:
+                return move
+
         valid_moves = board.get_valid_moves()
         return choice(valid_moves)
 
 
 class ExperiencedPlayer(Player):
-    """ Wins games, blocks opponent, uses Heuristic Table """
+    """ Wins games or blocks opponent with the next move. Uses Heuristic Table if there are no winning or blocking moves"""
     heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
 
     def __init__(self, deterministic=True, block_mid=False):
@@ -55,8 +81,8 @@ class ExperiencedPlayer(Player):
 
 
 class ExpertPlayer(Player):
-    """ Never loses, only draws """
+    """ Perfect player: never loses, only draws """
     pass
 
     def get_move(self, board):
-        pass
+        raise NotImplementedError("Implement when needed")
