@@ -1,12 +1,14 @@
+import random
+import numpy as np
+from copy import deepcopy
 import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
-import numpy as np
-from copy import deepcopy
 
 import TicTacToe.config as config
 import abstractClasses as abstract
 from modules import LegalSoftMax
+from abstractClasses import PlayerException
 
 
 class ReinforcePlayer(abstract.LearningPlayer):
@@ -24,7 +26,11 @@ class ReinforcePlayer(abstract.LearningPlayer):
     def get_move(self, board):
         if self.strategy.train:
             self.num_moves += 1
-        return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
+        try:
+            return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
+        except PlayerException as e:
+            print(e)
+            random.choice(board.get_valid_moves())
 
     def register_winner(self, winner_color):
         self.strategy.rewards += ([self.get_label(winner_color)] * self.num_moves)
@@ -53,10 +59,7 @@ class PGStrategy(abstract.Strategy):
             distribution = Categorical(probs)
             action = distribution.sample()
         except RuntimeError:
-            print("sum(probs) <= 0: %s" % probs)
-            probs += legal_moves_map * 1e-9
-            distribution = Categorical(probs)
-            action = distribution.sample()
+            raise PlayerException("sum(probs) <= 0:\n%s\n board:\n%s\nlegal moves:\n%s" % (probs, board_sample, legal_moves_map))
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
         log_prob = distribution.log_prob(action)

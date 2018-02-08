@@ -8,7 +8,8 @@ class LegalSoftMax(Module):
 
     def forward(self, input, legal_map):
 
-        x = input.exp()
+        x = input / input.sum()
+        x = x.exp()
         x = x * legal_map
         x = x / x.sum()
 
