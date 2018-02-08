@@ -14,7 +14,7 @@ class Experiment(ABC):
         self.__plotter__ = Plotter()
         self.last_plot = None
 
-        self.path = config.TIC_TAC_TOE_DIR + "/experiments/%s/" % self.experiment_name
+        self.path = config.TIC_TAC_TOE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
 
     @abstractmethod
     def run(self, silent=False):
@@ -26,7 +26,8 @@ class Experiment(ABC):
 
     @staticmethod
     def load_player(player_name):
-        torch.load(config.TIC_TAC_TOE_DIR + "/experiments/PretrainLegalMoves/" + player_name)
+        filename = config.findInSubdirectory(player_name, config.TIC_TAC_TOE_DIR + "/experiments")
+        return torch.load(filename)
 
     def add_loss(self, loss):
         if not self.__plotter__:

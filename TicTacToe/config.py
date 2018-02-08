@@ -44,3 +44,14 @@ def make_variable(lst):
     if CUDA:
         var = var.cuda(0)
     return var
+
+
+def findInSubdirectory(filename, subdirectory=''):
+    if subdirectory:
+        path = subdirectory
+    else:
+        path = os.getcwd()
+    for root, dirs, names in os.walk(path):
+        if filename in names:
+            return os.path.join(root, filename)
+    raise FileNotFoundError("File not found")

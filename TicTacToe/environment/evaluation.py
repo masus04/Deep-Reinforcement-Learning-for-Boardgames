@@ -3,13 +3,13 @@ import numpy as np
 import TicTacToe.config as config
 from abstractClasses import LearningPlayer
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.players.base_players import RandomPlayer, ExperiencedPlayer
+from TicTacToe.players.base_players import RandomPlayer, NovicePlayer, ExperiencedPlayer
 
 
-def evaluate_against_base_players(player):
+def evaluate_against_base_players(player, evaluation_players=None):
     """ Standardized evaluation against base players. @return an evaluation score (0, 100) """
 
-    EVALUATION_PLAYERS = (RandomPlayer(), ExperiencedPlayer())
+    EVALUATION_PLAYERS = evaluation_players if evaluation_players is not None else (RandomPlayer(), NovicePlayer(), ExperiencedPlayer())
 
     # Store original training values
     if issubclass(player.__class__, LearningPlayer):
