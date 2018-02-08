@@ -1,5 +1,5 @@
 import os
-from random import uniform, random
+from random import uniform
 from datetime import datetime
 
 from experiment import Experiment
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     PLAYER = None  # PLAYER = Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
 
     experiment = ReinforcedCrossValidation(TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
-    results = experiment.run(5, -2, -5)
+    results = experiment.run(5, -4, -5)
 
     print("\nReward(s) - LR:")
     for res in results:
