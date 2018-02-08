@@ -60,7 +60,7 @@ if __name__ == '__main__':
     LR = random()*1e-9 + 1e-3
     BATCH_SIZE = 32
 
-    # PLAYER = Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
+    PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
 
     print("Training ReinforcePlayer vs self with lr: %s" % LR)
     experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
