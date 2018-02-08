@@ -1,5 +1,5 @@
 import torch
-import numpy as np
+import torch.nn.functional as F
 from copy import deepcopy
 from abc import ABC, abstractmethod
 
@@ -214,6 +214,12 @@ class Model(torch.nn.Module):
             if isinstance(module, torch.nn.Conv2d) or isinstance(module, torch.nn.Linear):
                 torch.nn.init.xavier_normal(module.weight.data)
                 # torch.nn.init.xavier_normal(module.bias.data)
+
+    def legal_softmax(self, input, legal_moves_map):
+        x = F.softmax(input, dim=1)
+        legal_moves_map = legal_moves_map.view(-1, self.board_size**2)
+        x * legal_moves_map
+        return x
 
     def copy(self):
         return deepcopy(self)
