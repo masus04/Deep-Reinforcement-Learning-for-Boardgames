@@ -11,7 +11,8 @@ class TicTacToeBaseExperiment(Experiment):
     def __init__(self):
         super(TicTacToeBaseExperiment, self).__init__()
 
-    def generate_supervised_training_data(self, games, labeling_strategy):
+    @staticmethod
+    def generate_supervised_training_data(games, labeling_strategy):
         """
         Generates training data by applying random moves to a board and labeling each sample with the move that :param labeling_strategy would have taken given the board.
 
@@ -23,7 +24,7 @@ class TicTacToeBaseExperiment(Experiment):
         labeling_strategy.color = config.BLACK
 
         generator = RandomPlayer()
-        color_iterator = self.AlternatingColorIterator()
+        color_iterator = TicTacToeBaseExperiment.AlternatingColorIterator()
 
         start = datetime.now()
         training_set = []
