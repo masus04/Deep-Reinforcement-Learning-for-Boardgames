@@ -55,7 +55,7 @@ class Plotter:
 
         df = pd.DataFrame([line1, line2, line3])
         df = df.transpose()
-        ax = df.plot(legend=True, figsize=(16, 9))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
+        ax = df.plot(legend=True, figsize=(16, 9), ylim=(-1, 2))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
 
         ax.xaxis.set_ticks([i * len(self.losses.get_values()) / 10 for i in range(11)])
         ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
