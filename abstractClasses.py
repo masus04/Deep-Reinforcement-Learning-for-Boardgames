@@ -218,7 +218,7 @@ class Model(torch.nn.Module):
     def legal_softmax(self, input, legal_moves_map):
         x = F.softmax(input, dim=1)
         legal_moves_map = legal_moves_map.view(-1, self.board_size**2)
-        x * legal_moves_map
+        x = x * legal_moves_map
         return x
 
     def copy(self):

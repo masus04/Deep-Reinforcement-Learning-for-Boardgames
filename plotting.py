@@ -68,7 +68,7 @@ class Plotter:
 
     @staticmethod
     def __scale__(lst, length):
-        if len(lst) > 1 and length > len(lst):
+        if len(lst) > 1:
             old_indices = np.arange(0, len(lst))
             new_indices = np.linspace(0, len(lst) - 1, length)
             spl = UnivariateSpline(old_indices, lst, k=1, s=0)

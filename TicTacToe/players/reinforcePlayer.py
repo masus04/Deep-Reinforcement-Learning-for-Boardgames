@@ -8,6 +8,7 @@ from torch.distributions import Categorical
 import TicTacToe.config as config
 import abstractClasses as abstract
 from abstractClasses import PlayerException
+from modules import swish
 
 
 class ReinforcePlayer(abstract.LearningPlayer):
@@ -25,11 +26,7 @@ class ReinforcePlayer(abstract.LearningPlayer):
     def get_move(self, board):
         if self.strategy.train:
             self.num_moves += 1
-        try:
-            return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
-        except PlayerException as e:
-            print(e)
-            random.choice(board.get_valid_moves())
+        return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
 
     def register_winner(self, winner_color):
         self.strategy.rewards += ([self.get_label(winner_color)] * self.num_moves)
@@ -120,12 +117,9 @@ class PGFCModel(abstract.Model):
 
         self.board_size = config.BOARD_SIZE
         intermediate_size = 128
-        self.p_dropout = 0.0
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
-        self.dropout1 = torch.nn.Dropout(p=self.p_dropout)
         self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.dropout2 = torch.nn.Dropout(p=self.p_dropout)
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
 
         self.__xavier_initialization__()
@@ -136,13 +130,10 @@ class PGFCModel(abstract.Model):
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size**2)
         x = F.relu(self.fc1(x))
-        if self.p_dropout > 0:
-            x = self.dropout1(x)
         x = F.relu(self.fc2(x))
-        if self.p_dropout > 0:
-            x = self.dropout2(x)
         x = self.fc3(x)
 
+        # x = F.softmax(x, dim=1)
         x = self.legal_softmax(x, legal_moves_map)
         return x
 
@@ -153,16 +144,11 @@ class PGLargeFCModel(abstract.Model):
 
         self.board_size = config.BOARD_SIZE
         intermediate_size = 128
-        self.p_dropout = 0.5
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=intermediate_size)
-        self.dropout1 = torch.nn.Dropout(p=self.p_dropout)
         self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.dropout2 = torch.nn.Dropout(p=self.p_dropout)
         self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.dropout3 = torch.nn.Dropout(p=self.p_dropout)
         self.fc4 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.dropout4 = torch.nn.Dropout(p=self.p_dropout)
         self.fc5 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
 
         self.__xavier_initialization__()
@@ -173,13 +159,9 @@ class PGLargeFCModel(abstract.Model):
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size ** 2)
         x = F.relu(self.fc1(x))
-        # x = self.dropout1(x)
         x = F.relu(self.fc2(x))
-        # x = self.dropout2(x)
         x = F.relu(self.fc3(x))
-        # x = self.dropout3(x)
-        # x = F.relu(self.fc4(x))
-        # x = self.dropout4(x)
+        x = F.relu(self.fc4(x))
         x = self.fc5(x)
 
         x = self.legal_softmax(x, legal_moves_map)
