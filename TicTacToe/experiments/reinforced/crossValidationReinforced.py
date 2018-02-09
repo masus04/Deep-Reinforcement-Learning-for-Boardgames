@@ -35,14 +35,14 @@ if __name__ == '__main__':
 
     start = datetime.now()
 
-    GAMES = 2000000
+    GAMES = 10000000
     EVALUATIONS = 1000
     BATCH_SIZE = 32
 
     PLAYER = None  # PLAYER = Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
 
     experiment = ReinforcedCrossValidation(TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
-    results = experiment.run(5, -3.5, -5)
+    results = experiment.run(5, -4, -5)
 
     print("\nReward(s) - LR:")
     for res in results:

@@ -218,9 +218,14 @@ class Model(torch.nn.Module):
     @staticmethod
     def legal_softmax(input, legal_moves_map):
         legal_moves_map = legal_moves_map.view(input.data.shape)
+        x = input
 
-        x = F.log_softmax(input, dim=1).exp()
+        # x = (x-x.max()).exp() * legal_moves_map / (x-x.max()).exp().sum()
+
+        max_input = input.max()
+        x = (x-max_input).exp()
         x = x * legal_moves_map
+        x = x / x.sum()
         return x
 
     def copy(self):

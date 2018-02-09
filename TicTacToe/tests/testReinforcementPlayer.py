@@ -9,7 +9,7 @@ import TicTacToe.players.reinforcePlayer as reinforcePlayer
 from TicTacToe.environment.board import TicTacToeBoard
 from TicTacToe.players.base_players import RandomPlayer
 from TicTacToe.environment.game import TicTacToe
-
+from abstractClasses import PlayerException
 from abstractClasses import Model
 
 
@@ -61,7 +61,12 @@ class TestReinforcePlayer(unittest.TestCase):
 
         for i, case in enumerate(edge_cases):
             for j, l_moves in enumerate(legal_moves):
-                x = Model.legal_softmax(case, l_moves)
+                try:
+                    x = Model.legal_softmax(case, l_moves)
+                except Exception as e:
+                    raise PlayerException("LegalSoftMax failed for edge case %s and legal move %s: \n    %s" % (i, j, e))
+
+                self.assertTrue((x == x*l_moves).all(), "LegalSoftMax did not set illegal moves to 0")
                 self.assertTrue(x.sum().data[0] > 0, "x.sum <= 0 for edge case %s and legal move %s" % (i, j))
                 for elem in x.data.tolist():
                     self.assertNotEqual(elem, np.nan)
