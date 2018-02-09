@@ -215,9 +215,11 @@ class Model(torch.nn.Module):
                 torch.nn.init.xavier_normal(module.weight.data)
                 # torch.nn.init.xavier_normal(module.bias.data)
 
-    def legal_softmax(self, input, legal_moves_map):
-        x = F.softmax(input, dim=1)
-        legal_moves_map = legal_moves_map.view(-1, self.board_size**2)
+    @staticmethod
+    def legal_softmax(input, legal_moves_map):
+        legal_moves_map = legal_moves_map.view(input.data.shape)
+
+        x = F.log_softmax(input, dim=1).exp()
         x = x * legal_moves_map
         return x
 
