@@ -42,7 +42,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
 
             if not silent:
                 if Printer.print_episode(game, self.max_games, datetime.now() - start):
-                    plot_name = "Pretraining %s using %s layers on legal moves\nlr: %s batch size: %s" % (LAYERS, self.player.__class__.__name__, lr, batch_size)
+                    plot_name = "Pretraining %s using %s layers on legal moves\nlr: %s batch size: %s" % (self.player.__class__.__name__, LAYERS, lr, batch_size)
                     plot_info = "%sGames - Final reward: %s \nTime: %s" % (game, reward, config.time_diff(start))
                     self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
                     if (100*game/self.max_games) % 10 == 0:
@@ -58,7 +58,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
         return losses, rewards
 
     def __run_episode__(self, generator):
-        player = self.player  # .copy(shared_weights=True)
+        player = self.player
 
         rewards = []
         color_iterator = self.AlternatingColorIterator()
@@ -88,7 +88,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    MAX_GAMES = 1000000
+    MAX_GAMES = 100000
     TERMINATION_CRITERION = 500
     BATCH_SIZE = 32
     LR = random()*1e-9 + 1e-3

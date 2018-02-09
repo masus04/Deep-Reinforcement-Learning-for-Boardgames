@@ -15,20 +15,20 @@ class TestReinforcePlayer(unittest.TestCase):
     def testDummyForwardPass(self):
         board = TicTacToeBoard()
         value_function = reinforcePlayer.PGStrategy(lr=0.001, batch_size=1)
-        value_function.evaluate(board.board)
+        value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
     def testDummyUpdate(self):
         board = TicTacToeBoard()
         value_function = reinforcePlayer.PGStrategy(lr=0.001, batch_size=1)
-        value_function.evaluate(board.board)
+        value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
         move = RandomPlayer.get_move(board)
         board.apply_move(move, config.BLACK)
-        value_function.evaluate(board.board)
+        value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
         move = RandomPlayer.get_move(board)
         board.apply_move(move, config.WHITE)
-        value_function.evaluate(board.board)
+        value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
     def testDummyTrainReinforcePlayer(self):
         player1 = reinforcePlayer.ReinforcePlayer(strategy=reinforcePlayer.PGStrategy, lr=0.001)
