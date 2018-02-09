@@ -41,7 +41,7 @@ class PGStrategy(abstract.Strategy):
         self.lr = lr
         self.gamma = gamma
         self.batch_size = batch_size
-        self.model = model if model else PGLargeFCModel()  # PGFCModel()
+        self.model = model if model else PGFCModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
         self.batches = []
@@ -129,8 +129,8 @@ class PGFCModel(abstract.Model):
 
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size**2)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
         x = self.fc3(x)
 
         # x = F.softmax(x, dim=1)
@@ -158,10 +158,10 @@ class PGLargeFCModel(abstract.Model):
 
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size ** 2)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
+        x = F.leaky_relu(self.fc3(x))
+        x = F.leaky_relu(self.fc4(x))
         x = self.fc5(x)
 
         x = self.legal_softmax(x, legal_moves_map)
