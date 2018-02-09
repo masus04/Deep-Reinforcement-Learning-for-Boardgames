@@ -3,6 +3,7 @@ from random import random
 
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
+from TicTacToe.players.base_players import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
@@ -15,6 +16,8 @@ class TrainReinforcePlayer(Experiment):
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
+
+        self.__plotter__.line3_name = "ExperiencedPlayer score"
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
@@ -42,7 +45,8 @@ class TrainReinforcePlayer(Experiment):
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
             result = evaluate_against_base_players(self.player1)
-            self.add_scores(result)    # only evaluation results are interesting
+            exp_plr_score = evaluate_against_base_players(self.player1, [ExperiencedPlayer()])
+            self.add_scores(result, exp_plr_score)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
@@ -57,7 +61,7 @@ if __name__ == '__main__':
 
     GAMES = 1000000
     EVALUATIONS = 1000
-    LR = random()*1e-9 + 1e-3
+    LR = random()*1e-9 + 2e-4
     BATCH_SIZE = 32
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
