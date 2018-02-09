@@ -50,7 +50,7 @@ class TrainReinforcePlayer(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.player2.__class__.__name__, lr),
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, main_score))
+                        "Train ReinforcementPlayer vs %s with shared network\nLR: %s Games: %s \nFinal score: %s" % (self.opponent.__class__.__name__, lr, episode*games_per_evaluation, main_score))
 
         return self
 
@@ -63,9 +63,9 @@ if __name__ == '__main__':
     BATCH_SIZE = 32
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-    OPPONENT = NovicePlayer
+    OPPONENT = RandomPlayer
 
-    print("Training ReinforcePlayer vs self with lr: %s" % LR)
+    print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
     experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
