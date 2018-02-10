@@ -9,8 +9,7 @@ import TicTacToe.players.reinforcePlayer as reinforcePlayer
 from TicTacToe.environment.board import TicTacToeBoard
 from TicTacToe.players.base_players import RandomPlayer
 from TicTacToe.environment.game import TicTacToe
-from abstractClasses import PlayerException
-from abstractClasses import Model
+from abstractClasses import PlayerException, Model, Strategy
 
 
 class TestReinforcePlayer(unittest.TestCase):
@@ -70,6 +69,19 @@ class TestReinforcePlayer(unittest.TestCase):
                 self.assertTrue(x.sum().data[0] > 0, "x.sum <= 0 for edge case %s and legal move %s" % (i, j))
                 for elem in x.data.tolist():
                     self.assertNotEqual(elem, np.nan)
+
+    def test_discount_rewards(self):
+        rewards = [0] * 8 + [1]
+
+        discounted_rewards = Strategy.discount_rewards(rewards, discount_factor=1)
+        self.assertEqual(discounted_rewards, [1] * 9)
+
+        discounted_rewards = Strategy.discount_rewards(rewards, discount_factor=0.95)
+        self.assertNotEqual(discounted_rewards, rewards)
+        self.assertEqual(max(discounted_rewards), discounted_rewards[-1])
+
+
+
 
 
 if __name__ == '__main__':

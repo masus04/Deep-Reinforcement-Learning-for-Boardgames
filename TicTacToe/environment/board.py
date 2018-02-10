@@ -30,6 +30,7 @@ class TicTacToeBoard(Board):
             return self
         else:
             self.illegal_move = color
+            print("!! Illegal move !!")
         return self
 
     def game_won(self):

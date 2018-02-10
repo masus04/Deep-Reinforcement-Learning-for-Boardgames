@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+import numpy as np
 from copy import deepcopy
 from abc import ABC, abstractmethod
 
@@ -205,6 +206,19 @@ class Strategy(ABC):
         strategy.train = deepcopy(self.train)
         strategy.log_probs = deepcopy(self.log_probs)
         return strategy
+
+    @staticmethod
+    def discount_rewards(rewards, discount_factor):
+        if discount_factor <= 0:
+            return deepcopy(rewards)
+
+        running_reward = 0  # rewards[-1]
+        discounted_rewards = []
+        for r in rewards[::-1]:
+            running_reward = (discount_factor * running_reward + r)
+            discounted_rewards.insert(0, running_reward)
+
+        return discounted_rewards
 
 
 class Model(torch.nn.Module):
