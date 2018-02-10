@@ -25,12 +25,13 @@ class ReinforcePlayer(abstract.LearningPlayer):
 
     def get_move(self, board):
         if self.strategy.train:
-            self.num_moves += 1
+            self.strategy.rewards.append(0)
         return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
 
     def register_winner(self, winner_color):
-        self.strategy.rewards += ([self.get_label(winner_color)] * self.num_moves)
-        self.num_moves = 0
+        if self.strategy.train:
+            self.strategy.rewards[-1] = self.get_label(winner_color)
+
         return self.strategy.update()
 
 
@@ -91,19 +92,6 @@ class PGStrategy(abstract.Strategy):
         del self.log_probs[:]
 
         return abs(policy_loss.data[0])
-
-    @staticmethod
-    def discount_rewards(rewards, discount_factor):
-        if discount_factor <= 0:
-            return deepcopy(rewards)
-
-        running_reward = 0
-        discounted_rewards = []
-        for r in rewards[::-1]:
-            running_reward = config.GAMMA * running_reward + r
-            discounted_rewards.insert(0, running_reward)
-
-        return discounted_rewards
 
     @staticmethod
     def normalize_rewards(rewards):

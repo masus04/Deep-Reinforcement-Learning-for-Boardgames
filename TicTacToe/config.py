@@ -22,7 +22,7 @@ WIN_LINE_LENGTH = 3
 EVALUATION_GAMES = 40
 
 # Network parameters
-GAMMA = 0  # 0.99  # Reward discounting factor
+GAMMA = 1  # 0.95  # Reward discounting factor
 
 CUDA = False  # torch.cuda.is_available() # Cuda is slower, probably because of small models and batch sizes
 

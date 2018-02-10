@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     GAMES = 1000000
     EVALUATIONS = 1000
-    LR = random()*1e-9 + 2e-4
+    LR = random()*1e-9 + 2e-5
     BATCH_SIZE = 32
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
