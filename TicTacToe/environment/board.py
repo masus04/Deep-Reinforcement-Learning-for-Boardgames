@@ -27,10 +27,9 @@ class TicTacToeBoard(Board):
 
         if move in self.get_valid_moves():
             self.board[move[0]][move[1]] = color
-            return self
         else:
-            self.illegal_move = color
             print("!! Illegal move !!")
+            self.illegal_move = color
         return self
 
     def game_won(self):
