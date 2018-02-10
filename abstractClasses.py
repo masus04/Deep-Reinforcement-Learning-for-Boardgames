@@ -220,12 +220,11 @@ class Model(torch.nn.Module):
         legal_moves_map = legal_moves_map.view(input.data.shape)
         x = input
 
-        # x = (x-x.max()).exp() * legal_moves_map / (x-x.max()).exp().sum()
-
-        max_input = input.max()
-        x = (x-max_input).exp()
+        # set illegal moves to about float.minvalue
         x = x * legal_moves_map
-        x = x / x.sum()
+        x = x + (legal_moves_map-1) * 3e38
+
+        x = F.softmax(x, dim=1)
         return x
 
     def copy(self):
