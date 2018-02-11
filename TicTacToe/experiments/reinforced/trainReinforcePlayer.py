@@ -40,13 +40,12 @@ class TrainReinforcePlayer(Experiment):
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
+            self.add_results(("Losses", sum(losses)/len(losses)))
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
             score, results = evaluate_against_base_players(self.player1)
-            exp_plr_score, exp_plr_results = evaluate_against_base_players(self.player1, [ExperiencedPlayer()])
-            self.add_scores(score, exp_plr_score)
+            self.add_results(results)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):

@@ -30,14 +30,34 @@ class Experiment(ABC):
         return torch.load(filename)
 
     def add_loss(self, loss):
+        """ DEPRECATED: Use add_results instead for more dynamic behaviour."""
         if not self.__plotter__:
             raise Exception("__plotter__ not initialized, Experiment's super() must be called")
         self.__plotter__.add_loss(loss)
 
     def add_scores(self, score, second_score=None):
+        """ DEPRECATED: Use add_results instead for more dynamic behaviour."""
         if not self.__plotter__:
             raise Exception("__plotter__ not initialized, Experiment's super() must be called")
         self.__plotter__.add_score(score, second_score)
+
+    def add_results(self, results):
+        """
+        Takes a single tuple or a list of tuples (name, value) and appends them to the internal plotter.
+        Each distinct name is plotted as separately with its values interpolated to fit the other values.
+
+        :param results: a list of tuples (name, value)
+        :return: None
+        """
+        if not self.__plotter__:
+            raise Exception("__plotter__ not initialized, Experiment's super() must be called")
+        try:
+            if isinstance(results, list):
+                self.__plotter__.add_values(results)
+            elif isinstance(results, tuple):
+                self.__plotter__.add_values([results])
+        except Exception as e:
+            raise Exception("add_result received an illegal argument: " + str(e))
 
     def plot_scores(self, title):
         if not self.__plotter__:
@@ -61,7 +81,7 @@ class Experiment(ABC):
 
     class AlternatingColorIterator:
         """
-        Returns Black and White alternatingly, starting with WHITE
+        Returns Black and White alternately, starting with WHITE
         """
         def __init__(self):
             self.colors = [config.BLACK, config.WHITE]

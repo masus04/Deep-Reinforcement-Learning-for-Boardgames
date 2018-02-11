@@ -37,12 +37,12 @@ class Plotter:
         :param scores: a list of tuples (score_name, score)
         :return: None
         """
-        for v in values:
+        for val in values:
             try:
-                self.values[v[0]].append(v[1])
+                self.values[val[0]].append(val[1])
             except KeyError:
-                self.values[v[0]] = DataResolutionManager()
-                self.values[v[0]].append(v[1])
+                self.values[val[0]] = DataResolutionManager()
+                self.values[val[0]].append(val[1])
 
     def add_score(self, score, second_score=None):
         if score is not None:
