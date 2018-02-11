@@ -21,12 +21,28 @@ class Plotter:
         self.scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
         self.second_scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
 
+        self.values = dict()
+
         self.line1_name = "loss"
         self.line2_name = "score"
         self.line3_name = "second_score"
 
     def add_loss(self, loss):
         self.losses.append(loss)
+
+    def add_values(self, values):
+        """
+        Accepts a list of tuples (score_name, score) and adds it to the internal representation to be plotted
+
+        :param scores: a list of tuples (score_name, score)
+        :return: None
+        """
+        for v in values:
+            try:
+                self.values[v[0]].append(v[1])
+            except KeyError:
+                self.values[v[0]] = DataResolutionManager()
+                self.values[v[0]].append(v[1])
 
     def add_score(self, score, second_score=None):
         if score is not None:
@@ -38,22 +54,32 @@ class Plotter:
 
     def plot(self, title):
 
-        line1_values = self.losses.get_values()
+        if self.values:
+            lines = []
+            max_length = len(max(self.values.items(), key=lambda a: len(a))[1])
+            for key in self.values:
+                values = self.__scale__(self.values[key].get_values(), max_length)
+                series = pd.Series(values, name=key)
+                lines.append(series)
+            df = pd.DataFrame(lines)
 
-        line2_values = self.scores.get_values()
-        line2_values = self.__scale__(line2_values, len(line1_values))
+        else:
+            line1_values = self.losses.get_values()
 
-        line3_values = self.second_scores.get_values()
-        line3_values = self.__scale__(line3_values, len(line1_values))
+            line2_values = self.scores.get_values()
+            line2_values = self.__scale__(line2_values, len(line1_values))
 
-        if len(line1_values) == 0 and len(line2_values) == 0:
-            raise Exception("Cannot plot empty values losses and scores")
+            line3_values = self.second_scores.get_values()
+            line3_values = self.__scale__(line3_values, len(line1_values))
 
-        line1 = pd.Series(line1_values, name=self.line1_name)
-        line2 = pd.Series(line2_values, name=self.line2_name)
-        line3 = pd.Series(line3_values, name=self.line3_name)
+            if len(line1_values) == 0 and len(line2_values) == 0:
+                raise Exception("Cannot plot empty values losses and scores")
 
-        df = pd.DataFrame([line1, line2, line3])
+            line1 = pd.Series(line1_values, name=self.line1_name)
+            line2 = pd.Series(line2_values, name=self.line2_name)
+            line3 = pd.Series(line3_values, name=self.line3_name)
+            df = pd.DataFrame([line1, line2, line3])
+
         df = df.transpose()
         ax = df.plot(legend=True, figsize=(16, 9), ylim=(-1, 2))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
 
@@ -61,7 +87,7 @@ class Plotter:
         ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
 
         plt.title(title)
-        plt.xlabel = "Episodes"
+        plt.xlabel("Episodes")
         plt.grid()
 
         return plt
@@ -122,6 +148,9 @@ class DataResolutionManager:
 
     def __str__(self):
         return self.get_values().__str__()
+
+    def __len__(self):
+        return len(self.values)
 
 
 class Printer:

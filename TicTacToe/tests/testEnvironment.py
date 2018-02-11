@@ -143,6 +143,15 @@ class TestEnvironment(unittest.TestCase):
 
         self.assertTrue(os.path.exists("testPlot.png"))
 
+    def test_dynamic_plotting(self):
+        plotter = Plotter()
+        max = 3000
+        for i in range(max):
+            plotter.add_values([("loss", (max-i)/max), ("evaluation score", i/max/2), ("second score", 0.3)])
+
+        plotter.plot("DynamicTestPlot").savefig("DynamicTestPlot")
+        self.assertTrue(os.path.exists("DynamicTestPlot.png"))
+
     def test_Evaluation(self):
         start = datetime.now()
         score = evaluate_against_base_players(ttt_players.RandomPlayer())
