@@ -29,18 +29,6 @@ class Experiment(ABC):
         filename = config.findInSubdirectory(player_name, config.TIC_TAC_TOE_DIR + "/experiments")
         return torch.load(filename)
 
-    def add_loss(self, loss):
-        """ DEPRECATED: Use add_results instead for more dynamic behaviour."""
-        if not self.__plotter__:
-            raise Exception("__plotter__ not initialized, Experiment's super() must be called")
-        self.__plotter__.add_loss(loss)
-
-    def add_scores(self, score, second_score=None):
-        """ DEPRECATED: Use add_results instead for more dynamic behaviour."""
-        if not self.__plotter__:
-            raise Exception("__plotter__ not initialized, Experiment's super() must be called")
-        self.__plotter__.add_score(score, second_score)
-
     def add_results(self, results):
         """
         Takes a single tuple or a list of tuples (name, value) and appends them to the internal plotter.

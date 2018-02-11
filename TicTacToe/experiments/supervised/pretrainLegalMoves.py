@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from random import random
+import numpy as np
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
@@ -73,15 +74,12 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
             # prepare for next sample
             board.apply_move(generator.get_move(board), color_iterator.__next__())
 
-        for reward in rewards:
-            player.strategy.rewards.append(reward)
-        player.num_moves = 0
         loss = player.strategy.update()
+        player.strategy.rewards = []
 
-        average_reward = sum(rewards) / 9
+        average_reward = np.mean(rewards)
         del rewards[:]
-        self.add_loss(loss)
-        self.add_scores(average_reward)
+        self.add_results([("Losses", loss), ("Score", average_reward)])
 
         return loss, average_reward
 

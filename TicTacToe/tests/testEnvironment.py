@@ -129,20 +129,6 @@ class TestEnvironment(unittest.TestCase):
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced(block) vs Experienced(): %s" % np.mean(results))
 
-    def test_Plotter(self):
-        plotter = Plotter()
-
-        max = 3000
-        for i in range(max):
-            plotter.add_loss(max-i)
-            plotter.add_score(i)
-
-            if (i+1) % 500 == 0:
-                plt = plotter.plot("Iteration: %s" % (i+1))
-                plt.savefig("testPlot")
-
-        self.assertTrue(os.path.exists("testPlot.png"))
-
     def test_dynamic_plotting(self):
         plotter = Plotter()
         max = 3000

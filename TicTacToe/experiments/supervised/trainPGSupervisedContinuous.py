@@ -56,16 +56,11 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
                 move = generator.get_move(board)
                 board.apply_move(move, color_iterator.__next__())
 
-            # Player.register_winner stand in because it does not allow more than one label
-            for reward in rewards:
-                player.strategy.rewards.append(reward)
-            player.num_moves = 0
             loss = player.strategy.update()
 
             average_reward = sum(rewards) / 9
             del rewards[:]
-            self.add_loss(loss)
-            self.add_scores(average_reward)
+            self.add_results([("Losses", loss), ("Reward", average_reward)])
 
             if game % self.evaluation_period == 0:
                 test_rewards = []
@@ -80,7 +75,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
                 average_test_reward = sum(test_rewards) / len(test_rewards)
                 del test_rewards[:]
-                self.add_scores(None, average_test_reward)
+                self.add_results(("Test reward", average_test_reward))
 
             if not silent:
                 if Printer.print_episode(game + 1, self.games, datetime.now() - start):
@@ -95,7 +90,7 @@ if __name__ == '__main__':
 
     GAMES = 100000
     BATCH_SIZE = 32
-    LR = random()*1e-9 + 1e-2
+    LR = random()*1e-9 + 1e-4
 
     EVALUATION_PERIOD = 100
 

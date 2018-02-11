@@ -1,5 +1,6 @@
 from datetime import datetime
 from random import random
+import numpy as np
 
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
@@ -40,7 +41,7 @@ class TrainReinforcePlayer(Experiment):
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_results(("Losses", sum(losses)/len(losses)))
+            self.add_results(("Losses", np.mean(losses)))
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
