@@ -16,14 +16,16 @@ def evaluate_against_base_players(player, evaluation_players=None):
         training_values = player.strategy.train, player.strategy.model.training
         player.strategy.train, player.strategy.model.training = False, False
 
+    results = []
     accumulated_rewards = []
     for e_player in EVALUATION_PLAYERS:
         simulation = TicTacToe([player, e_player])
         reward, losses = simulation.run_simulations(config.EVALUATION_GAMES)
+        results.append((e_player, reward))
         accumulated_rewards.append(reward)
 
     # Restore original training values
     if issubclass(player.__class__, LearningPlayer):
         player.strategy.train, player.strategy.model.training = training_values
 
-    return np.mean(accumulated_rewards)
+    return np.mean(accumulated_rewards), results

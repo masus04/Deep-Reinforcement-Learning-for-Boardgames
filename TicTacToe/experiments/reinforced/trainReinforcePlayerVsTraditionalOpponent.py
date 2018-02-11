@@ -42,8 +42,8 @@ class TrainReinforcePlayer(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            main_score = evaluate_against_base_players(self.player1)
-            opponent_score = evaluate_against_base_players(self.player1, [self.player2])
+            main_score, main_results = evaluate_against_base_players(self.player1)
+            opponent_score, opponent_results = evaluate_against_base_players(self.player1, [self.player2])
             self.add_scores(main_score, opponent_score)
 
             if not silent:

@@ -44,15 +44,15 @@ class TrainReinforcePlayer(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            result = evaluate_against_base_players(self.player1)
-            exp_plr_score = evaluate_against_base_players(self.player1, [ExperiencedPlayer()])
-            self.add_scores(result, exp_plr_score)
+            score, results = evaluate_against_base_players(self.player1)
+            exp_plr_score, exp_plr_results = evaluate_against_base_players(self.player1, [ExperiencedPlayer()])
+            self.add_scores(score, exp_plr_score)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode, result))
+                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode, score))
 
         return self
 

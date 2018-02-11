@@ -154,11 +154,11 @@ class TestEnvironment(unittest.TestCase):
 
     def test_Evaluation(self):
         start = datetime.now()
-        score = evaluate_against_base_players(ttt_players.RandomPlayer())
+        score, results = evaluate_against_base_players(ttt_players.RandomPlayer())
         print("Evaluating RandomPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
         start = datetime.now()
-        evaluate_against_base_players(ttt_players.ExperiencedPlayer())
+        score, results = evaluate_against_base_players(ttt_players.ExperiencedPlayer())
         print("Evaluating ExpertPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
     def test_Performance(self):
