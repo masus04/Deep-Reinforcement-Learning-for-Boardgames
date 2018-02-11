@@ -49,10 +49,6 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
                 reward = config.BLACK if expert_move == strategy_move else config.WHITE
                 rewards.append(reward)
 
-            # Player.register_winner stand in because it does not allow more than one label
-            for reward in rewards:
-                player.strategy.rewards.append(reward)
-            player.num_moves = 0
             loss = player.strategy.update()
 
             for board, expert_move in test_set:
@@ -66,8 +62,7 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
             average_reward = sum(rewards)/len(rewards)
             average_test_reward = sum(test_rewards)/len(test_rewards)
 
-            self.add_scores(average_reward, average_test_reward)
-            self.add_loss(loss)
+            self.add_results([("Losses", loss), ("Average reward", average_reward), ("Average test reward", average_test_reward)])
 
             if not silent:
                 if Printer.print_episode(episode + 1, self.episodes, datetime.now() - start):

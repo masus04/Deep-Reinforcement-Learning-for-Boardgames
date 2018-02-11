@@ -129,27 +129,22 @@ class TestEnvironment(unittest.TestCase):
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced(block) vs Experienced(): %s" % np.mean(results))
 
-    def test_Plotter(self):
+    def test_dynamic_plotting(self):
         plotter = Plotter()
-
         max = 3000
         for i in range(max):
-            plotter.add_loss(max-i)
-            plotter.add_score(i)
+            plotter.add_values([("loss", (max-i)/max), ("evaluation score", i/max/2), ("second score", 0.3)])
 
-            if (i+1) % 500 == 0:
-                plt = plotter.plot("Iteration: %s" % (i+1))
-                plt.savefig("testPlot")
-
-        self.assertTrue(os.path.exists("testPlot.png"))
+        plotter.plot("DynamicTestPlot").savefig("DynamicTestPlot")
+        self.assertTrue(os.path.exists("DynamicTestPlot.png"))
 
     def test_Evaluation(self):
         start = datetime.now()
-        score = evaluate_against_base_players(ttt_players.RandomPlayer())
+        score, results = evaluate_against_base_players(ttt_players.RandomPlayer())
         print("Evaluating RandomPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
         start = datetime.now()
-        evaluate_against_base_players(ttt_players.ExperiencedPlayer())
+        score, results = evaluate_against_base_players(ttt_players.ExperiencedPlayer())
         print("Evaluating ExpertPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
 
     def test_Performance(self):

@@ -1,5 +1,6 @@
 from datetime import datetime
 from random import random
+import numpy as np
 
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
@@ -40,19 +41,18 @@ class TrainReinforcePlayer(Experiment):
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
+            self.add_results(("Losses", np.mean(losses)))
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            result = evaluate_against_base_players(self.player1)
-            exp_plr_score = evaluate_against_base_players(self.player1, [ExperiencedPlayer()])
-            self.add_scores(result, exp_plr_score)
+            score, results = evaluate_against_base_players(self.player1)
+            self.add_results(results)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, result))
+                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, results))
 
         return self
 
