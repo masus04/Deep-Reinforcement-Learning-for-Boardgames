@@ -45,7 +45,7 @@ class TrainReinforcePlayer(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results = evaluate_against_base_players(self.player1)
+            score, results = evaluate_against_base_players(self.player1, silent=(episode == self.evaluations))
             self.add_results(results)
 
             if not silent:

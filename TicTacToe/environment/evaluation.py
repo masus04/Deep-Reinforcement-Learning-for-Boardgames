@@ -14,6 +14,7 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
 
     :param player: The player to be evaluated
     :param evaluation_players: A list of players against which the player should be evaluated
+    :param silent: Flag controlling if output is written to console
     :return: a tuple (score, results) where score is the average score over all evaluation games (scalar (-1, 1)) and results is a list of
              tuples (name, score) where 'score' is the score (-1, 1) achieved when evaluated against the player named 'name'.
     """
@@ -27,10 +28,10 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     for e_player in evaluation_players:
         simulation = TicTacToe([player, e_player])
         rewards, losses = simulation.run_simulations(config.EVALUATION_GAMES)
-        results.append((e_player.__class__.__name__, rewards))
+        results.append((e_player.__str__(), rewards))
 
         if not silent:
-            print_results(e_player, rewards)
+            print_results(player, e_player, rewards)
 
     results = [(result[0], np.mean(result[1])) for result in results]
     results.insert(0, ("Total Score", np.mean([res[1] for res in results])))  # Insert average overall score as first element of results
@@ -45,8 +46,13 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     return results[0][1], results
 
 
-def print_results(player, rewards):
+def print_results(player, e_player, rewards):
     counter = Counter(rewards)
-    print("Evaluating vs %s" % player.__class__.__name__)
+    try:
+        lr = player.strategy.lr
+    except AttributeError:
+        lr = None
+
+    print("Evaluating %s vs %s" % (player.__str__(), e_player.__str__()))
     print("Total score: %s" % np.mean(rewards))
     print("W/D/L: %s/%s/%s\n" % (counter[config.LABEL_WIN], counter[config.LABEL_DRAW], counter[config.LABEL_LOSS]))

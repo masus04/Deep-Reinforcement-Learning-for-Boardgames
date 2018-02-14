@@ -148,7 +148,10 @@ class Player(ABC):
         if Board.other_color(self.color) == winner_color:
             return config.LABEL_LOSS
         return config.LABEL_DRAW
-    
+
+    def __str__(self):
+        return "[%s]" % self.__class__.__name__
+
 
 class LearningPlayer(Player):
 
@@ -168,7 +171,10 @@ class LearningPlayer(Player):
         :return:
         """
         return self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
-    
+
+    def __str__(self):
+        return "[%s lr:%s]" % (self.__class__.__name__, self.strategy.lr)
+
 
 class PlayerException(Exception):
     pass
