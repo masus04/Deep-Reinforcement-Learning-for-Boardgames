@@ -121,7 +121,6 @@ class PGFCModel(abstract.Model):
         x = F.leaky_relu(self.fc2(x))
         x = self.fc3(x)
 
-        # x = F.softmax(x, dim=1)
         x = self.legal_softmax(x, legal_moves_map)
         return x
 
@@ -174,11 +173,24 @@ class PGConvModel(abstract.Model):
 
         self.__xavier_initialization__()
 
-    def forward(self, input):
+    def forward(self, input, legal_moves_map):
         x = F.relu(self.conv1(input))
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
 
         x = self.reduce(x)
         x = x.view(-1, self.board_size**2)
+
+        x = self.legal_softmax(x, legal_moves_map)
+
         return x
+
+
+class FCReinforcePlayer(ReinforcePlayer):
+    def __init__(self, lr, model=PGLargeFCModel(), batch_size=1):
+        super(FCReinforcePlayer, self).__init__(strategy=PGStrategy(lr, batch_size, model=model), lr=lr)
+
+
+class ConvReinforcePlayer(ReinforcePlayer):
+    def __init__(self, lr, model=PGConvModel(), batch_size=1):
+        super(ConvReinforcePlayer, self).__init__(strategy=PGStrategy(lr, batch_size, model=model), lr=lr)

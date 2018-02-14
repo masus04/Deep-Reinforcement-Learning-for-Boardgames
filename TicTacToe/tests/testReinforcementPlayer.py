@@ -80,8 +80,19 @@ class TestReinforcePlayer(unittest.TestCase):
         self.assertNotEqual(discounted_rewards, rewards)
         self.assertEqual(max(discounted_rewards), discounted_rewards[-1])
 
+    def test_FCReinforcePlayer(self):
+        fc_player = reinforcePlayer.FCReinforcePlayer(lr=1e-4)
+        random_player = RandomPlayer()
 
+        simulation = TicTacToe([fc_player, random_player])
+        simulation.run_simulations(100)
 
+    def test_ConvReinforcePlayer(self):
+        fc_player = reinforcePlayer.ConvReinforcePlayer(lr=1e-4)
+        random_player = RandomPlayer()
+
+        simulation = TicTacToe([fc_player, random_player])
+        simulation.run_simulations(100)
 
 
 if __name__ == '__main__':
