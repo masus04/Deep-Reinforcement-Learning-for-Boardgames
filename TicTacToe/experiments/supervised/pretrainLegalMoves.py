@@ -32,7 +32,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
         self.player.color = config.BLACK
 
         generator = RandomPlayer()
-        print("Pretraining %s on legal moves" % self.player.__class__.__name__)
+        print("Pretraining %s on legal moves" % self.player.__str__())
 
         losses, rewards = [], []
         start = datetime.now()

@@ -8,6 +8,7 @@ import TicTacToe.config as config
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.board import TicTacToeBoard
 import TicTacToe.players.base_players as ttt_players
+from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
 
@@ -160,6 +161,9 @@ class TestEnvironment(unittest.TestCase):
     def test_evaluation(self):
         p1 = ttt_players.RandomPlayer()
         evaluate_against_base_players(p1, silent=False)
+
+        p2 = ReinforcePlayer(strategy=PGStrategy, lr=1e-5)
+        evaluate_against_base_players(p2, silent=False)
 
 
 if __name__ == '__main__':
