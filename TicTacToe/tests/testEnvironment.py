@@ -157,6 +157,10 @@ class TestEnvironment(unittest.TestCase):
         simulation.run_simulations(N)
         print("Simulating %s random games took %s" % (N, datetime.now()-start))
 
+    def test_evaluation(self):
+        p1 = ttt_players.RandomPlayer()
+        evaluate_against_base_players(p1, silent=False)
+
 
 if __name__ == '__main__':
     unittest.main()
