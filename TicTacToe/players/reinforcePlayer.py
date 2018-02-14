@@ -174,7 +174,9 @@ class PGConvModel(abstract.Model):
         self.__xavier_initialization__()
 
     def forward(self, input, legal_moves_map):
-        x = F.relu(self.conv1(input))
+        x = input.unsqueeze(dim=0)
+
+        x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
 
