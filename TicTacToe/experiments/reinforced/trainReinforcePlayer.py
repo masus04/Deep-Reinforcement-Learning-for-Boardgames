@@ -45,7 +45,7 @@ class TrainReinforcePlayer(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results = evaluate_against_base_players(self.player1, silent=(episode == self.evaluations))
+            score, results = evaluate_against_base_players(self.player1)
             self.add_results(results)
 
             if not silent:
@@ -54,6 +54,7 @@ class TrainReinforcePlayer(Experiment):
                         "ReinforcementTraining LR: %s" % lr,
                         "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, results))
 
+        evaluate_against_base_players(self.player1, silent=False)
         return self
 
 
@@ -70,5 +71,6 @@ if __name__ == '__main__':
     experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
-    print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
-
+    print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+    if PLAYER:
+        print("Pretrained on %s legal moves" % 1000000)

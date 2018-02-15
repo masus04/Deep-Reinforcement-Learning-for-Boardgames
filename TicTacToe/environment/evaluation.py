@@ -53,6 +53,6 @@ def print_results(player, e_player, rewards):
     except AttributeError:
         lr = None
 
-    print("Evaluating %s vs %s" % (player.__str__(), e_player.__str__()))
+    print("\nEvaluating %s vs %s" % (player.__str__(), e_player.__str__()))
     print("Total score: %s" % np.mean(rewards))
-    print("W/D/L: %s/%s/%s\n" % (counter[config.LABEL_WIN], counter[config.LABEL_DRAW], counter[config.LABEL_LOSS]))
+    print("W/D/L: %s/%s/%s" % (counter[config.LABEL_WIN], counter[config.LABEL_DRAW], counter[config.LABEL_LOSS]))
