@@ -67,6 +67,10 @@ class Experiment(ABC):
 
         torch.save(player, self.path + player.__class__.__name__ + " " + description + ".pth")
 
+    @property
+    def num_episodes(self):
+        return self.__plotter__.num_episodes
+
     class AlternatingColorIterator:
         """
         Returns Black and White alternately, starting with WHITE

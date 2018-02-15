@@ -16,16 +16,7 @@ class Plotter:
     def __init__(self):
         HISTORY_SIZE = 1000
 
-        self.num_episodes = 0
-        self.losses = DataResolutionManager([], storage_size=HISTORY_SIZE)
-        self.scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
-        self.second_scores = DataResolutionManager([], storage_size=HISTORY_SIZE)
-
         self.values = dict()
-
-        self.line1_name = "loss"
-        self.line2_name = "score"
-        self.line3_name = "second_score"
 
     def add_loss(self, loss):
         self.losses.append(loss)
@@ -83,7 +74,7 @@ class Plotter:
         df = df.transpose()
         ax = df.plot(legend=True, figsize=(16, 9), ylim=(-1, 2))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
 
-        ax.xaxis.set_ticks([i * len(self.losses.get_values()) / 10 for i in range(11)])
+        ax.xaxis.set_ticks([i * self.num_episodes / 10 for i in range(11)])
         ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
 
         plt.title(title)
@@ -101,6 +92,10 @@ class Plotter:
             lst = spl(new_indices)
 
         return lst
+
+    @property
+    def num_episodes(self):
+        return max((len(self.values[value]) for value in self.values))
 
 
 class DataResolutionManager:
