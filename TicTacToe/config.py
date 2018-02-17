@@ -35,6 +35,15 @@ def get_color_from_player_number(code):
     return "Empty"
 
 
+def get_label_from_winner_color(player1, player2, winner):
+    if player1.color == winner:
+        return player1.original_color
+    elif player2.color == winner:
+        return player2.original_color
+    else:
+        return EMPTY
+
+
 def time_diff(start):
     return str(datetime.now()-start).split(".")[0]
 

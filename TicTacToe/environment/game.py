@@ -17,6 +17,13 @@ class TicTacToe:
             player.original_color = player.color
 
     def __run__(self, player1, player2):
+        """
+        Runs an episode of the game
+
+        :param player1:
+        :param player2:
+        :return: The original color of the winning player
+        """
         self.board = TicTacToeBoard()
         players = player1, player2
 
@@ -26,12 +33,22 @@ class TicTacToe:
 
             winner = self.board.game_won()
             if winner:
-                return player1 if player1.color == winner else player2
+                return config.get_label_from_winner_color(player1, player2, winner)
 
             players = list(reversed(players))
 
     def run_simulations(self, episodes, switch_colors=True, switch_players=True):
-        """ Runs @episodes simulations using the given players. @return the results and average losses per episode"""
+        """
+        Runs a number of games using the given players and returns statistics over all games run.
+
+
+        If both :param switch_colors and :param switch_players are set, all four possible starting positions will iterated through.
+        :param episodes: The number of games to run
+        :param switch_colors: Flag specifying whether to alternate the players colors during play
+        :param switch_players: Flag specifying whether to alternate the starting player
+        :return: The results and average losses per episode where results is a list of the original colors of the winning player ([original_winning_color])
+        """
+
         simulation_players = [self.player1, self.player2]
 
         results = []
@@ -47,11 +64,11 @@ class TicTacToe:
             winner = self.__run__(simulation_players[0], simulation_players[1])
             player_losses = []
             for player in simulation_players:
-                loss = player.register_winner(winner.original_color)
+                loss = player.register_winner(winner)
                 player_losses.append(loss)
 
             losses += player_losses
-            results.append(winner.original_color)
+            results.append(winner)
 
         for player in simulation_players:
             player.color = player.original_color
