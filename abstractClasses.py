@@ -83,11 +83,12 @@ class Board(ABC):
         """
         if color == config.BLACK:
             return config.WHITE
-        if color == config.WHITE:
+        elif color == config.WHITE:
             return config.BLACK
-        if color == config.EMPTY:
-            return color
-        raise BoardException("Illegal color provided: %s" % color)
+        elif color == config.EMPTY:
+            return config.EMPTY
+        else:
+            raise BoardException("Illegal color provided: %s" % color)
 
 
 class BoardException(Exception):
@@ -145,9 +146,10 @@ class Player(ABC):
         """
         if self.original_color == winner_color:
             return config.LABEL_WIN
-        if Board.other_color(self.color) == winner_color:
+        elif Board.other_color(self.original_color) == winner_color:
             return config.LABEL_LOSS
-        return config.LABEL_DRAW
+        else:
+            return config.LABEL_DRAW
 
     def __str__(self):
         return "[%s]" % self.__class__.__name__
