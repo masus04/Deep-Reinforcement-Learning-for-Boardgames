@@ -46,7 +46,7 @@ if __name__ == '__main__':
     experiment = ReinforcedCrossValidation(TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
     #experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=ExperiencedPlayer), BATCH_SIZE)
 
-    results = experiment.run(5, -4, -5)
+    results = experiment.run(5, -4, -5.5)
 
     print("\nFinal Reward - LR:")
     for res in results:
