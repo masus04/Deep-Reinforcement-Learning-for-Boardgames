@@ -51,7 +51,7 @@ class TrainReinforcementPlayerBothIndependently(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode, score))
+                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
 
             score, results = evaluate_against_base_players(self.player1, [self.player2])
             if score >= 0:
