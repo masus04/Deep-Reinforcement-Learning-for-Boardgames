@@ -6,7 +6,7 @@ from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
 from TicTacToe.players.base_players import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.evaluation import evaluate_against_base_players
+from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
 from plotting import Printer
 
 
@@ -53,8 +53,7 @@ class TrainReinforcementPlayerBothIndependently(Experiment):
                         "ReinforcementTraining LR: %s" % lr,
                         "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
 
-            score, results = evaluate_against_base_players(self.player1, [self.player2])
-            if score >= 0:
+            if evaluate_against_each_other(self.player1, self.player2):
                 self.player1 = self.player2.copy(shared_weights=False)
             else:
                 self.player2 = self.player1.copy(shared_weights=False)

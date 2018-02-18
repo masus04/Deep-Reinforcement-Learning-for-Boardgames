@@ -46,6 +46,34 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     return results[0][1], results
 
 
+def evaluate_against_each_other(player1, player2):
+    """
+    Evaluates player1 vs player2 using direct matches in oder to determine which one is used as new reference player
+    :param player1:
+    :param player2:
+    :return: True if player1 scores at least as high as player2
+    """
+    score, results = evaluate_against_base_players(player1, [player2])
+    return score >= 0
+
+
+def evaluate_both_players(player1, player2):
+    """
+    Evaluates both player2 and player1 against base players and each other to determine which one is used as new reference player.
+
+    :param player1:
+    :param player2:
+    :return: True if player1 scores at least as high as player2
+    """
+    score, results = evaluate_against_base_players(player1, [player2])
+    p1_score, results = evaluate_against_base_players(player1)
+    p2_score, results = evaluate_against_base_players(player2)
+    p1_score += score
+    p2_score -= score
+
+    return p1_score >= p2_score
+
+
 def print_results(player, e_player, rewards):
     counter = Counter(rewards)
     try:
