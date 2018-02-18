@@ -5,7 +5,7 @@ from experiment import Experiment
 from TicTacToe.players.base_players import ExperiencedPlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayer import TrainReinforcePlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsTraditionalOpponent import TrainReinforcePlayerVsTraditionalOpponent
-from TicTacToe.experiments.reinforced.trainReinforcementPlayerVsBest import TrainReinforcePlayerVsBest
+from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBest import TrainReinforcePlayerVsBest
 
 
 class ReinforcedCrossValidation(Experiment):
