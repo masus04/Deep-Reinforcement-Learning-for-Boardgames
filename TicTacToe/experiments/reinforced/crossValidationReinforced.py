@@ -37,8 +37,8 @@ if __name__ == '__main__':
 
     start = datetime.now()
 
-    GAMES = 100
-    EVALUATIONS = 1
+    GAMES = 10000000
+    EVALUATIONS = 1000
     BATCH_SIZE = 32
 
     PLAYER = None  # PLAYER = Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
