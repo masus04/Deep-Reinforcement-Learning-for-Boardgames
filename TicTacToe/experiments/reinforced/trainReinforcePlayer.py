@@ -54,7 +54,7 @@ class TrainReinforcePlayer(Experiment):
                         "ReinforcementTraining LR: %s" % lr,
                         "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode, score))
 
-        evaluate_against_base_players(self.player1, silent=False)
+        self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 

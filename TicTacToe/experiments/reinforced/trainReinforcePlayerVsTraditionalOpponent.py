@@ -10,10 +10,10 @@ from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
 
 
-class TrainReinforcePlayer(Experiment):
+class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
 
     def __init__(self, games, evaluations, pretrained_player, opponent):
-        super(TrainReinforcePlayer, self).__init__()
+        super(TrainReinforcePlayerVsTraditionalOpponent, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -54,7 +54,7 @@ class TrainReinforcePlayer(Experiment):
                         "ReinforcementTraining vs %s LR: %s" % (self.player2.__class__.__name__, lr),
                         "Train ReinforcementPlayer vs %s with shared network\nLR: %s Games: %s \nFinal score: %s" % (self.opponent.__class__.__name__, lr, episode*games_per_evaluation, results))
 
-        evaluate_against_base_players(self.player1, silent=False)
+        self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     OPPONENT = ExperiencedPlayer
 
     print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
-    experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+    experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
