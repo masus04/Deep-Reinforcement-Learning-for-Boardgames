@@ -1,10 +1,10 @@
 from datetime import datetime
-from random import random
+from random import random, choice
 import numpy as np
 
 from experiment import Experiment
 from TicTacToe.players.base_players import RandomPlayer, NovicePlayer, ExperiencedPlayer
-from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
@@ -27,14 +27,19 @@ class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else ReinforcePlayer(PGStrategy, lr=lr, batch_size=batch_size)
-        self.player2 = self.opponent()
-
-        self.simulation = TicTacToe([self.player1, self.player2])
+        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, batch_size=batch_size)
+        if self.opponent is not None:
+            self.player2 = self.opponent
+            self.simulation = TicTacToe([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
         for episode in range(1, self.evaluations+1):
+
+            if self.opponent is None:
+                self.player2 = choice([RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False, block_mid=True)])
+                self.simulation = TicTacToe([self.player1, self.player2])
+
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
@@ -51,8 +56,8 @@ class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "ReinforcementTraining vs %s LR: %s" % (self.player2.__class__.__name__, lr),
-                        "Train ReinforcementPlayer vs %s with shared network\nLR: %s Games: %s \nFinal score: %s" % (self.opponent.__class__.__name__, lr, episode*games_per_evaluation, results))
+                        "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
+                        "Train ReinforcementPlayer vs %s with shared network\nLR: %s Games: %s \nFinal score: %s" % (self.opponent, lr, episode*games_per_evaluation, results))
 
         self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
@@ -61,16 +66,16 @@ class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
 if __name__ == '__main__':
 
     GAMES = 100000
-    EVALUATIONS = 100
-    LR = random()*1e-9 + 1e-3
+    EVALUATIONS = 1000
+    LR = random()*1e-9 + 1e-4
     BATCH_SIZE = 32
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-    OPPONENT = ExperiencedPlayer
+    OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
 
     print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
     experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
-
+    experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 

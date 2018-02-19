@@ -60,12 +60,12 @@ class TrainReinforcePlayer(Experiment):
 
 if __name__ == '__main__':
 
-    GAMES = 1000000
+    GAMES = 100000
     EVALUATIONS = 1000
     LR = random()*1e-9 + 2e-5
     BATCH_SIZE = 32
 
-    PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
+    PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
     print("Training ReinforcePlayer vs self with lr: %s" % LR)
     experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
