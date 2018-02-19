@@ -6,6 +6,7 @@ from TicTacToe.players.base_players import ExperiencedPlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayer import TrainReinforcePlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsTraditionalOpponent import TrainReinforcePlayerVsTraditionalOpponent
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBest import TrainReinforcePlayerVsBest
+from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBestEvalVsReferencePlayers import TrainReinforcePlayerVsBestEvalVsReferencePlayers
 
 
 class ReinforcedCrossValidation(Experiment):
@@ -47,6 +48,7 @@ if __name__ == '__main__':
     experiment = ReinforcedCrossValidation(TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
     # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=ExperiencedPlayer), BATCH_SIZE)
     # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
+    # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsBestEvalVsReferencePlayers(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
 
     results = experiment.run(5, -4, -6)
 

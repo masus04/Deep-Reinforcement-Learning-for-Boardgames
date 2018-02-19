@@ -10,10 +10,10 @@ from TicTacToe.environment.evaluation import evaluate_against_base_players, eval
 from plotting import Printer
 
 
-class TrainReinforcePlayerVsBest(Experiment):
+class TrainReinforcePlayerVsBestEvalVsReferencePlayers(Experiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
-        super(TrainReinforcePlayerVsBest, self).__init__()
+        super(TrainReinforcePlayerVsBestEvalVsReferencePlayers, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -54,8 +54,7 @@ class TrainReinforcePlayerVsBest(Experiment):
                         "ReinforcementTraining LR: %s" % lr,
                         "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
 
-            if evaluate_against_each_other(self.player1, self.player2):
-            # if evaluate_both_players(self.player1, self.player2):
+            if evaluate_both_players(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train = False
                 self.replacements.append(episode)
@@ -74,7 +73,7 @@ if __name__ == '__main__':
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
 
-    experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+    experiment = TrainReinforcePlayerVsBestEvalVsReferencePlayers(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
     print("\nSuccessfully trained on %s games" % experiment.num_episodes)
