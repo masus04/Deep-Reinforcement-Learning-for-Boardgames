@@ -3,7 +3,7 @@ from random import random
 import numpy as np
 
 from experiment import Experiment
-from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
+from TicTacToe.players.reinforcePlayer import ReinforcePlayer, FCReinforcePlayer
 from TicTacToe.players.base_players import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -25,7 +25,7 @@ class TrainReinforcePlayerVsBest(Experiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else ReinforcePlayer(PGStrategy, lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)

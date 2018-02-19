@@ -172,7 +172,7 @@ class LearningPlayer(Player):
         :param shared_weights: If True, the returned player shares a Model and therefore the weights with the original player
         :return:
         """
-        return self.__class__(self.strategy.copy(shared_weights=shared_weights), self.strategy.lr)
+        return self.__class__(lr=self.strategy.lr, strategy=self.strategy.copy(shared_weights=shared_weights))
 
     def __str__(self):
         return "[%s lr:%s]" % (self.__class__.__name__, self.strategy.lr)

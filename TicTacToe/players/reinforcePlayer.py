@@ -189,10 +189,12 @@ class PGConvModel(abstract.Model):
 
 
 class FCReinforcePlayer(ReinforcePlayer):
-    def __init__(self, lr, model=PGLargeFCModel(), batch_size=1):
-        super(FCReinforcePlayer, self).__init__(strategy=PGStrategy(lr, batch_size, model=model), lr=lr)
+    def __init__(self, lr, strategy=None, batch_size=1):
+        super(FCReinforcePlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
+                                                else PGStrategy(lr, batch_size, model=PGLargeFCModel()))
 
 
 class ConvReinforcePlayer(ReinforcePlayer):
-    def __init__(self, lr, model=PGConvModel(), batch_size=1):
-        super(ConvReinforcePlayer, self).__init__(strategy=PGStrategy(lr, batch_size, model=model), lr=lr)
+    def __init__(self, lr, strategy=None, batch_size=1):
+        super(ConvReinforcePlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
+                                                  else PGStrategy(lr, batch_size, model=PGConvModel()))
