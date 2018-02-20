@@ -52,7 +52,7 @@ class TrainReinforcePlayerVsBest(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                        "Train ReinforcementPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):

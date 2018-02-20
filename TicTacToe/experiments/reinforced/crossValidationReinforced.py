@@ -46,7 +46,7 @@ if __name__ == '__main__':
     PLAYER = None  # PLAYER = Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
 
     experiment = ReinforcedCrossValidation(TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
-    # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=ExperiencedPlayer(deterministic=False, block_mid=True)), BATCH_SIZE)
+    # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=None), BATCH_SIZE)
     # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
     # experiment = ReinforcedCrossValidation(TrainReinforcePlayerVsBestEvalVsReferencePlayers(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
 

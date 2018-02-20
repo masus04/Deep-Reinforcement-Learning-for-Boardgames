@@ -51,7 +51,7 @@ class TrainReinforcementPlayerBothIndependently(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                        "Train ReinforcementPlayer vs self with separate networkss\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
 
             if evaluate_against_each_other(self.player1, self.player2):
                 self.player1 = self.player2.copy(shared_weights=False)
