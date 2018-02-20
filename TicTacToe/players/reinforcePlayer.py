@@ -1,14 +1,11 @@
-import random
 import numpy as np
-from copy import deepcopy
 import torch
-import torch.nn.functional as F
 from torch.distributions import Categorical
 
 import TicTacToe.config as config
 import abstractClasses as abstract
+from TicTacToe.players.models import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
 from abstractClasses import PlayerException
-from modules import swish
 
 
 class ReinforcePlayer(abstract.LearningPlayer):
@@ -42,7 +39,7 @@ class PGStrategy(abstract.Strategy):
         self.lr = lr
         self.gamma = gamma
         self.batch_size = batch_size
-        self.model = model if model else PGFCModel()  # PGFCModel()
+        self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
         self.batches = []
@@ -98,103 +95,13 @@ class PGStrategy(abstract.Strategy):
         return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
 
 
-class PGFCModel(abstract.Model):
-
-    def __init__(self):
-        super(PGFCModel, self).__init__()
-
-        self.board_size = config.BOARD_SIZE
-        intermediate_size = 128
-
-        self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
-        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
-
-        self.__xavier_initialization__()
-
-        if config.CUDA:
-            self.cuda(0)
-
-    def forward(self, input, legal_moves_map):
-        x = input.view(-1, self.board_size**2)
-        x = F.leaky_relu(self.fc1(x))
-        x = F.leaky_relu(self.fc2(x))
-        x = self.fc3(x)
-
-        x = self.legal_softmax(x, legal_moves_map)
-        return x
-
-
-class PGLargeFCModel(abstract.Model):
-    def __init__(self):
-        super(PGLargeFCModel, self).__init__()
-
-        self.board_size = config.BOARD_SIZE
-        intermediate_size = 128
-
-        self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=intermediate_size)
-        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.fc4 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.fc5 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
-
-        self.__xavier_initialization__()
-
-        if config.CUDA:
-            self.cuda(0)
-
-    def forward(self, input, legal_moves_map):
-        x = input.view(-1, self.board_size ** 2)
-        x = F.leaky_relu(self.fc1(x))
-        x = F.leaky_relu(self.fc2(x))
-        x = F.leaky_relu(self.fc3(x))
-        x = F.leaky_relu(self.fc4(x))
-        x = self.fc5(x)
-
-        x = self.legal_softmax(x, legal_moves_map)
-        return x
-
-
-class PGConvModel(abstract.Model):
-
-    def __init__(self):
-        super(PGConvModel, self).__init__()
-
-        self.board_size = config.BOARD_SIZE
-        self.conv_channels = 8
-
-        # Create representation
-        self.conv1 = torch.nn.Conv2d(in_channels=1, out_channels=self.conv_channels, kernel_size=3, padding=1)
-        self.conv2 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
-        self.conv3 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
-
-        # Evaluate and output move possibilities
-        self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=0)
-
-        self.__xavier_initialization__()
-
-    def forward(self, input, legal_moves_map):
-        x = input.unsqueeze(dim=0)
-
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = F.relu(self.conv3(x))
-
-        x = self.reduce(x)
-        x = x.view(-1, self.board_size**2)
-
-        x = self.legal_softmax(x, legal_moves_map)
-
-        return x
-
-
 class FCReinforcePlayer(ReinforcePlayer):
     def __init__(self, lr, strategy=None, batch_size=1):
         super(FCReinforcePlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, batch_size, model=PGLargeFCModel()))
+                                                else PGStrategy(lr, batch_size, model=LargeFCPolicyModel()))
 
 
 class ConvReinforcePlayer(ReinforcePlayer):
     def __init__(self, lr, strategy=None, batch_size=1):
         super(ConvReinforcePlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
-                                                  else PGStrategy(lr, batch_size, model=PGConvModel()))
+                                                  else PGStrategy(lr, batch_size, model=ConvPolicyModel()))
