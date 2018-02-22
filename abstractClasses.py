@@ -191,8 +191,8 @@ class Strategy(ABC):
 
     def __init__(self):
         self.lr = None
-        self.model = None
-        self.optimizer = None
+        self.policy = None
+        self.vf_optimizer = None
         self.rewards = []
         self.log_probs = []
         self.train = True
@@ -205,15 +205,9 @@ class Strategy(ABC):
     def update(self):
         pass
 
+    @abstractmethod
     def copy(self, shared_weights=True):
-        if shared_weights:
-            strategy = self.__class__(model=self.model, lr=self.lr, batch_size=self.batch_size)
-        else:
-            strategy = self.__class__(model=self.model.copy(), lr=self.lr, batch_size=self.batch_size)
-
-        strategy.train = deepcopy(self.train)
-        strategy.log_probs = deepcopy(self.log_probs)
-        return strategy
+        pass
 
     @staticmethod
     def discount_rewards(rewards, discount_factor):

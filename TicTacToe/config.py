@@ -23,6 +23,7 @@ EVALUATION_GAMES = 40
 
 # Network parameters
 GAMMA = 1  # 0.95  # Reward discounting factor
+ALPHA = 1  # Bootstrapping factor
 
 CUDA = False  # torch.cuda.is_available() # Cuda is slower, probably because of small models and batch sizes
 

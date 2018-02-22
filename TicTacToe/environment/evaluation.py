@@ -3,6 +3,8 @@ from collections import Counter
 
 import TicTacToe.config as config
 from abstractClasses import LearningPlayer
+from TicTacToe.players.reinforcePlayer import ReinforcePlayer
+from TicTacToe.players.actorCriticPlayer import ActorCriticPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.players.base_players import RandomPlayer, NovicePlayer, ExperiencedPlayer
 
@@ -20,9 +22,14 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     """
 
     # Store original training values
-    if issubclass(player.__class__, LearningPlayer):
+    if issubclass(player.__class__, ReinforcePlayer):
         training_values = player.strategy.train, player.strategy.model.training
         player.strategy.train, player.strategy.model.training = False, False
+
+    if issubclass(player.__class__, ActorCriticPlayer):
+        training_values = player.strategy.train, player.strategy.policy.training, player.strategy.value_function.training
+        player.strategy.train, player.strategy.policy.training, player.strategy.value_function.training = False, False, False
+
 
     results = []
     for e_player in evaluation_players:
@@ -37,8 +44,11 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     results.insert(0, ("Total Score", np.mean([res[1] for res in results])))  # Insert average overall score as first element of results
 
     # Restore original training values
-    if issubclass(player.__class__, LearningPlayer):
+    if issubclass(player.__class__, ReinforcePlayer):
         player.strategy.train, player.strategy.model.training = training_values
+
+    if issubclass(player.__class__, ActorCriticPlayer):
+        player.strategy.train, player.strategy.policy.training, player.strategy.value_function.training = training_values
 
     if not silent:
         print("Overall score: %s" % results[0][1])

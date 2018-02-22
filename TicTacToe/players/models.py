@@ -83,13 +83,48 @@ class ConvPolicyModel(abstract.Model):
     def forward(self, input, legal_moves_map):
         x = input.unsqueeze(dim=0)
 
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = F.relu(self.conv3(x))
+        x = F.leaky_relu(self.conv1(x))
+        x = F.leaky_relu(self.conv2(x))
+        x = F.leaky_relu(self.conv3(x))
 
         x = self.reduce(x)
         x = x.view(-1, self.board_size**2)
 
         x = self.legal_softmax(x, legal_moves_map)
 
+        return x
+
+
+class LargeValueFunctionModel(LargeFCPolicyModel):
+    def __init__(self):
+        super(LargeValueFunctionModel, self).__init__()
+        self.vf_output = torch.nn.Linear(in_features=self.board_size ** 2, out_features=1)
+
+    def forward(self, input):
+        x = input.view(-1, self.board_size ** 2)
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
+        x = F.leaky_relu(self.fc3(x))
+        x = F.leaky_relu(self.fc4(x))
+        x = F.leaky_relu(self.fc5(x))
+
+        x = self.vf_output(x)
+        return x
+
+
+class ConvValueFunctionModel(ConvPolicyModel):
+    def __init__(self):
+        super(ConvValueFunctionModel, self).__init__()
+        self.vf_output = torch.nn.Linear(in_features=self.board_size ** 2, out_features=1)
+
+    def forward(self, input, legal_moves_map):
+        x = input.unsqueeze(dim=0)
+
+        x = F.leaky_relu(self.conv1(x))
+        x = F.leaky_relu(self.conv2(x))
+        x = F.leaky_relu(self.conv3(x))
+        x = self.reduce(x)
+        x = x.view(-1, self.board_size ** 2)
+
+        x = self.vf_output(x)
         return x
