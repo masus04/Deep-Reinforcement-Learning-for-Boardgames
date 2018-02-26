@@ -76,8 +76,8 @@ class ACStrategy(Strategy):
         if len(self.log_probs) != len(self.rewards) or len(self.log_probs) != len(self.board_samples):
             raise PlayerException("log_probs, rewards and board_samples must all have the same length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.board_samples)))
 
-        rewards = self.discount_rewards(self.rewards, self.gamma)
-        rewards = self.bootstrap_rewards(rewards)
+        # rewards = self.discount_rewards(self.rewards, self.gamma)
+        rewards = self.bootstrap_rewards(self.rewards)
         rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
@@ -95,7 +95,6 @@ class ACStrategy(Strategy):
 
         """ Value function update """
 
-        # TODO: Verify structure
         vf_losses = [self.vf_criterion.forward(self.value_function(config.make_variable(sample)), reward) for sample, reward in zip(self.board_samples, rewards)]
         vf_loss = torch.cat(vf_losses).sum() / len(vf_losses)
         self.vf_batch_losses.append(vf_loss)
