@@ -193,9 +193,12 @@ class Strategy(ABC):
         self.lr = None
         self.policy = None
         self.vf_optimizer = None
+        self.train = True
+
         self.rewards = []
         self.log_probs = []
-        self.train = True
+        self.boards = []
+        self.legal_move_maps = []
 
     @abstractmethod
     def evaluate(self, board_sample):
