@@ -97,9 +97,9 @@ class PGStrategy(abstract.Strategy):
 
     def copy(self, shared_weights=True):
         if shared_weights:
-            strategy = self.__class__(model=self.policy, lr=self.lr, batch_size=self.batch_size)
+            strategy = self.__class__(model=self.model, lr=self.lr, batch_size=self.batch_size)
         else:
-            strategy = self.__class__(model=self.policy.copy(), lr=self.lr, batch_size=self.batch_size)
+            strategy = self.__class__(model=self.model.copy(), lr=self.lr, batch_size=self.batch_size)
 
         strategy.train = deepcopy(self.train)
         strategy.log_probs = deepcopy(self.log_probs)

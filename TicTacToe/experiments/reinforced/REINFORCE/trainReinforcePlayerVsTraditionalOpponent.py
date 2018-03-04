@@ -5,6 +5,8 @@ import numpy as np
 from experiment import Experiment
 from TicTacToe.players.base_players import RandomPlayer, NovicePlayer, ExperiencedPlayer
 from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
+from TicTacToe.players.actorCriticPlayer import FCActorCriticPlayer
+from TicTacToe.players.proximalPolicyOptimizationPlayer import FCPPOPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
@@ -27,7 +29,7 @@ class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCPPOPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = TicTacToe([self.player1, self.player2])
@@ -41,14 +43,22 @@ class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
                 self.simulation = TicTacToe([self.player1, self.player2])
 
             # train
-            self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
+            try:
+                self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
+            except AttributeError:
+                self.player1.strategy.train, self.player1.strategy.policy.training, self.player1.strategy.value_function.training = True, True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
             # self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
 
             # evaluate
-            self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+            try:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # training mode
+            except AttributeError:
+                self.player1.strategy.train, self.player1.strategy.policy.training, self.player1.strategy.value_function.training = False, False, False  # training mode
+
+
             score, results = evaluate_against_base_players(self.player1)
             self.add_results(results)
             # self.add_scores(main_score, opponent_score)
@@ -56,8 +66,8 @@ class TrainReinforcePlayerVsTraditionalOpponent(Experiment):
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train ReinforcementPlayer vs traditional opponents: %s \nLR: %s Games: %s \nFinal score: %s" % (self.opponent, lr, episode*games_per_evaluation, results))
+                        "%s vs %s LR: %s" % (self.player1, self.opponent, lr),
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s \nFinal score: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation, results))
 
         self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
