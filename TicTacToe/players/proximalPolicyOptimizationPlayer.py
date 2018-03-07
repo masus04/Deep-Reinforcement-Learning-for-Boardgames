@@ -69,7 +69,7 @@ class PPOStrategy(abstract.Strategy):
         return move
 
     def update(self):
-        old_strategy = self.copy(shared_weights=False)
+        # old_strategy = self.copy(shared_weights=False)
         old_log_probs = [lp.data[0] for lp in self.log_probs]  # unpack so the original weights are not changed
         policy_loss = []
 

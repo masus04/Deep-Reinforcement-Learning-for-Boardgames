@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     start = datetime.now()
 
-    GAMES = 1000000
+    GAMES = 5000000
     EVALUATIONS = 1000
     BATCH_SIZE = 32
 
