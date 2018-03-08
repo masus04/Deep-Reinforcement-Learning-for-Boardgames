@@ -4,7 +4,7 @@ from random import random
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.reinforcePlayer import PGStrategy, ReinforcePlayer
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from TicTacToe.environment.board import TicTacToeBoard
 from plotting import Printer
@@ -28,7 +28,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
         EVALUATION_GAMES = 10
 
-        player = ReinforcePlayer(strategy=PGStrategy(lr=lr, batch_size=batch_size))
+        player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)

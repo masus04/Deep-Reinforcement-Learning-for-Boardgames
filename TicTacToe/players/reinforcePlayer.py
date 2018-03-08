@@ -4,30 +4,9 @@ from torch.distributions import Categorical
 
 import TicTacToe.config as config
 import abstractClasses as abstract
+from abstractClasses import LearningPlayer
 from TicTacToe.players.models import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
 from abstractClasses import PlayerException
-
-
-class ReinforcePlayer(abstract.LearningPlayer):
-
-    def __init__(self, strategy):
-        super(ReinforcePlayer, self).__init__()
-
-        if issubclass(strategy.__class__, abstract.Strategy):
-            self.strategy = strategy
-        else:
-            raise Exception("ReinforcePlayer takes as a strategy argument a subclass of %s, received %s" % (abstract.Model, strategy))
-
-    def get_move(self, board):
-        if self.strategy.train:
-            self.strategy.rewards.append(0)
-        return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
-
-    def register_winner(self, winner_color):
-        if self.strategy.train:
-            self.strategy.rewards[-1] = self.get_label(winner_color)
-
-        return self.strategy.update()
 
 
 class PGStrategy(abstract.Strategy):
@@ -93,13 +72,13 @@ class PGStrategy(abstract.Strategy):
         return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
 
 
-class FCReinforcePlayer(ReinforcePlayer):
-    def __init__(self, lr, strategy=None, batch_size=1):
+class FCReinforcePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                 else PGStrategy(lr, batch_size, model=LargeFCPolicyModel()))
 
 
-class ConvReinforcePlayer(ReinforcePlayer):
-    def __init__(self, lr, strategy=None, batch_size=1):
+class ConvReinforcePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(ConvReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                   else PGStrategy(lr, batch_size, model=ConvPolicyModel()))

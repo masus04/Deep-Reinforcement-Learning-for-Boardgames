@@ -5,7 +5,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 import TicTacToe.config as config
-import TicTacToe.players.reinforcePlayer as reinforcePlayer
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer, PGStrategy
 from TicTacToe.environment.board import TicTacToeBoard
 from TicTacToe.players.basePlayers import RandomPlayer
 from TicTacToe.environment.game import TicTacToe
@@ -15,16 +15,16 @@ from abstractClasses import PlayerException, Model, Strategy
 class TestReinforcePlayer(unittest.TestCase):
 
     def test_CreateReinforcementPlayer(self):
-        reinforcePlayer.ReinforcePlayer(strategy=reinforcePlayer.PGStrategy(lr=0.001, batch_size=1))
+        FCReinforcePlayer(lr=0.001, batch_size=1)
 
     def test_DummyForwardPass(self):
         board = TicTacToeBoard()
-        value_function = reinforcePlayer.PGStrategy(lr=0.001, batch_size=1)
+        value_function = PGStrategy(lr=0.001, batch_size=1)
         value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
     def test_DummyUpdate(self):
         board = TicTacToeBoard()
-        value_function = reinforcePlayer.PGStrategy(lr=0.001, batch_size=1)
+        value_function = PGStrategy(lr=0.001, batch_size=1)
         value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
         move = RandomPlayer.get_move(board)
@@ -36,7 +36,7 @@ class TestReinforcePlayer(unittest.TestCase):
         value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
     def test_DummyTrainReinforcePlayer(self):
-        player1 = reinforcePlayer.ReinforcePlayer(strategy=reinforcePlayer.PGStrategy(lr=0.001, batch_size=1))
+        player1 = FCReinforcePlayer(lr=0.001, batch_size=1)
         player2 = RandomPlayer()
 
         simulation = TicTacToe([player1, player2])
@@ -81,14 +81,14 @@ class TestReinforcePlayer(unittest.TestCase):
         self.assertEqual(max(discounted_rewards), discounted_rewards[-1])
 
     def test_FCReinforcePlayer(self):
-        fc_player = reinforcePlayer.FCReinforcePlayer(lr=1e-4)
+        fc_player = FCReinforcePlayer(lr=1e-4)
         random_player = RandomPlayer()
 
         simulation = TicTacToe([fc_player, random_player])
         simulation.run_simulations(100)
 
     def test_ConvReinforcePlayer(self):
-        fc_player = reinforcePlayer.ConvReinforcePlayer(lr=1e-4)
+        fc_player = FCReinforcePlayer(lr=1e-4)
         random_player = RandomPlayer()
 
         simulation = TicTacToe([fc_player, random_player])

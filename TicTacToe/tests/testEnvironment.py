@@ -8,7 +8,7 @@ import TicTacToe.config as config
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.board import TicTacToeBoard
 import TicTacToe.players.basePlayers as ttt_players
-from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
 
@@ -162,7 +162,7 @@ class TestEnvironment(unittest.TestCase):
         p1 = ttt_players.RandomPlayer()
         evaluate_against_base_players(p1, silent=False)
 
-        p2 = ReinforcePlayer(strategy=PGStrategy(lr=1e-5, batch_size=1))
+        p2 = FCReinforcePlayer(lr=1e-5, batch_size=1)
         evaluate_against_base_players(p2, silent=False)
 
 

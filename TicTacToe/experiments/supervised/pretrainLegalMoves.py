@@ -5,7 +5,7 @@ import numpy as np
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.reinforcePlayer import PGStrategy, ReinforcePlayer
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from TicTacToe.environment.board import TicTacToeBoard
 from plotting import Printer
@@ -28,7 +28,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, batch_size, termination_criterion, silent=False):
-        self.player = ReinforcePlayer(strategy=PGStrategy(lr=lr, batch_size=batch_size))
+        self.player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
         self.player.color = config.BLACK
 
         generator = RandomPlayer()

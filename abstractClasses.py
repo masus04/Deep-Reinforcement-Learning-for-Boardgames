@@ -157,13 +157,25 @@ class Player(ABC):
 
 class LearningPlayer(Player):
 
-    def __init__(self):
+    def __init__(self, strategy):
         super(LearningPlayer, self).__init__()
-        self.model = None
 
-    @abstractmethod
+        if issubclass(strategy.__class__, Strategy):
+            self.strategy = strategy
+        else:
+            raise Exception("ReinforcePlayer takes as a strategy argument a subclass of %s, received %s" % (Model, strategy))
+
+    def get_move(self, board):
+        if self.strategy.train:
+            self.strategy.rewards.append(0)
+        return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
+
     def register_winner(self, winner_color):
-        pass
+        if self.strategy.train:
+            self.strategy.rewards[-1] = self.get_label(winner_color)
+
+        return self.strategy.update()
+
 
     def copy(self, shared_weights=True):
         """

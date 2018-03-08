@@ -3,8 +3,7 @@ from datetime import datetime
 from random import random
 
 import TicTacToe.config as config
-from experiment import Experiment
-from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from plotting import Printer
@@ -27,7 +26,7 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
         print("Training PGStrategy supervised on %s games for %s Episodes - LR: %s" % (self.games, self.episodes, lr))
         TEST_GAMES = 1
 
-        player = ReinforcePlayer(strategy=PGStrategy(lr=lr, batch_size=1))
+        player = FCReinforcePlayer(lr=lr, batch_size=1)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
