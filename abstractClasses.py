@@ -176,7 +176,6 @@ class LearningPlayer(Player):
 
         return self.strategy.update()
 
-
     def copy(self, shared_weights=True):
         """
         Returns a clean copy of the player and all its attributes.

@@ -16,6 +16,7 @@ class PGStrategy(abstract.Strategy):
         self.lr = lr
         self.gamma = gamma
         self.batch_size = batch_size
+
         self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
