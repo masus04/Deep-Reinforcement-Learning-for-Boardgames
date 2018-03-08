@@ -47,7 +47,7 @@ class PPOStrategy(abstract.Strategy):
         self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
-        self.steps = 5
+        self.steps = 1
         self.clip = 0.2
 
     def evaluate(self, board_sample, legal_moves_map):
@@ -78,7 +78,9 @@ class PPOStrategy(abstract.Strategy):
                 surr2 = torch.clamp(ratio, 1.0 - self.clip, 1.0 + self.clip) * reward
                 action_loss = -torch.min(surr1, surr2).mean()
                 policy_loss.append(action_loss)
+                self.optimizer.zero_grad()
                 action_loss.backward()
+                self.optimizer.step()
 
             del self.log_probs[:]
 
