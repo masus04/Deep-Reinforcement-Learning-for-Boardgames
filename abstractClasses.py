@@ -214,8 +214,6 @@ class Strategy(ABC):
 
     @staticmethod
     def discount_rewards(rewards, discount_factor):
-        if discount_factor <= 0:
-            return deepcopy(rewards)
 
         running_reward = 0  # rewards[-1]
         discounted_rewards = []

@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     experiment = PPOCrossValidation(TrainPPOPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
 
-    results = experiment.run(5, -4, -6)
+    results = experiment.run(5, -4, -8)
 
     print("\nFinal Reward - LR:")
     for res in results:

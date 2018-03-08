@@ -55,12 +55,8 @@ class PPOStrategy(abstract.Strategy):
         legal_moves_map = config.make_variable(legal_moves_map)
         probs = self.model(input, legal_moves_map)
 
-        try:
-            distribution = Categorical(probs)
-            action = distribution.sample()
-        except RuntimeError:
-            self.model(input, legal_moves_map)
-            raise PlayerException("sum(probs) <= 0:\n%s\n board:\n%s\nlegal moves:\n%s" % (probs, board_sample, legal_moves_map))
+        distribution = Categorical(probs)
+        action = distribution.sample()
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
         log_prob = distribution.log_prob(action)
@@ -70,6 +66,7 @@ class PPOStrategy(abstract.Strategy):
 
     def update(self):
         # old_strategy = self.copy(shared_weights=False)
+        self.rewards = self.discount_rewards(self.rewards, config.GAMMA)
         old_log_probs = [lp.data[0] for lp in self.log_probs]  # unpack so the original weights are not changed
         policy_loss = []
 
