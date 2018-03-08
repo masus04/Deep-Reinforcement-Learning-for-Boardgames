@@ -3,7 +3,7 @@ from random import random, choice
 import numpy as np
 
 from experiment import Experiment
-from TicTacToe.players.base_players import RandomPlayer, NovicePlayer, ExperiencedPlayer
+from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players

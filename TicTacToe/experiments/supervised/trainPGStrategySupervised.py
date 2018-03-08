@@ -5,7 +5,7 @@ from random import random
 import TicTacToe.config as config
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
-from TicTacToe.players.base_players import ExperiencedPlayer
+from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from plotting import Printer
 

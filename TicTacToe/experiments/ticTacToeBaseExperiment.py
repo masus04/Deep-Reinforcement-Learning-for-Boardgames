@@ -2,7 +2,7 @@ from datetime import datetime
 
 import TicTacToe.config as config
 from TicTacToe.environment.board import TicTacToeBoard
-from TicTacToe.players.base_players import ExperiencedPlayer, RandomPlayer
+from TicTacToe.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from experiment import Experiment
 
 

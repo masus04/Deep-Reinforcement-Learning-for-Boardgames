@@ -7,7 +7,7 @@ from datetime import datetime
 import TicTacToe.config as config
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.board import TicTacToeBoard
-import TicTacToe.players.base_players as ttt_players
+import TicTacToe.players.basePlayers as ttt_players
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, PGStrategy
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter

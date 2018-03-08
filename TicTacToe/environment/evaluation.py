@@ -4,7 +4,7 @@ from collections import Counter
 import TicTacToe.config as config
 from abstractClasses import LearningPlayer
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.players.base_players import RandomPlayer, NovicePlayer, ExperiencedPlayer
+from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 
 
 def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), NovicePlayer(), ExperiencedPlayer()], silent=True):

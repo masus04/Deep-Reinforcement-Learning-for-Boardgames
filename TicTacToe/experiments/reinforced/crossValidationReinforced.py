@@ -2,7 +2,7 @@ from random import uniform
 from datetime import datetime
 
 from experiment import Experiment
-from TicTacToe.players.base_players import ExperiencedPlayer
+from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayer import TrainReinforcePlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsTraditionalOpponent import TrainReinforcePlayerVsTraditionalOpponent
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBest import TrainReinforcePlayerVsBest

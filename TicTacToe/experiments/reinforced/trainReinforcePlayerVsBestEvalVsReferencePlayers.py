@@ -4,7 +4,7 @@ import numpy as np
 
 from experiment import Experiment
 from TicTacToe.players.reinforcePlayer import ReinforcePlayer, FCReinforcePlayer
-from TicTacToe.players.base_players import ExperiencedPlayer
+from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
 from plotting import Printer
