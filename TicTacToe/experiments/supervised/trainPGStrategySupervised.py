@@ -27,7 +27,7 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
         print("Training PGStrategy supervised on %s games for %s Episodes - LR: %s" % (self.games, self.episodes, lr))
         TEST_GAMES = 1
 
-        player = ReinforcePlayer(strategy=PGStrategy, lr=lr)
+        player = ReinforcePlayer(strategy=PGStrategy(lr=lr, batch_size=1))
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)

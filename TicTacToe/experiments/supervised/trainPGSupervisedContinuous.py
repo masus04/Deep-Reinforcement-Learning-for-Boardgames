@@ -28,7 +28,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
         EVALUATION_GAMES = 10
 
-        player = ReinforcePlayer(strategy=PGStrategy, lr=lr, batch_size=batch_size)
+        player = ReinforcePlayer(strategy=PGStrategy(lr=lr, batch_size=batch_size))
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)

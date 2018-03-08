@@ -162,7 +162,7 @@ class TestEnvironment(unittest.TestCase):
         p1 = ttt_players.RandomPlayer()
         evaluate_against_base_players(p1, silent=False)
 
-        p2 = ReinforcePlayer(strategy=PGStrategy, lr=1e-5)
+        p2 = ReinforcePlayer(strategy=PGStrategy(lr=1e-5, batch_size=1))
         evaluate_against_base_players(p2, silent=False)
 
 

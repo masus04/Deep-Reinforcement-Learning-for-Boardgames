@@ -28,7 +28,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, batch_size, termination_criterion, silent=False):
-        self.player = ReinforcePlayer(strategy=PGStrategy, lr=lr, batch_size=batch_size)
+        self.player = ReinforcePlayer(strategy=PGStrategy(lr=lr, batch_size=batch_size))
         self.player.color = config.BLACK
 
         generator = RandomPlayer()

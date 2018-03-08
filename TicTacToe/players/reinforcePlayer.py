@@ -10,12 +10,10 @@ from abstractClasses import PlayerException
 
 class ReinforcePlayer(abstract.LearningPlayer):
 
-    def __init__(self, strategy, lr, batch_size=1):
+    def __init__(self, strategy):
         super(ReinforcePlayer, self).__init__()
 
-        if issubclass(strategy, abstract.Strategy):
-            self.strategy = strategy(lr=lr, batch_size=batch_size)
-        elif issubclass(strategy.__class__, abstract.Strategy):
+        if issubclass(strategy.__class__, abstract.Strategy):
             self.strategy = strategy
         else:
             raise Exception("ReinforcePlayer takes as a strategy argument a subclass of %s, received %s" % (abstract.Model, strategy))
@@ -97,11 +95,11 @@ class PGStrategy(abstract.Strategy):
 
 class FCReinforcePlayer(ReinforcePlayer):
     def __init__(self, lr, strategy=None, batch_size=1):
-        super(FCReinforcePlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
+        super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                 else PGStrategy(lr, batch_size, model=LargeFCPolicyModel()))
 
 
 class ConvReinforcePlayer(ReinforcePlayer):
     def __init__(self, lr, strategy=None, batch_size=1):
-        super(ConvReinforcePlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
+        super(ConvReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                   else PGStrategy(lr, batch_size, model=ConvPolicyModel()))
