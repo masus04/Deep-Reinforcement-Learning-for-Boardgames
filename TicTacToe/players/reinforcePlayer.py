@@ -68,10 +68,6 @@ class PGStrategy(abstract.Strategy):
 
         return abs(policy_loss.data[0])
 
-    @staticmethod
-    def normalize_rewards(rewards):
-        return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
-
 
 class FCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):

@@ -239,6 +239,10 @@ class Strategy(ABC):
 
         return discounted_rewards
 
+    @staticmethod
+    def normalize_rewards(rewards):
+        return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
+
 
 class Model(torch.nn.Module):
 
