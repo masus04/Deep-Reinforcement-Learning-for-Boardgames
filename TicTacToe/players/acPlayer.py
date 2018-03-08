@@ -59,7 +59,7 @@ class ACStrategy(Strategy):
             value_losses.append(F.smooth_l1_loss(state_value, reward))
 
         self.optimizer.zero_grad()
-        loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum() / len(self.log_probs)
+        loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
         loss.backward()
         self.optimizer.step()
 
