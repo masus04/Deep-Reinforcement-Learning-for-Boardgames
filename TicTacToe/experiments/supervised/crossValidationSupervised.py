@@ -26,7 +26,7 @@ class SupervisedCrossValidation(Experiment):
             print("\nIteration %s/%s" % (i+1, iterations))
             print("Running CrossValidation for %s with lr: %s" % (self.nested_experiment.__class__.__name__, LR))
 
-            last_reward = self.nested_experiment.reset().run(lr=LR, batch_size=self.batch_size)
+            last_reward = self.nested_experiment.reset().run(lr=LR, steps=self.batch_size)
             results.append((last_reward, LR))
 
         return sorted(results, reverse=True)

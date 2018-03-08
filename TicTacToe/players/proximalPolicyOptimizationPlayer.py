@@ -11,11 +11,11 @@ from abstractClasses import PlayerException
 
 class PPOPlayer(abstract.LearningPlayer):
 
-    def __init__(self, strategy, lr, batch_size=1):
+    def __init__(self, strategy, lr, clip):
         super(PPOPlayer, self).__init__()
 
         if issubclass(strategy, abstract.Strategy):
-            self.strategy = strategy(lr=lr, batch_size=1)  # Hard code batch size to 1 for now
+            self.strategy = strategy(lr=lr, clip=clip)
         elif issubclass(strategy.__class__, abstract.Strategy):
             self.strategy = strategy
         else:
@@ -36,19 +36,21 @@ class PPOPlayer(abstract.LearningPlayer):
             return self.strategy.update()
         return 0
 
+    def copy(self, shared_weights=True):
+        return self.__class__(lr=self.strategy.lr, clip=self.strategy.clip, strategy=self.strategy.copy(shared_weights=shared_weights))
+
 
 class PPOStrategy(abstract.Strategy):
 
-    def __init__(self, lr, batch_size, gamma=config.GAMMA,  model=None):
+    def __init__(self, lr, clip, gamma=config.GAMMA, model=None):
         super(PPOStrategy, self).__init__()
         self.lr = lr
+        self.clip = clip
         self.gamma = gamma
-        self.batch_size = batch_size
         self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
-        self.steps = 1
-        self.clip = 0.2
+        self.steps = 32
 
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
@@ -68,9 +70,9 @@ class PPOStrategy(abstract.Strategy):
         # old_strategy = self.copy(shared_weights=False)
         self.rewards = self.discount_rewards(self.rewards, config.GAMMA)
         old_log_probs = [lp.data[0] for lp in self.log_probs]  # unpack so the original weights are not changed
-        policy_loss = []
 
         for step in range(self.steps):
+            policy_loss = []
             for log_prob, old_log_prob, reward in zip(self.log_probs, old_log_probs, self.rewards):
                 old_log_prob = config.make_variable(np.array([old_log_prob]))
                 ratio = (log_prob - old_log_prob).exp()
@@ -78,9 +80,17 @@ class PPOStrategy(abstract.Strategy):
                 surr2 = torch.clamp(ratio, 1.0 - self.clip, 1.0 + self.clip) * reward
                 action_loss = -torch.min(surr1, surr2).mean()
                 policy_loss.append(action_loss)
+
+                """
                 self.optimizer.zero_grad()
                 action_loss.backward()
                 self.optimizer.step()
+                """
+
+            self.optimizer.zero_grad()
+            policy_loss = torch.cat(policy_loss).mean()
+            policy_loss.backward()
+            self.optimizer.step()
 
             del self.log_probs[:]
 
@@ -88,13 +98,12 @@ class PPOStrategy(abstract.Strategy):
                 for board, legal_move_map in zip(self.boards, self.legal_move_maps):
                     self.evaluate(board, legal_move_map)
 
-        policy_loss = abs(torch.cat(policy_loss).mean().data[0])
-
         del self.rewards[:]
         del self.log_probs[:]
         del self.boards[:]
         del self.legal_move_maps[:]
 
+        # policy_loss = (sum(policy_loss)/len(policy_loss)).data[0]
         return policy_loss
 
     @staticmethod
@@ -103,21 +112,22 @@ class PPOStrategy(abstract.Strategy):
 
     def copy(self, shared_weights=True):
         if shared_weights:
-            strategy = self.__class__(model=self.model, lr=self.lr, batch_size=self.batch_size)
+            strategy = self.__class__(model=self.model, lr=self.lr, clip=self.clip)
         else:
-            strategy = self.__class__(model=self.model.copy(), lr=self.lr, batch_size=self.batch_size)
+            strategy = self.__class__(model=self.model.copy(), lr=self.lr, clip=self.clip)
 
         strategy.train = deepcopy(self.train)
+        strategy.clip = deepcopy(self.clip)
         return strategy
 
 
 class FCPPOPlayer(PPOPlayer):
-    def __init__(self, lr, strategy=None, batch_size=1):
-        super(FCPPOPlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
-                                                else PPOStrategy(lr, batch_size, model=LargeFCPolicyModel()))
+    def __init__(self, lr, clip, strategy=None):
+        super(FCPPOPlayer, self).__init__(lr=lr, clip=clip, strategy=strategy if strategy is not None
+                                                else PPOStrategy(lr=lr, clip=clip, model=LargeFCPolicyModel()))
 
 
 class ConvPPOPlayer(PPOPlayer):
-    def __init__(self, lr, strategy=None, batch_size=1):
-        super(ConvPPOPlayer, self).__init__(lr=lr, strategy=strategy if strategy is not None
-                                                  else PPOStrategy(lr, batch_size, model=ConvPolicyModel()))
+    def __init__(self, lr, clip, strategy=None):
+        super(ConvPPOPlayer, self).__init__(lr=lr, clip=clip, strategy=strategy if strategy is not None
+                                                  else PPOStrategy(lr=lr, clip=clip, model=ConvPolicyModel()))
