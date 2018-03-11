@@ -66,8 +66,8 @@ class TrainACPlayerVsTraditionalOpponent(Experiment):
 if __name__ == '__main__':
 
     for i in range(10):
-        GAMES = 100
-        EVALUATIONS = 10
+        GAMES = 500000
+        EVALUATIONS = 1000
         LR = uniform(1e-4, 1e-6)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
