@@ -57,7 +57,7 @@ class TrainACPlayerVsTraditionalOpponent(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train ReinforcementPlayer vs traditional opponents: %s \nLR: %s Games: %s \nFinal score: %s" % (self.opponent, lr, episode*games_per_evaluation, results))
+                        "Train ReinforcementPlayer vs traditional opponents: %s \nLR: %s Games: %s" % (self.opponent, lr, episode*games_per_evaluation))
 
         self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
@@ -65,10 +65,14 @@ class TrainACPlayerVsTraditionalOpponent(Experiment):
 
 if __name__ == '__main__':
 
-    for i in range(10):
+    ITERATIONS = 10
+    start = datetime.now()
+
+    for i in range(ITERATIONS):
+        print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 500000
         EVALUATIONS = 1000
-        LR = uniform(1e-4, 1e-6)  # random()*1e-9 + 1e-5
+        LR = uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-4
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
@@ -77,6 +81,9 @@ if __name__ == '__main__':
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
-        # experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
-        print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
+        print()
 
+    # experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
+    print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
+
+    print("took: %s" % datetime.now() - start)
