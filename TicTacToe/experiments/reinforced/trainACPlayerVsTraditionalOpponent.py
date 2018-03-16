@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 500000
+        GAMES = 1000000
         EVALUATIONS = 1000
         LR = uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-4
         BATCH_SIZE = 1
@@ -82,8 +82,8 @@ if __name__ == '__main__':
         experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
         print()
+        experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
 
-    # experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 
     print("took: %s" % datetime.now() - start)

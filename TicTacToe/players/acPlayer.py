@@ -1,11 +1,11 @@
-import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
+from numba import jit
 
 import TicTacToe.config as config
 from TicTacToe.players.models import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
-from abstractClasses import LearningPlayer, Strategy, Model, PlayerException
+from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 
 class ACStrategy(Strategy):
@@ -51,15 +51,9 @@ class ACStrategy(Strategy):
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
-        policy_losses = []
-        value_losses = []
-
-        for log_prob, state_value, reward in zip(self.log_probs, self.state_values, rewards):
-            policy_losses.append(-log_prob*(reward - state_value.data[0][0]))
-            value_losses.append(F.smooth_l1_loss(state_value, reward))
+        loss = calculate_loss(self.log_probs, self.state_values, rewards)
 
         self.optimizer.zero_grad()
-        loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
         loss.backward()
         self.optimizer.step()
 
@@ -74,3 +68,15 @@ class FCACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, batch_size, model=LargeFCPolicyModel(ac_policy=True)))
+
+
+@jit
+def calculate_loss(log_probs, state_values, rewards):
+    policy_losses = []
+    value_losses = []
+
+    for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
+        policy_losses.append(-log_prob * (reward - state_value.data[0][0]))
+        value_losses.append(F.smooth_l1_loss(state_value, reward))
+
+    return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()

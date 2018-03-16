@@ -64,7 +64,7 @@ if __name__ == '__main__':
     LR = random() * 1e-9 + 1e-4
     BATCH_SIZE = 1
 
-    PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
+    PLAYER = None  # Experiment.load_player("FCACPlayer pretrained on traditional opponents.pth")
 
     print("Training ACPlayer vs self with lr: %s" % LR)
     experiment = TrainACPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
