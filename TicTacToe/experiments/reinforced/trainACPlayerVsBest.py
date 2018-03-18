@@ -67,13 +67,13 @@ class TrainACPlayerVsBest(Experiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
+    ITERATIONS = 5
 
     start = datetime.now()
     for i in range(ITERATIONS):
-        GAMES = 50000000
+        GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = random()*1e-9 + 1e-5  # uniform(1e-4, 1e-6)
+        LR = uniform(-4e-4, -1e-5)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
-    print("\nSuccessfully trained on %s games" % experiment.num_episodes)
-    if PLAYER:
-        print("Pretrained on %s legal moves" % 1000000)
-    print("took %s" % datetime.now()-start)
+        print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+        if PLAYER:
+            print("Pretrained on %s legal moves" % 1000000)
+    print("Experiment completed successfully, took %s" % datetime.now()-start)

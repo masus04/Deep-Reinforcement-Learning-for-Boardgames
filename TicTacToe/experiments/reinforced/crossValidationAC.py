@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     experiment = ActorCriticCrossValidation(TrainACPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
 
-    results = experiment.run(5, -4.5, -6.5)
+    results = experiment.run(5, -4.5, -5)
 
     print("\nFinal Reward - LR:")
     for res in results:
