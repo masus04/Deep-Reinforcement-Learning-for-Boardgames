@@ -82,7 +82,7 @@ class ConvPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        self.conv_channels = 8
+        self.conv_channels = 32
 
         # Create representation
         self.conv1 = torch.nn.Conv2d(in_channels=1, out_channels=self.conv_channels, kernel_size=3, padding=1)
@@ -90,7 +90,8 @@ class ConvPolicyModel(abstract.Model):
         self.conv3 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
 
         # Evaluate and output move possibilities
-        self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=0)
+        self.reduce1 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels//4, kernel_size=1, padding=0)
+        self.reduce2 = torch.nn.Conv2d(in_channels=self.conv_channels//4, out_channels=1, kernel_size=1, padding=0)
 
         self.vf_head = torch.nn.Linear(in_features=self.board_size**2, out_features=1)
 
@@ -103,10 +104,12 @@ class ConvPolicyModel(abstract.Model):
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
 
-        x = self.reduce(x)
-        x = x.view(-1, self.board_size**2)
+        x = self.reduce1(x)
+        x = self.reduce2(x)
 
+        x = x.view(-1, self.board_size**2)
         p = self.legal_softmax(x, legal_moves_map)
+
         vf = self.vf_head(x)
 
         return p, vf if self.ac_policy else p

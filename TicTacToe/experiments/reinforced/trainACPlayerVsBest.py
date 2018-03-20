@@ -3,7 +3,7 @@ from random import random, uniform, randint
 import numpy as np
 
 from experiment import Experiment
-from TicTacToe.players.acPlayer import FCACPlayer
+from TicTacToe.players.acPlayer import FCACPlayer, ConvACPlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -25,7 +25,7 @@ class TrainACPlayerVsBest(Experiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -52,7 +52,7 @@ class TrainACPlayerVsBest(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ACPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                        "Train %s vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (self.player1, lr, episode*games_per_evaluation, score))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -67,13 +67,13 @@ class TrainACPlayerVsBest(Experiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 5
+    ITERATIONS = 1
 
     start = datetime.now()
     for i in range(ITERATIONS):
-        GAMES = 10000000
-        EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = uniform(4e-4, 4e-6)  # random()*1e-9 + 1e-5
+        GAMES = 100000
+        EVALUATIONS = 100  # 100 * randint(10, 500)
+        LR = random()*1e-9 + 1e-5  # uniform(4e-4, 4e-6)
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")

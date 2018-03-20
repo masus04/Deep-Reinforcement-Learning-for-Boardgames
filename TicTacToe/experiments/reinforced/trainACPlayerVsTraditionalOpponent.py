@@ -4,7 +4,7 @@ import numpy as np
 
 from experiment import Experiment
 from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
-from TicTacToe.players.acPlayer import FCACPlayer
+from TicTacToe.players.acPlayer import FCACPlayer, ConvACPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
@@ -27,7 +27,7 @@ class TrainACPlayerVsTraditionalOpponent(Experiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = TicTacToe([self.player1, self.player2])
@@ -57,7 +57,7 @@ class TrainACPlayerVsTraditionalOpponent(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train ReinforcementPlayer vs traditional opponents: %s \nLR: %s Games: %s" % (self.opponent, lr, episode*games_per_evaluation))
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation))
 
         self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
