@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     GAMES = 5000
     EVALUATIONS = 100
-    LR = random() * 1e-9 + 3e-4
+    LR = random() * 1e-9 + 2e-5
     BATCH_SIZE = 1
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")

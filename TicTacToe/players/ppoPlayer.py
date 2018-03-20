@@ -59,7 +59,7 @@ class PPOStrategy(Strategy):
         rewards = self.discount_rewards(self.rewards, 0.95)  # self.gamma)
         rewards = config.make_variable(torch.FloatTensor(rewards))
         samples = list(zip(self.board_samples, self.legal_moves))
-        rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
+        # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
         for i in range(UPDATES):
             loss = calculate_loss(self.log_probs, old_log_probs, self.state_values, rewards, config.CLIP)
@@ -102,4 +102,4 @@ def calculate_loss(log_probs, old_log_probs, state_values, rewards, clip):
 
         value_losses.append(F.smooth_l1_loss(state_value, reward))
 
-    return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
+    return torch.stack(policy_losses).mean() + torch.stack(value_losses).mean()
