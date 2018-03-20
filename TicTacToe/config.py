@@ -24,6 +24,7 @@ EVALUATION_GAMES = 40
 # Network parameters
 LR = 1e-5
 GAMMA = 1  # 0.95  # Reward discounting factor
+CLIP = 0.2  # Clipping parameter for PPO
 
 CUDA = False  # torch.cuda.is_available() # Cuda is slower, probably because of small models and batch sizes
 

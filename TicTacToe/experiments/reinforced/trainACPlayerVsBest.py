@@ -1,19 +1,19 @@
 from datetime import datetime
-from random import random
+from random import random, uniform, randint
 import numpy as np
 
 from experiment import Experiment
-from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
+from TicTacToe.players.acPlayer import FCACPlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
 from plotting import Printer
 
 
-class TrainReinforcePlayerVsBest(Experiment):
+class TrainACPlayerVsBest(Experiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
-        super(TrainReinforcePlayerVsBest, self).__init__()
+        super(TrainACPlayerVsBest, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -25,7 +25,7 @@ class TrainReinforcePlayerVsBest(Experiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -52,7 +52,7 @@ class TrainReinforcePlayerVsBest(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                        "Train ACPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -67,16 +67,21 @@ class TrainReinforcePlayerVsBest(Experiment):
 
 if __name__ == '__main__':
 
-    GAMES = 100000
-    EVALUATIONS = 1000
-    LR = random()*1e-9 + 2e-5
-    BATCH_SIZE = 32
+    ITERATIONS = 5
 
-    PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
+    start = datetime.now()
+    for i in range(ITERATIONS):
+        GAMES = 10000000
+        EVALUATIONS = 1000  # 100 * randint(10, 500)
+        LR = uniform(4e-4, 4e-6)  # random()*1e-9 + 1e-5
+        BATCH_SIZE = 1
 
-    experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-    experiment.run(lr=LR, batch_size=BATCH_SIZE)
+        PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
-    print("\nSuccessfully trained on %s games" % experiment.num_episodes)
-    if PLAYER:
-        print("Pretrained on %s legal moves" % 1000000)
+        experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+        experiment.run(lr=LR, batch_size=BATCH_SIZE)
+
+        print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+        if PLAYER:
+            print("Pretrained on %s legal moves" % 1000000)
+    print("Experiment completed successfully, took %s" % datetime.now()-start)

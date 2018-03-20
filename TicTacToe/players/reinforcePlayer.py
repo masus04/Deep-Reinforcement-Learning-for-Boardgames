@@ -16,6 +16,7 @@ class PGStrategy(abstract.Strategy):
         self.lr = lr
         self.gamma = gamma
         self.batch_size = batch_size
+
         self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -66,10 +67,6 @@ class PGStrategy(abstract.Strategy):
         del self.log_probs[:]
 
         return abs(policy_loss.data[0])
-
-    @staticmethod
-    def normalize_rewards(rewards):
-        return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
 
 
 class FCReinforcePlayer(LearningPlayer):

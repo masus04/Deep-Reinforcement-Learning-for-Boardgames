@@ -176,7 +176,6 @@ class LearningPlayer(Player):
 
         return self.strategy.update()
 
-
     def copy(self, shared_weights=True):
         """
         Returns a clean copy of the player and all its attributes.
@@ -239,6 +238,10 @@ class Strategy(ABC):
             discounted_rewards.insert(0, running_reward)
 
         return discounted_rewards
+
+    @staticmethod
+    def normalize_rewards(rewards):
+        return (rewards - rewards.mean()) / (rewards.std() + np.finfo(np.float64).eps)
 
 
 class Model(torch.nn.Module):
