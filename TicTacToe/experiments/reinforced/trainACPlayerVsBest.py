@@ -67,7 +67,7 @@ class TrainACPlayerVsBest(Experiment):
 
 if __name__ == '__main__':
 
-    COMMENT = "BASELINE"
+    COMMENT = "BOOTSTRAP"
     ITERATIONS = 5
 
     start = datetime.now()

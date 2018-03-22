@@ -50,10 +50,10 @@ class ACStrategy(Strategy):
 
         # ----------------------------------------------------------- #
         # Use either Discount (and baseline),
-        rewards = self.discount_rewards(self.rewards, self.gamma)
-        rewards = self.rewards_baseline(rewards)
+        # rewards = self.discount_rewards(self.rewards, self.gamma)
+        # rewards = self.rewards_baseline(rewards)
         # Or Bootstrapping
-            # rewards = self.bootstrap_rewards()
+        rewards = self.bootstrap_rewards()
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
