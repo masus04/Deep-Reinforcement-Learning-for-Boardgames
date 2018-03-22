@@ -49,8 +49,11 @@ class ACStrategy(Strategy):
             raise PlayerException("log_probs length must be equal to rewards length as well as state_values length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.state_values)))
 
         # ----------------------------------------------------------- #
+        # Use either Discount (and baseline),
         rewards = self.discount_rewards(self.rewards, self.gamma)
         rewards = self.rewards_baseline(rewards)
+        # Or Bootstrapping
+            # rewards = self.bootstrap_rewards()
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 

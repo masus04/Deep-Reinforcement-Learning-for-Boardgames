@@ -51,8 +51,8 @@ class TrainACPlayerVsBest(Experiment):
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "ReinforcementTraining LR: %s" % lr,
-                        "Train ACPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                        "%s vs BEST LR: %s" % (COMMENT, lr),
+                        "%s Train %s vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (COMMENT, self.player1, lr, episode*games_per_evaluation, score))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -67,13 +67,14 @@ class TrainACPlayerVsBest(Experiment):
 
 if __name__ == '__main__':
 
+    COMMENT = "BASELINE"
     ITERATIONS = 5
 
     start = datetime.now()
     for i in range(ITERATIONS):
         GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = uniform(4e-4, 4e-6)  # random()*1e-9 + 1e-5
+        LR = uniform(4e-5, 4e-6)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")

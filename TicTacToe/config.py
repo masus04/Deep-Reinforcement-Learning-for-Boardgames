@@ -24,7 +24,7 @@ EVALUATION_GAMES = 40
 # Network parameters
 LR = 1e-5
 GAMMA = 1  # 0.95   # Reward discounting factor
-ALPHA = 0.03       # Bootstrapping factor for TD error
+ALPHA = 1           # Bootstrapping factor for TD error
 CLIP = 0.1          # Clipping parameter for PPO
 
 CUDA = False  # torch.cuda.is_available() # Cuda is slower, probably because of small models and batch sizes

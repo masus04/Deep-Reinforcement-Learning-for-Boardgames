@@ -245,10 +245,10 @@ class Strategy(ABC):
 
     def bootstrap_rewards(self):
         # TODO: Catch illegal use of this method
-        bs_rewards = [self.model(config.make_variable([self.board_samples[i]]), config.make_variable([self.legal_moves[i]]))[1].data[0,0] for i in range(len(self.board_samples)-1)]
-        bs_rewards.append(self.rewards[-1])
+        pred_values = [self.model(config.make_variable([self.board_samples[i]]), config.make_variable([self.legal_moves[i]]))[1].data[0,0] for i in range(len(self.board_samples))]
+        pred_values[-1] = self.rewards[-1]
 
-        rewards = [config.ALPHA * bs_rewards[i+1] - bs_rewards[i] for i in range(len(bs_rewards)-1)]
+        rewards = [config.ALPHA * pred_values[i+1] - pred_values[i] for i in range(len(pred_values)-1)]
         rewards.append(self.rewards[-1])
 
         return rewards
@@ -257,6 +257,7 @@ class Strategy(ABC):
         # TODO: Catch illegal use of this method
         rewards = [rewards[i] - self.model(config.make_variable([self.board_samples[i]]), config.make_variable([self.legal_moves[i]]))[1].data[0, 0] for i in range(len(self.board_samples))]
         return rewards
+
 
 class Model(torch.nn.Module):
 
