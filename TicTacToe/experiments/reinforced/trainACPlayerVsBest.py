@@ -84,4 +84,4 @@ if __name__ == '__main__':
         print("\nSuccessfully trained on %s games" % experiment.num_episodes)
         if PLAYER:
             print("Pretrained on %s legal moves" % 1000000)
-    print("Experiment completed successfully, took %s" % datetime.now()-start)
+    print("Experiment completed successfully, took %s" % (datetime.now()-start))

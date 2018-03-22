@@ -22,12 +22,13 @@ class ACStrategy(Strategy):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
         self.state_values = []
+        self.board_samples = []
+        self.legal_moves = []
 
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
-        legal_moves_map = config.make_variable(legal_moves_map)
 
-        probs, state_value = self.model(input, legal_moves_map)
+        probs, state_value = self.model(input, config.make_variable(legal_moves_map))
         distribution = Categorical(probs)
         action = distribution.sample()
 
@@ -35,6 +36,8 @@ class ACStrategy(Strategy):
         if self.train:
             self.log_probs.append(distribution.log_prob(action))
             self.state_values.append(state_value)
+            self.board_samples.append(board_sample)
+            self.legal_moves.append(legal_moves_map)
         return move
 
     def update(self):
@@ -46,8 +49,8 @@ class ACStrategy(Strategy):
             raise PlayerException("log_probs length must be equal to rewards length as well as state_values length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.state_values)))
 
         # ----------------------------------------------------------- #
-
         rewards = self.discount_rewards(self.rewards, self.gamma)
+        rewards = self.rewards_baseline(rewards)
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
@@ -60,6 +63,7 @@ class ACStrategy(Strategy):
         del self.rewards[:]
         del self.log_probs[:]
         del self.state_values[:]
+        del self.board_samples[:]
 
         return abs(loss.data[0])
 

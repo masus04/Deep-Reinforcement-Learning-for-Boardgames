@@ -57,7 +57,7 @@ class TrainPPOPlayerVsTraditionalOpponent(Experiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train ReinforcementPlayer vs traditional opponents: %s \nLR: %s Games: %s" % (self.opponent, lr, episode*games_per_evaluation))
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation))
 
         self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
         return self
