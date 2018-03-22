@@ -248,7 +248,7 @@ class Strategy(ABC):
         pred_values = [self.model(config.make_variable([self.board_samples[i]]), config.make_variable([self.legal_moves[i]]))[1].data[0,0] for i in range(len(self.board_samples))]
         pred_values[-1] = self.rewards[-1]
 
-        rewards = [config.ALPHA * pred_values[i+1] - pred_values[i] for i in range(len(pred_values)-1)]
+        rewards = [self.alpha * pred_values[i+1] - pred_values[i] for i in range(len(pred_values)-1)]
         rewards.append(self.rewards[-1])
 
         return rewards

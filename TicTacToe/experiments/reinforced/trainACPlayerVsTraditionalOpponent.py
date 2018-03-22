@@ -6,7 +6,7 @@ from experiment import Experiment
 from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 from TicTacToe.players.acPlayer import FCACPlayer
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.evaluation import evaluate_against_base_players
+from TicTacToe.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer
 
 
@@ -49,17 +49,18 @@ class TrainACPlayerVsTraditionalOpponent(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results = evaluate_against_base_players(self.player1)
+            score, results, overview = evaluate_against_base_players(self.player1)
             self.add_results(results)
             # self.add_scores(main_score, opponent_score)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                    overview = format_overview(overview)
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation))
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s" % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview))
 
-        self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
+        self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 
@@ -70,9 +71,9 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 1000000
-        EVALUATIONS = 1000
-        LR = uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-4
+        GAMES = 100000
+        EVALUATIONS = 100
+        LR = random()*1e-9 + 1e-5  # uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")

@@ -49,7 +49,7 @@ class TrainPPOPlayerVsTraditionalOpponent(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results = evaluate_against_base_players(self.player1)
+            score, results, overview = evaluate_against_base_players(self.player1)
             self.add_results(results)
             # self.add_scores(main_score, opponent_score)
 
@@ -59,7 +59,7 @@ class TrainPPOPlayerVsTraditionalOpponent(Experiment):
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
                         "Train %s vs traditional opponents: %s \nLR: %s Games: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation))
 
-        self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
+        self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 
