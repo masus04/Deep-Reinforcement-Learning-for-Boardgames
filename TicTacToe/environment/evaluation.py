@@ -51,7 +51,7 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     if not silent:
         print("Overall score: %s" % avg_results[0][1])
 
-    return results[0][1], avg_results, results_overview
+    return avg_results[0][1], avg_results, results_overview
 
 
 def format_overview(overview):

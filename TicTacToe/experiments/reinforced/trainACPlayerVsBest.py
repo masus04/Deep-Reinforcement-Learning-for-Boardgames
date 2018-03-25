@@ -72,6 +72,8 @@ if __name__ == '__main__':
 
     start = datetime.now()
     for i in range(ITERATIONS):
+
+        print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
         GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
         LR = uniform(4e-5, 4e-6)  # random()*1e-9 + 1e-5
@@ -82,7 +84,7 @@ if __name__ == '__main__':
         experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
-        print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+        print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
         if PLAYER:
             print("Pretrained on %s legal moves" % 1000000)
     print("Experiment completed successfully, took %s" % (datetime.now()-start))
