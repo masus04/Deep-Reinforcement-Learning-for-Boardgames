@@ -2,7 +2,7 @@ import numpy as np
 from random import choice, random
 
 import TicTacToe.config as config
-from abstractClasses import Player
+from abstractClasses import Player, PlayerException
 from TicTacToe.environment.game import TicTacToe
 
 
@@ -42,7 +42,19 @@ class NovicePlayer(Player):
 
 class ExperiencedPlayer(Player):
     """ Wins games or blocks opponent with the next move. Uses Heuristic Table if there are no winning or blocking moves"""
-    heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
+    if config.BOARD_SIZE == 3:
+        heuristic_table = np.array([[1, 0.5, 1], [0.5, 0.75, 0.5], [1, 0.5, 1]])
+    elif config.BOARD_SIZE == 8:
+        heuristic_table = np.array([[1, 2, 3, 4, 4, 3, 2, 1],
+                                    [2, 3, 4, 5, 5, 4, 3, 2],
+                                    [3, 4, 5, 6, 6, 5, 4, 3],
+                                    [4, 5, 6, 7, 7, 6, 5, 4],
+                                    [4, 5, 6, 7, 7, 6, 5, 4],
+                                    [3, 4, 5, 6, 6, 5, 4, 3],
+                                    [2, 3, 4, 5, 5, 4, 3, 2],
+                                    [1, 2, 3, 4, 4, 3, 2, 1]])
+    else:
+        raise PlayerException("HeuristicPlayer is not implemented for board size == %s" % config.BOARD_SIZE)
 
     def __init__(self, deterministic=True, block_mid=False):
         self.deterministic = deterministic
