@@ -44,7 +44,7 @@ class TrainPPOPlayer(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results = evaluate_against_base_players(self.player1)
+            score, results, overview = evaluate_against_base_players(self.player1)
             self.add_results(results)
 
             if not silent:
@@ -53,7 +53,7 @@ class TrainPPOPlayer(Experiment):
                         "ReinforcementTraining LR: %s" % lr,
                         "Train ACPlayer vs self with shared network\nLR: %s Games: %s" % (lr, episode*games_per_evaluation))
 
-        self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
+        self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 

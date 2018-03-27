@@ -1,5 +1,6 @@
 import numpy as np
 from collections import Counter
+from copy import deepcopy
 
 import TicTacToe.config as config
 from abstractClasses import LearningPlayer
@@ -28,22 +29,47 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     for e_player in evaluation_players:
         simulation = TicTacToe([player, e_player])
         rewards, losses = simulation.run_simulations(config.EVALUATION_GAMES)
-        results.append((e_player.__str__(), rewards))
+        results.append([e_player.__str__(), rewards])
 
         if not silent:
             print_results(player, e_player, rewards)
-
-    results = [(result[0], np.mean(result[1])) for result in results]
-    results.insert(0, ("Total Score", np.mean([res[1] for res in results])))  # Insert average overall score as first element of results
 
     # Restore original training values
     if issubclass(player.__class__, LearningPlayer):
         player.strategy.train, player.strategy.model.training = training_values
 
-    if not silent:
-        print("Overall score: %s" % results[0][1])
+    avg_results = [(result[0], np.mean(result[1])) for result in results]
+    avg_results.insert(0, ("Total Score", np.mean([res[1] for res in avg_results])))  # Insert average overall score as first element of results
 
-    return results[0][1], results
+    results_overview = deepcopy(results)
+    total = Counter(dict())
+    for entry in results_overview:
+        entry[1] = Counter(entry[1])
+        total += entry[1]
+    results_overview.insert(0, ("[Total Score]", total))  # Insert average overall score as first element of results
+
+    if not silent:
+        print("Overall score: %s" % avg_results[0][1])
+
+    return avg_results[0][1], avg_results, results_overview
+
+
+def format_overview(overview):
+    representation = ""
+    for entry in overview:
+        representation += "%s - " % (entry[0])
+        for key in sorted(entry[1].keys(), reverse=True):
+            representation += " %s:%s" % (to_status(key), entry[1][key])
+    return representation
+
+
+def to_status(label):
+    if label == config.LABEL_WIN:
+        return "w"
+    elif label == config.LABEL_DRAW:
+        return "d"
+    elif label == config.LABEL_LOSS:
+        return "l"
 
 
 def evaluate_against_each_other(player1, player2):
@@ -53,7 +79,7 @@ def evaluate_against_each_other(player1, player2):
     :param player2:
     :return: True if player1 scores at least as high as player2
     """
-    score, results = evaluate_against_base_players(player1, [player2])
+    score, results, overview = evaluate_against_base_players(player1, [player2])
     return score >= 0
 
 
@@ -65,9 +91,9 @@ def evaluate_both_players(player1, player2):
     :param player2:
     :return: True if player1 scores at least as high as player2
     """
-    score, results = evaluate_against_base_players(player1, [player2])
-    p1_score, results = evaluate_against_base_players(player1)
-    p2_score, results = evaluate_against_base_players(player2)
+    score, results, overview = evaluate_against_base_players(player1, [player2])
+    p1_score, results, overview = evaluate_against_base_players(player1)
+    p2_score, results, overview = evaluate_against_base_players(player2)
     p1_score += score
     p2_score -= score
 

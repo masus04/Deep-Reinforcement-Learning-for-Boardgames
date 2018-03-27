@@ -45,14 +45,14 @@ class TrainACPlayerVsBest(Experiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results = evaluate_against_base_players(self.player1)
+            score, results, overview = evaluate_against_base_players(self.player1)
             self.add_results(results)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "ReinforcementTraining LR: %s" % lr,
-                        "Train ACPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                        "%s vs BEST LR: %s" % (COMMENT, lr),
+                        "%s Train %s vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (COMMENT, self.player1, lr, episode*games_per_evaluation, score))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -61,19 +61,22 @@ class TrainACPlayerVsBest(Experiment):
                 self.replacements.append(episode)
 
         print("Best player replaced after episodes: %s" % self.replacements)
-        self.final_score, self.final_results = evaluate_against_base_players(self.player1, silent=False)
+        self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 
 if __name__ == '__main__':
 
+    COMMENT = "BOOTSTRAP"
     ITERATIONS = 5
 
     start = datetime.now()
     for i in range(ITERATIONS):
+
+        print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
         GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = uniform(4e-4, 4e-6)  # random()*1e-9 + 1e-5
+        LR = uniform(4e-5, 4e-6)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
@@ -81,7 +84,7 @@ if __name__ == '__main__':
         experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
-        print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+        print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
         if PLAYER:
             print("Pretrained on %s legal moves" % 1000000)
-    print("Experiment completed successfully, took %s" % datetime.now()-start)
+    print("Experiment completed successfully, took %s" % (datetime.now()-start))
