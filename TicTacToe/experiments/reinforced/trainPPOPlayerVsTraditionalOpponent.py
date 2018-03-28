@@ -65,14 +65,14 @@ class TrainPPOPlayerVsTraditionalOpponent(Experiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
+    ITERATIONS = 10
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 1000000
         EVALUATIONS = 1000
-        LR = random()*1e-9 + 1e-4  # uniform(1e-3, 1e-4)
+        LR = uniform(1e-4, 5e-6)  # random()*1e-9 + 1e-4  # uniform(1e-3, 1e-4)
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
