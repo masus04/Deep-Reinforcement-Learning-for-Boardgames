@@ -18,7 +18,7 @@ LABEL_DRAW = EMPTY
 # Board parameters
 BOARD_SIZE = 8
 
-EVALUATION_GAMES = 40
+EVALUATION_GAMES = 20
 
 # Network parameters
 LR = 1e-5

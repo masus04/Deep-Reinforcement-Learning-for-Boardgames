@@ -75,7 +75,7 @@ class OthelloBoard(Board):
         return self
 
     def apply_move_recursively(self, pos, direction, color, other_color, dir_takes):
-        if self.board[pos[0], pos[1]] == config.EMPTY:
+        if not self.in_bounds((pos[0], pos[1])) or self.board[pos[0], pos[1]] == config.EMPTY:
             return set()
 
         if self.board[pos[0], pos[1]] == color:
@@ -86,7 +86,11 @@ class OthelloBoard(Board):
             return self.apply_move_recursively(pos+direction, direction, color, other_color, dir_takes)
 
     def game_won(self):
-        return len(self.get_valid_moves(config.BLACK) + self.get_valid_moves(config.WHITE)) == 0
+        if len(self.get_valid_moves(config.BLACK) | self.get_valid_moves(config.WHITE)) == 0:
+            stones = self.count_stones()
+            return config.BLACK if stones[0] > stones[1] else config.WHITE
+        else:
+            return None
 
     def in_bounds(self, position):
         return position[0] >= 0 and position[1] >= 0 and position[0] < self.board_size and position[1] < self.board_size
