@@ -1,11 +1,10 @@
 import torch
 import torch.nn.functional as F
-from torch.autograd import Variable
 from torch.distributions import Categorical
 from numba import jit
 
 import TicTacToe.config as config
-from TicTacToe.players.models3x3 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models3x3 import FCPolicyModel, LargeFCPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 

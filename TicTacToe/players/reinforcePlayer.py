@@ -1,11 +1,10 @@
-import numpy as np
 import torch
 from torch.distributions import Categorical
 
 import TicTacToe.config as config
 import abstractClasses as abstract
 from abstractClasses import LearningPlayer
-from TicTacToe.players.models3x3 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models3x3 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
 from abstractClasses import PlayerException
 
 
@@ -25,7 +24,7 @@ class PGStrategy(abstract.Strategy):
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
         legal_moves_map = config.make_variable(legal_moves_map)
-        probs = self.model(input, legal_moves_map)
+        probs, _ = self.model(input, legal_moves_map)
 
         try:
             distribution = Categorical(probs)

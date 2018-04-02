@@ -35,7 +35,7 @@ class FCPolicyModel(abstract.Model):
 
         vf = self.vf_head(x)
 
-        return p, vf if self.ac_policy else p
+        return p, vf
 
 
 class LargeFCPolicyModel(abstract.Model):
@@ -72,7 +72,7 @@ class LargeFCPolicyModel(abstract.Model):
 
         vf = self.vf_head(x)
 
-        return p, vf if self.ac_policy else p
+        return p, vf
 
 
 class ConvPolicyModel(abstract.Model):
@@ -82,12 +82,17 @@ class ConvPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        self.conv_channels = 8
+        self.conv_channels = 32
 
         # Create representation
         self.conv1 = torch.nn.Conv2d(in_channels=1, out_channels=self.conv_channels, kernel_size=3, padding=1)
         self.conv2 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
         self.conv3 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv4 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv5 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv6 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv7 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
+        self.conv8 = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=self.conv_channels, kernel_size=3, padding=1)
 
         # Evaluate and output move possibilities
         self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=0)
@@ -102,6 +107,11 @@ class ConvPolicyModel(abstract.Model):
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
+        x = F.relu(self.conv4(x))
+        x = F.relu(self.conv5(x))
+        x = F.relu(self.conv6(x))
+        x = F.relu(self.conv7(x))
+        x = F.relu(self.conv8(x))
 
         x = self.reduce(x)
         x = x.view(-1, self.board_size**2)
@@ -109,4 +119,4 @@ class ConvPolicyModel(abstract.Model):
         p = self.legal_softmax(x, legal_moves_map)
         vf = self.vf_head(x)
 
-        return p, vf if self.ac_policy else p
+        return p, vf
