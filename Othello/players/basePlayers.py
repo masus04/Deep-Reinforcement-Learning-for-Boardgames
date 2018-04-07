@@ -63,26 +63,16 @@ class ExperiencedPlayer(Player):
     def get_move(self, board):
         valid_moves = board.get_valid_moves(self.color)
 
-        if self.block_mid and sum(board.count_stones()) == 1 and (1, 1) in valid_moves:
-            return 1, 1
-
-        denies, attacks = [], []
+        attacks = []
         for move in valid_moves:
             afterstate = board.copy().apply_move(move, self.color)
             if afterstate.game_won() == self.color:
                 return move
 
-            afterstate_opponent = board.copy().apply_move(move, board.other_color(self.color))
-            if afterstate_opponent.game_won() == board.other_color(self.color):
-                denies.append((self.evaluate_heuristic_table(afterstate_opponent), move))
-
             attacks.append((self.evaluate_heuristic_table(afterstate), move))
 
         try:
-            if denies:
-                return max(denies)[1]
-            else:
-                return max(attacks)[1]
+            return max(attacks)[1]
         except ValueError:
             return None
 

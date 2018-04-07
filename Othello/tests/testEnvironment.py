@@ -109,6 +109,13 @@ class TestEnvironment(unittest.TestCase):
 
         self.assertEqual((4, 4), board.count_stones())
 
+    def test_ExperiencedVsRandom(self):
+        player1 = ExperiencedPlayer()
+        player2 = RandomPlayer()
+        simulation = Othello([player1, player2])
+        results, losses = simulation.run_simulations(self.TEST_EPISODES)
+        print("Average Result Experienced vs Random: %s" % np.mean(results))
+
     def testRandomPlayer(self):
         player1 = RandomPlayer()
         player2 = RandomPlayer()
@@ -119,8 +126,7 @@ class TestEnvironment(unittest.TestCase):
 
         print("Average Result Random vs Random: %s" % np.mean(results))
 
-    # TODO: Rename to execute this test
-    def _ExperiencedPlayer(self):
+    def test_ExperiencedPlayer(self):
         player1 = ExperiencedPlayer()
         player2 = ExperiencedPlayer()
         simulation = Othello([player1, player2])
@@ -129,14 +135,6 @@ class TestEnvironment(unittest.TestCase):
         self.assertTrue(None not in results)
 
         print("Average Result Experienced vs Experienced: %s" % np.mean(results))
-
-    # TODO: Rename to execute this test
-    def _ExperiencedVsRandom(self):
-        player1 = ExperiencedPlayer()
-        player2 = RandomPlayer()
-        simulation = Othello([player1, player2])
-        results, losses = simulation.run_simulations(self.TEST_EPISODES)
-        print("Average Result Experienced vs Random: %s" % np.mean(results))
 
     def test_dynamic_plotting(self):
         plotter = Plotter()
@@ -147,8 +145,7 @@ class TestEnvironment(unittest.TestCase):
         plotter.plot("DynamicTestPlot").savefig("DynamicTestPlot")
         self.assertTrue(os.path.exists("DynamicTestPlot.png"))
 
-    # TODO: Rename to execute this test
-    def _Evaluation(self):
+    def test_Evaluation(self):
         start = datetime.now()
         score, results, overview = evaluate_against_base_players(RandomPlayer())
         print("Evaluating RandomPlayer -> score: %s, took: %s" % (score, datetime.now() - start))
@@ -161,7 +158,7 @@ class TestEnvironment(unittest.TestCase):
         p1 = RandomPlayer()
         p2 = RandomPlayer()
         simulation = Othello([p1, p2])
-        N = 150
+        N = 15
 
         start = datetime.now()
         simulation.run_simulations(N)
