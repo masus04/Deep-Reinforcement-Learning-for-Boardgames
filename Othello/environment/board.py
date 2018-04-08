@@ -38,7 +38,7 @@ class OthelloBoard(Board):
 
         takes = find_takes(self.board, self.board_size, move, color, self.other_color(color))
 
-        if len(takes.shape) > 1:  # More than just placed stone in taken set
+        if len(takes) > 1:  # More than just placed stone in taken set
             for t in takes:
                 self.board[t[0], t[1]] = color
 
@@ -133,31 +133,33 @@ def __get_legal_moves_map__(board_size, valid_moves):
     return legal_moves_map
 
 
-# @njit
+@njit
 def find_takes(board, board_size, move, color, other_color):
-    takes = np.array(move)
-    for direction in DIRECTIONS:
-        dir_takes = find_takes_recursively(board, board_size, move + direction, direction, color, other_color, np.array([], dtype=takes.dtype))
-        if dir_takes.size>0:
-            takes = np.vstack((takes, dir_takes))
+    takes = [move]
+    for i in range(len(DIRECTIONS)):
+        direction = DIRECTIONS[i]
+        new_pos = np.array(move) + direction
+        if in_bounds(board_size, new_pos) and board[new_pos[0], new_pos[1]] == other_color:
+            find_takes_directionally(board, board_size, new_pos, direction, color, other_color, takes)
     return takes
 
 
-# @njit
-def find_takes_recursively(board, board_size, pos, direction, color, other_color, dir_takes):
-    if not in_bounds(board_size, (pos[0], pos[1])) or board[pos[0], pos[1]] == config.EMPTY:
-        return np.array([], dtype=dir_takes.dtype)
+@njit
+def find_takes_directionally(board, board_size, pos, direction, color, other_color, takes):
+    dir_takes = [(pos[0], pos[1])]
 
-    if board[pos[0], pos[1]] == color:
-        return dir_takes
+    new_pos = pos + direction
+    while in_bounds(board_size, (new_pos[0], new_pos[1])) and board[new_pos[0], new_pos[1]] != config.EMPTY:
 
-    if board[pos[0], pos[1]] == other_color:
-        move = np.array([pos[0], pos[1]])
-        if dir_takes.size > 0:
-            dir_takes = np.vstack((dir_takes, move))
-        else:
-            dir_takes = np.array(move)
-        return find_takes_recursively(board, board_size, pos + direction, direction, color, other_color, dir_takes)
+        if board[new_pos[0], new_pos[1]] == color:
+            takes.extend(dir_takes)
+            return
+
+        if board[new_pos[0], new_pos[1]] == other_color:
+            dir_takes.append((new_pos[0], new_pos[1]))
+            new_pos += direction
+
+    return
 
 
 @njit
