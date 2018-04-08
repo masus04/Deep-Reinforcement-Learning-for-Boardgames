@@ -1,5 +1,6 @@
 import numpy as np
-from numba import njit, jit
+from numba import njit
+from numba.types import Array
 
 import Othello.config as config
 from abstractClasses import Board, BoardException
@@ -35,13 +36,9 @@ class OthelloBoard(Board):
         if color is None:
             raise BoardException("Illegal color provided: %s" % color)
 
+        takes = find_takes(self.board, self.board_size, move, color, self.other_color(color))
 
-        takes = set()
-        takes.add(move)
-        for direction in DIRECTIONS:
-            takes = takes | self.apply_move_recursively(move+direction, direction, color, self.other_color(color), set())
-
-        if len(takes) > 1:  # More than just placed stone in taken set
+        if len(takes.shape) > 1:  # More than just placed stone in taken set
             for t in takes:
                 self.board[t[0], t[1]] = color
 
@@ -50,17 +47,6 @@ class OthelloBoard(Board):
             self.illegal_move = color
 
         return self
-
-    def apply_move_recursively(self, pos, direction, color, other_color, dir_takes):
-        if not in_bounds(self.board_size, (pos[0], pos[1])) or self.board[pos[0], pos[1]] == config.EMPTY:
-            return set()
-
-        if self.board[pos[0], pos[1]] == color:
-            return dir_takes
-
-        if self.board[pos[0], pos[1]] == other_color:
-            dir_takes.add((pos[0], pos[1]))
-            return self.apply_move_recursively(pos+direction, direction, color, other_color, dir_takes)
 
     def game_won(self):
         if len(self.get_valid_moves(config.BLACK) | self.get_valid_moves(config.WHITE)) == 0:
@@ -145,6 +131,33 @@ def __get_legal_moves_map__(board_size, valid_moves):
     for move in valid_moves:
         legal_moves_map[move[0]][move[1]] = 1
     return legal_moves_map
+
+
+# @njit
+def find_takes(board, board_size, move, color, other_color):
+    takes = np.array(move)
+    for direction in DIRECTIONS:
+        dir_takes = find_takes_recursively(board, board_size, move + direction, direction, color, other_color, np.array([], dtype=takes.dtype))
+        if dir_takes.size>0:
+            takes = np.vstack((takes, dir_takes))
+    return takes
+
+
+# @njit
+def find_takes_recursively(board, board_size, pos, direction, color, other_color, dir_takes):
+    if not in_bounds(board_size, (pos[0], pos[1])) or board[pos[0], pos[1]] == config.EMPTY:
+        return np.array([], dtype=dir_takes.dtype)
+
+    if board[pos[0], pos[1]] == color:
+        return dir_takes
+
+    if board[pos[0], pos[1]] == other_color:
+        move = np.array([pos[0], pos[1]])
+        if dir_takes.size>0:
+            dir_takes = np.vstack((dir_takes, move))
+        else:
+            dir_takes = np.array(move)
+        return find_takes_recursively(board, board_size, pos + direction, direction, color, other_color, dir_takes)
 
 
 @njit
