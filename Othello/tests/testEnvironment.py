@@ -158,7 +158,7 @@ class TestEnvironment(unittest.TestCase):
         p1 = RandomPlayer()
         p2 = RandomPlayer()
         simulation = Othello([p1, p2])
-        N = 15
+        N = 500
 
         start = datetime.now()
         simulation.run_simulations(N)

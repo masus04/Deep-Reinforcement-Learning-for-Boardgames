@@ -1,9 +1,13 @@
 import numpy as np
-from numba import njit
+from numba import njit, jit
 
 import Othello.config as config
 from abstractClasses import Board, BoardException
 from Othello.config import BLACK, WHITE, EMPTY
+
+DIRECTIONS = np.array([[-1,-1], [-1,0], [-1,1],
+                       [0, -1], [0, 0], [0, 1],
+                       [1, -1], [1, 0], [1, 1]])
 
 
 class OthelloBoard(Board):
@@ -11,10 +15,6 @@ class OthelloBoard(Board):
     Represents a board of Othello and all actions that can be taken on it.
     """
     def __init__(self, board=None):
-        self.DIRECTIONS = [np.array([-1,-1]), np.array([-1,0]), np.array([-1,1]),
-                           np.array([0, -1]), np.array([0, 0]), np.array([0, 1]),
-                           np.array([1, -1]), np.array([1, 0]), np.array([1, 1])]
-
         self.board_size = board.board_size if board else config.BOARD_SIZE
 
         if board:
@@ -29,30 +29,7 @@ class OthelloBoard(Board):
         self.illegal_move = None
 
     def get_valid_moves(self, color):
-        other_color = self.other_color(color)
-        legal_moves = set()
-        for i in range(self.board_size):
-            for j in range(self.board_size):
-                if self.board[i][j] == EMPTY:
-                    pos = np.array([i, j])
-                    for direction in self.DIRECTIONS:
-                        new_pos = pos + direction
-                        if self.in_bounds(new_pos) and self.board[new_pos[0], new_pos[1]] == other_color:
-                            if self.get_legal_moves_in_direction(new_pos, direction, color, other_color):
-                                legal_moves.add((pos[0], pos[1]))
-        return legal_moves
-
-    def get_legal_moves_in_direction(self, pos, direction, color, other_color):
-        new_pos = pos + direction
-
-        if not self.in_bounds(new_pos) or self.board[new_pos[0], new_pos[1]] == EMPTY:
-            return False
-
-        if self.board[new_pos[0], new_pos[1]] == color:
-            return True
-
-        if self.board[new_pos[0], new_pos[1]] == other_color:
-            return self.get_legal_moves_in_direction(new_pos, direction, color, other_color)
+        return __get_legal_moves__(self.board, self.board_size, color, self.other_color(color))
 
     def apply_move(self, move, color):
         if color is None:
@@ -61,7 +38,7 @@ class OthelloBoard(Board):
 
         takes = set()
         takes.add(move)
-        for direction in self.DIRECTIONS:
+        for direction in DIRECTIONS:
             takes = takes | self.apply_move_recursively(move+direction, direction, color, self.other_color(color), set())
 
         if len(takes) > 1:  # More than just placed stone in taken set
@@ -75,7 +52,7 @@ class OthelloBoard(Board):
         return self
 
     def apply_move_recursively(self, pos, direction, color, other_color, dir_takes):
-        if not self.in_bounds((pos[0], pos[1])) or self.board[pos[0], pos[1]] == config.EMPTY:
+        if not in_bounds(self.board_size, (pos[0], pos[1])) or self.board[pos[0], pos[1]] == config.EMPTY:
             return set()
 
         if self.board[pos[0], pos[1]] == color:
@@ -91,9 +68,6 @@ class OthelloBoard(Board):
             return config.BLACK if stones[0] > stones[1] else config.WHITE
         else:
             return None
-
-    def in_bounds(self, position):
-        return position[0] >= 0 and position[1] >= 0 and position[0] < self.board_size and position[1] < self.board_size
 
     def get_representation(self, color):
         if color == BLACK:
@@ -119,6 +93,51 @@ Numba 0.36 does not yet fully support custom types.
 The following functions are implemented in such a way that they can be expressed using only supported types.
 These functions can then be wrapped by a class method, hiding the numba implementation from the class user.
 """
+
+
+@njit
+def __get_legal_moves__(board, board_size, color, other_color):
+    legal_moves = set()
+    for i in range(board_size):
+        for j in range(board_size):
+            if board[i][j] == EMPTY:
+                pos = np.array([i, j])
+                legal = False  # Optimization preventing unnecessary checks after move has been proven valid
+                for k in range(len(DIRECTIONS)):
+                    direction = DIRECTIONS[k]
+                    new_pos = pos + direction
+                    if not legal and in_bounds(board_size, new_pos) and board[new_pos[0], new_pos[1]] == other_color:
+                        if __get_legal_moves_in_direction__(board, board_size, new_pos, direction, color, other_color):
+                            legal_moves.add((pos[0], pos[1]))
+                            legal = True
+    return legal_moves
+
+
+@njit
+def __get_legal_moves_in_direction__(board, board_size, pos, direction, color, other_color):
+    """
+    Checks for player stones in the given direction AFTER the given position that mark the original position as a legal move
+
+    :param board: the board
+    :param board_size: the board size (NxN)
+    :param pos: The position of the first oppoonent stone
+    :param direction: direction to check
+    :param color: player color
+    :param other_color: opponent color
+    :return: True if at least one stone can be overturned in the given direction and False otherwise
+    """
+    new_pos = pos + direction
+
+    while in_bounds(board_size, new_pos) and board[new_pos[0], new_pos[1]] != EMPTY:
+
+        if board[new_pos[0], new_pos[1]] == color:
+            return True
+
+        if board[new_pos[0], new_pos[1]] == other_color:
+            new_pos = new_pos + direction
+
+    return False
+
 
 @njit
 def __get_legal_moves_map__(board_size, valid_moves):
@@ -150,3 +169,10 @@ def __get_representation_njit__(board, board_size, color, other_color):
                 out[i, j] = color
 
     return out
+
+
+@njit
+def in_bounds(board_size, position):
+    return position[0] >= 0 and position[1] >= 0 and position[0] < board_size and position[1] < board_size
+
+
