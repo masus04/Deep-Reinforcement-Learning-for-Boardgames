@@ -153,7 +153,7 @@ def find_takes_recursively(board, board_size, pos, direction, color, other_color
 
     if board[pos[0], pos[1]] == other_color:
         move = np.array([pos[0], pos[1]])
-        if dir_takes.size>0:
+        if dir_takes.size > 0:
             dir_takes = np.vstack((dir_takes, move))
         else:
             dir_takes = np.array(move)
