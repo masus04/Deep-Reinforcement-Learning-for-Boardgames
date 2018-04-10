@@ -27,10 +27,15 @@ class OthelloBoard(Board):
             self.board[4, 3] = config.BLACK
             self.board[4, 4] = config.WHITE
 
+        self.legal_moves = {}
         self.illegal_move = None
 
     def get_valid_moves(self, color):
-        return __get_legal_moves__(self.board, self.board_size, color, self.other_color(color))
+        if color in self.legal_moves:
+            return self.legal_moves[color]
+        else:
+            self.legal_moves[color] = __get_legal_moves__(self.board, self.board_size, color, self.other_color(color))
+            return self.legal_moves[color]
 
     def apply_move(self, move, color):
         if color is None:
@@ -46,6 +51,7 @@ class OthelloBoard(Board):
             print("!! Illegal move !!")
             self.illegal_move = color
 
+        self.legal_moves = {}
         return self
 
     def game_won(self):
@@ -137,7 +143,7 @@ def __get_legal_moves_map__(board_size, valid_moves):
     return legal_moves_map
 
 
-# @njit
+@njit
 def find_takes(board, board_size, move, color, other_color):
     takes = [move]
     for i in range(len(DIRECTIONS)):
@@ -148,7 +154,7 @@ def find_takes(board, board_size, move, color, other_color):
     return takes
 
 
-# @njit
+@njit
 def find_takes_directionally(board, board_size, pos, direction, color, other_color, takes):
     dir_takes = [(pos[0], pos[1])]
 

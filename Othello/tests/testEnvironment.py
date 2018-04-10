@@ -7,7 +7,7 @@ from datetime import datetime
 import Othello.config as config
 from Othello.environment.board import OthelloBoard
 from Othello.environment.game import Othello
-from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer, ExpertPlayer, SearchPlayer
+from Othello.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer, ExpertPlayer, SearchPlayer
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
@@ -81,6 +81,8 @@ class TestEnvironment(unittest.TestCase):
         self.assertEqual(board.illegal_move, config.BLACK)
 
     def test_Board_GameWon(self):
+
+        # Case 1: Full board
         board = OthelloBoard()
         self.assertIsNone(board.game_won(), msg="Empty Board")
         board.apply_move((2, 3), config.BLACK)
@@ -97,12 +99,22 @@ class TestEnvironment(unittest.TestCase):
             for tile in range(len(board.board)):
                 if board.board[col, tile] == config.EMPTY:
                     board.board[col, tile] = config.BLACK
+
+        board.legal_moves = {}  # This is required because moves were directly set to the board instead of using apply_move
         self.assertEqual(board.game_won(), config.BLACK, msg="Black wins by stone count")
 
+        # Case 2: No valid moves
         board = OthelloBoard()
         board.apply_move((3, 2), config.BLACK)
         board.apply_move((4, 5), config.BLACK)
         self.assertEqual(board.game_won(), config.BLACK, msg="Black wins by stone count after no players could perform any legal moves")
+
+        # Case 3: Regular, deterministic game
+        for i in range(32):
+            game = Othello((DeterministicPlayer(), DeterministicPlayer()))
+            game.run_simulations(1)
+            winner = game.board.game_won()
+            self.assertEqual(winner, config.WHITE, "Winner of deterministic game was not Black")
 
     def test_Board_Representation(self):
         iterator = OthelloBaseExperiment.AlternatingColorIterator()

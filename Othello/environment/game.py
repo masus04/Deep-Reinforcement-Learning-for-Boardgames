@@ -28,9 +28,7 @@ class Othello:
         players = player1, player2
 
         while True:
-            self.board.current_player_valid_moves = self.board.get_valid_moves(players[0].color)
-
-            if len(self.board.current_player_valid_moves) > 0:
+            if len(self.board.get_valid_moves(players[0].color)) > 0:
                 move = players[0].get_move(self.board)
                 self.board.apply_move(move, players[0].color)
 
