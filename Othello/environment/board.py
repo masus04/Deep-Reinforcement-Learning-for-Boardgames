@@ -51,7 +51,7 @@ class OthelloBoard(Board):
     def game_won(self):
         if len(self.get_valid_moves(config.BLACK) | self.get_valid_moves(config.WHITE)) == 0:
             stones = self.count_stones()
-            return config.BLACK if stones[0] > stones[1] else config.WHITE
+            return config.BLACK if stones[0] > stones[1] else config.WHITE if stones[0] < stones[1] else config.EMPTY
         else:
             return None
 
@@ -65,7 +65,11 @@ class OthelloBoard(Board):
             raise BoardException("Illegal color provided: %s" % color)
 
     def get_legal_moves_map(self, color):
-        return __get_legal_moves_map__(self.board_size, self.get_valid_moves(color))
+        legal_moves = self.get_valid_moves(color)
+        if not legal_moves:
+            return np.zeros((self.board_size, self.board_size))
+        else:
+            return __get_legal_moves_map__(self.board_size, legal_moves)
 
     def copy(self):
         return OthelloBoard(self)
@@ -133,7 +137,7 @@ def __get_legal_moves_map__(board_size, valid_moves):
     return legal_moves_map
 
 
-@njit
+# @njit
 def find_takes(board, board_size, move, color, other_color):
     takes = [move]
     for i in range(len(DIRECTIONS)):
@@ -144,7 +148,7 @@ def find_takes(board, board_size, move, color, other_color):
     return takes
 
 
-@njit
+# @njit
 def find_takes_directionally(board, board_size, pos, direction, color, other_color, takes):
     dir_takes = [(pos[0], pos[1])]
 

@@ -9,7 +9,6 @@ from Othello.environment.board import OthelloBoard
 from Othello.environment.game import Othello
 from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer, ExpertPlayer, SearchPlayer
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-# from Othello.players.reinforcePlayer import FCReinforcePlayer
 from Othello.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
 
@@ -198,14 +197,6 @@ class TestEnvironment(unittest.TestCase):
         start = datetime.now()
         simulation.run_simulations(N)
         print("Simulating %s random games took %s" % (N, datetime.now()-start))
-
-    # TODO: Rename to execute this test
-    def evaluation(self):
-        p1 = RandomPlayer()
-        evaluate_against_base_players(p1, silent=False)
-
-        p2 = FCReinforcePlayer(lr=1e-5, batch_size=1)
-        evaluate_against_base_players(p2, silent=False)
 
 
 if __name__ == '__main__':

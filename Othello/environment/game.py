@@ -28,13 +28,15 @@ class Othello:
         players = player1, player2
 
         while True:
-            move = players[0].get_move(self.board)
-            if move is not None:
+            self.board.current_player_valid_moves = self.board.get_valid_moves(players[0].color)
+
+            if len(self.board.current_player_valid_moves) > 0:
+                move = players[0].get_move(self.board)
                 self.board.apply_move(move, players[0].color)
 
-            winner = self.board.game_won()
-            if winner:
-                return config.get_label_from_winner_color(player1, player2, winner)
+                winner = self.board.game_won()
+                if winner:
+                    return config.get_label_from_winner_color(player1, player2, winner)
 
             players = list(reversed(players))
 

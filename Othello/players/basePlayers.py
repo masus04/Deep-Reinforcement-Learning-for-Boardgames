@@ -25,7 +25,7 @@ class DeterministicPlayer(Player):
     This player is supposed to be as simple to beat as possible and should be used as a dummy opponent in training.
     """
     def get_move(self, board):
-        return board.get_valid_moves(self.color)[0]
+        return board.current(self.color)[0]
 
 
 class NovicePlayer(Player):

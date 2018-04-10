@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 import TicTacToe.config as config
 import abstractClasses as abstract
 from abstractClasses import LearningPlayer
-from models3x3 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models8x8 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
 from abstractClasses import PlayerException
 
 
@@ -26,8 +26,12 @@ class PGStrategy(abstract.Strategy):
         legal_moves_map = config.make_variable(legal_moves_map)
         probs, _ = self.model(input, legal_moves_map)
 
-        distribution = Categorical(probs)
-        action = distribution.sample()
+        try:
+            distribution = Categorical(probs)
+            action = distribution.sample()
+        except RuntimeError:
+            self.model(input, legal_moves_map)
+            raise PlayerException("sum(probs) <= 0:\n%s\n board:\n%s\nlegal moves:\n%s" % (probs, board_sample, legal_moves_map))
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
         log_prob = distribution.log_prob(action)
