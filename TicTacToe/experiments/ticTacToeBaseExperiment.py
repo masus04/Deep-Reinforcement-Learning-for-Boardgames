@@ -1,4 +1,5 @@
 from datetime import datetime
+from abc import ABC
 
 import TicTacToe.config as config
 from TicTacToe.environment.board import TicTacToeBoard
@@ -9,7 +10,7 @@ from experiment import Experiment
 class TicTacToeBaseExperiment(Experiment):
 
     def __init__(self):
-        super(TicTacToeBaseExperiment, self).__init__()
+        super(TicTacToeBaseExperiment, self).__init__(config)
 
     @staticmethod
     def generate_supervised_training_data(games, labeling_strategy):

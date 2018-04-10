@@ -2,18 +2,17 @@ from datetime import datetime
 from random import random
 import numpy as np
 
-from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
-from TicTacToe.players.basePlayers import ExperiencedPlayer
-from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.evaluation import evaluate_against_base_players
+from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.players.ppoPlayer import FCPPOPlayer
+from Othello.environment.game import Othello
+from Othello.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
 
 
-class TrainReinforcePlayer(TicTacToeBaseExperiment):
+class TrainPPOPlayer(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
-        super(TrainReinforcePlayer, self).__init__()
+        super(TrainPPOPlayer, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -26,13 +25,13 @@ class TrainReinforcePlayer(TicTacToeBaseExperiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCPPOPlayer(lr=lr, batch_size=batch_size)
 
         # Player2 shares the same weights but does not change them.
         self.player2 = self.player1.copy(shared_weights=True)
         self.player2.strategy.train = False
 
-        self.simulation = TicTacToe([self.player1, self.player2])
+        self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
@@ -52,7 +51,7 @@ class TrainReinforcePlayer(TicTacToeBaseExperiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs self with shared network\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, results))
+                        "Train ACPlayer vs self with shared network\nLR: %s Games: %s" % (lr, episode*games_per_evaluation))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
@@ -60,15 +59,15 @@ class TrainReinforcePlayer(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 100000
-    EVALUATIONS = 1000
-    LR = random()*1e-9 + 2e-5
-    BATCH_SIZE = 32
+    GAMES = 5000
+    EVALUATIONS = 100
+    LR = random() * 1e-9 + 2e-5
+    BATCH_SIZE = 1
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
-    print("Training ReinforcePlayer vs self with lr: %s" % LR)
-    experiment = TrainReinforcePlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+    print("Training ACPlayer vs self with lr: %s" % LR)
+    experiment = TrainPPOPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
     print("\nSuccessfully trained on %s games" % experiment.num_episodes)

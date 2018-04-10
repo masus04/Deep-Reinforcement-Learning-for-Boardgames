@@ -2,14 +2,14 @@ from datetime import datetime
 from random import random
 import numpy as np
 
-from experiment import Experiment
+from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.players.acPlayer import FCACPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
 
 
-class TrainACPlayer(Experiment):
+class TrainACPlayer(TicTacToeBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
         super(TrainACPlayer, self).__init__()
