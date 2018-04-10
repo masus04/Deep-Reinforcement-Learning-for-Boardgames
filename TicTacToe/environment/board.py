@@ -1,5 +1,5 @@
 import numpy as np
-from numba import njit, float64, intp, boolean
+from numba import njit
 
 from abstractClasses import Board, BoardException
 import TicTacToe.config as config
@@ -65,8 +65,8 @@ class TicTacToeBoard(Board):
 
 """   ---  Numba implementations  ---   '''
 Numba 0.36 does not yet fully support custom types.
-The following methods are implemented in such a way that they can be expressed using only supported types.
-These methods can then be wrapped by a class method, hiding the numba implementation from the class user.
+The following functions are implemented in such a way that they can be expressed using only supported types.
+These functions can then be wrapped by a class method, hiding the numba implementation from the class user.
 """
 
 

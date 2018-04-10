@@ -2,18 +2,18 @@ import os
 import torch
 from abc import ABC, abstractmethod
 
-import TicTacToe.config as config
 from plotting import Plotter
 
 
 class Experiment(ABC):
     """ Base class for running experiments. Provides a plotter as well as path handling. DO NOT FORGET TO CALL super()"""
 
-    def __init__(self):
+    def __init__(self, config):
         self.experiment_name = self.__class__.__name__
         self.__plotter__ = Plotter()
         self.last_plot = None
 
+        self.config = config
         self.path = config.TIC_TAC_TOE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
 
     @abstractmethod
@@ -24,9 +24,8 @@ class Experiment(ABC):
     def reset(self):
         pass
 
-    @staticmethod
-    def load_player(player_name):
-        filename = config.findInSubdirectory(player_name, config.TIC_TAC_TOE_DIR + "/experiments")
+    def load_player(self, player_name):
+        filename = self.config.findInSubdirectory(player_name, self.config.TIC_TAC_TOE_DIR + "/experiments")
         return torch.load(filename)
 
     def add_results(self, results):
@@ -76,7 +75,7 @@ class Experiment(ABC):
         Returns Black and White alternately, starting with WHITE
         """
         def __init__(self):
-            self.colors = [config.BLACK, config.WHITE]
+            self.colors = [self.config.BLACK, self.config.WHITE]
 
         def __iter__(self):
             return self

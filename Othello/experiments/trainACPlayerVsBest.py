@@ -2,15 +2,15 @@ from datetime import datetime
 from random import random, uniform, randint
 import numpy as np
 
-from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.acPlayer import FCACPlayer
-from TicTacToe.players.basePlayers import ExperiencedPlayer
-from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
+from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.players.acPlayer import FCACPlayer
+from Othello.players.basePlayers import ExperiencedPlayer
+from Othello.environment.game import Othello
+from Othello.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
 from plotting import Printer
 
 
-class TrainACPlayerVsBest(TicTacToeBaseExperiment):
+class TrainACPlayerVsBest(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
         super(TrainACPlayerVsBest, self).__init__()
@@ -31,7 +31,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         self.player2 = self.player1.copy(shared_weights=False)
         self.player2.strategy.train = False
 
-        self.simulation = TicTacToe([self.player1, self.player2])
+        self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         self.replacements = []

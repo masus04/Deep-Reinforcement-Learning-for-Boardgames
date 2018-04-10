@@ -35,7 +35,7 @@ class FCPolicyModel(abstract.Model):
 
         vf = self.vf_head(x)
 
-        return p, vf if self.ac_policy else p
+        return p, vf
 
 
 class LargeFCPolicyModel(abstract.Model):
@@ -72,7 +72,7 @@ class LargeFCPolicyModel(abstract.Model):
 
         vf = self.vf_head(x)
 
-        return p, vf if self.ac_policy else p
+        return p, vf
 
 
 class ConvPolicyModel(abstract.Model):
@@ -109,4 +109,4 @@ class ConvPolicyModel(abstract.Model):
         p = self.legal_softmax(x, legal_moves_map)
         vf = self.vf_head(x)
 
-        return p, vf if self.ac_policy else p
+        return p, vf

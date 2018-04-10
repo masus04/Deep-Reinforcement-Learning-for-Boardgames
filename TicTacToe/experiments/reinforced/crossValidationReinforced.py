@@ -1,7 +1,7 @@
 from random import uniform
 from datetime import datetime
 
-from experiment import Experiment
+from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayer import TrainReinforcePlayer
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsTraditionalOpponent import TrainReinforcePlayerVsTraditionalOpponent
@@ -9,7 +9,7 @@ from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBest import TrainRei
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBestEvalVsReferencePlayers import TrainReinforcePlayerVsBestEvalVsReferencePlayers
 
 
-class ReinforcedCrossValidation(Experiment):
+class ReinforcedCrossValidation(TicTacToeBaseExperiment):
 
     def __init__(self, nested_experiment, batch_size):
         super(ReinforcedCrossValidation, self).__init__()

@@ -2,7 +2,7 @@ from datetime import datetime
 from random import random
 import numpy as np
 
-from experiment import Experiment
+from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
@@ -10,7 +10,7 @@ from TicTacToe.environment.evaluation import evaluate_against_base_players, eval
 from plotting import Printer
 
 
-class TrainReinforcePlayerVsBest(Experiment):
+class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
         super(TrainReinforcePlayerVsBest, self).__init__()

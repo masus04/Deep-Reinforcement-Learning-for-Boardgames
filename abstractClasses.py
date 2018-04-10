@@ -81,14 +81,18 @@ class Board(ABC):
         :param color: The color used to represent the player
         :return: The color of the opposing player
         """
-        if color == config.BLACK:
-            return config.WHITE
-        elif color == config.WHITE:
-            return config.BLACK
-        elif color == config.EMPTY:
-            return config.EMPTY
-        else:
-            raise BoardException("Illegal color provided: %s" % color)
+        return __other_color__(color)
+
+
+def __other_color__(color):
+    if color == config.BLACK:
+        return config.WHITE
+    elif color == config.WHITE:
+        return config.BLACK
+    elif color == config.EMPTY:
+        return config.EMPTY
+    else:
+        raise BoardException("Illegal color provided: %s" % color)
 
 
 class BoardException(Exception):

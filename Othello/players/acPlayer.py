@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 from numba import jit
 
 import TicTacToe.config as config
-from models3x3 import FCPolicyModel, LargeFCPolicyModel
+from models8x8 import FCPolicyModel, LargeFCPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 

@@ -2,18 +2,18 @@ from datetime import datetime
 from random import random, choice, uniform
 import numpy as np
 
-from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
+from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
-from TicTacToe.players.ppoPlayer import FCPPOPlayer
+from TicTacToe.players.acPlayer import FCACPlayer
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.evaluation import evaluate_against_base_players
+from TicTacToe.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer
 
 
-class TrainPPOPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
+class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player, opponent):
-        super(TrainPPOPlayerVsTraditionalOpponent, self).__init__()
+        super(TrainACPlayerVsTraditionalOpponent, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -27,7 +27,7 @@ class TrainPPOPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCPPOPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = TicTacToe([self.player1, self.player2])
@@ -55,9 +55,10 @@ class TrainPPOPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                    overview = format_overview(overview)
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation))
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s" % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
@@ -65,25 +66,25 @@ class TrainPPOPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
+    ITERATIONS = 10
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 1000000
         EVALUATIONS = 1000
-        LR = random()*1e-9 + 1e-4  # uniform(1e-3, 1e-4)
+        LR = random()*1e-9 + 1e-5  # uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
         OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
-        experiment = TrainPPOPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+        experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
         print()
         experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
 
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 
-    print("took: %s" % datetime.now() - start)
+    print("took: %s" % (datetime.now() - start))
