@@ -2,8 +2,6 @@ import numpy as np
 from random import choice, random
 
 from abstractClasses import Player, PlayerException
-from Othello.players.heuristics import OthelloHeuristic
-from Othello.players.search_based_ai import GameArtificialIntelligence
 
 
 class RandomPlayer(Player):
@@ -45,21 +43,14 @@ class NovicePlayer(Player):
 
 
 class ExperiencedPlayer(Player):
-    """ Wins games or blocks opponent with the next move. Uses Heuristic Table if there are no winning or blocking moves"""
-    heuristic_table = np.array([[100, -25, 10,  5,  5, 10, -25, 100],
-                                [-25, -25,  2,  2,  2,  2, -25, -25],
-                                [ 10,   2,  5,  1,  1,  5,   2,  10],
-                                [  5,   2,  1,  2,  2,  1,   2,   5],
-                                [  5,   2,  1,  2,  2,  1,   2,   5],
-                                [ 10,   2,  5,  1,  1,  5,   2,  10],
-                                [-25, -25,  2,  2,  2,  2, -25, -25],
-                                [100, -25, 10,  5,  5, 10, -25, 100]])
+    """ Maximizes longest rows while preventing the opponent to do the same (One step ahead)"""
 
     def __init__(self, deterministic=True, block_mid=False):
         self.deterministic = deterministic
         self.block_mid = block_mid
 
     def get_move(self, board):
+        # TODO: Rewrite this method for Connect4
         valid_moves = board.get_valid_moves(self.color)
 
         attacks = []
@@ -75,14 +66,6 @@ class ExperiencedPlayer(Player):
         except ValueError:
             return None
 
-    def evaluate_heuristic_table(self, board):
-        self_mask = board.board == self.color
-        other_mask = board.board == board.other_color(self.color)
-        score = np.sum(self.heuristic_table * self_mask - self.heuristic_table * other_mask)
-        if not self.deterministic:
-            score += random() * 0.001  # Introduce some randomness to equally valued boards
-        return score
-
 
 class ExpertPlayer(Player):
     """ Perfect player: never loses, only draws """
@@ -90,14 +73,3 @@ class ExpertPlayer(Player):
 
     def get_move(self, board):
         raise NotImplementedError("Implement when needed")
-
-
-class SearchPlayer(Player):
-
-    def __init__(self, time_limit=5, strategy=OthelloHeuristic.DEFAULT_STRATEGY):
-        super(SearchPlayer, self).__init__()
-        self.time_limit = time_limit
-        self.ai = GameArtificialIntelligence(OthelloHeuristic(strategy).evaluate)
-
-    def get_move(self, board):
-        return self.ai.move_search(board, self.time_limit, self.color, board.other_color(self.color))

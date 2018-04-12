@@ -14,7 +14,7 @@ class Experiment(ABC):
         self.last_plot = None
 
         self.config = config
-        self.path = config.TIC_TAC_TOE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
+        self.path = config.BASE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
 
     @abstractmethod
     def run(self, silent=False):
@@ -25,7 +25,7 @@ class Experiment(ABC):
         pass
 
     def load_player(self, player_name):
-        filename = self.config.findInSubdirectory(player_name, self.config.TIC_TAC_TOE_DIR + "/experiments")
+        filename = self.config.findInSubdirectory(player_name, self.config.BASE_DIR + "/experiments")
         return torch.load(filename)
 
     def add_results(self, results):

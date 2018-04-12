@@ -16,10 +16,9 @@ LABEL_LOSS = WHITE
 LABEL_DRAW = EMPTY
 
 # Board parameters
-BOARD_SIZE = 8
-WIN_LINE_LENGTH = 3
+BOARD_SIZE = (6, 7)
 
-EVALUATION_GAMES = 40
+EVALUATION_GAMES = 20
 
 # Network parameters
 LR = 1e-5

@@ -1,5 +1,3 @@
-from abc import ABC
-
 import Othello.config as config
 from experiment import Experiment
 
