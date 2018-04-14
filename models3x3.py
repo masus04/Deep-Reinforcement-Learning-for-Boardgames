@@ -82,7 +82,7 @@ class ConvPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        self.conv_channels = 8
+        self.conv_channels = 32
 
         # Create representation
         self.conv1 = torch.nn.Conv2d(in_channels=1, out_channels=self.conv_channels, kernel_size=3, padding=1)
