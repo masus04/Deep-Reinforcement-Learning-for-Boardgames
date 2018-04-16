@@ -3,7 +3,7 @@ from random import random, uniform, randint
 import numpy as np
 
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.acPlayer import FCACPlayer
+from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -25,7 +25,7 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
