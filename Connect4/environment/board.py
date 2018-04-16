@@ -77,7 +77,8 @@ class Connect4Board(Board):
         return Connect4Board(self)
 
     def count_connections(self):
-        return count_connections(self.board, self.board_size)
+        connections = count_connections(self.board, self.board_size)
+        return {config.BLACK: connections[0], config.WHITE: connections[1]}
 
 
 """   ---  Numba implementations  ---   '''
@@ -87,7 +88,7 @@ These functions can then be wrapped by a class method, hiding the numba implemen
 """
 
 
-# @njit
+@njit
 def __get_legal_moves__(board, board_size):
     legal_moves = set()
     for column in range(board_size[1]):
@@ -99,30 +100,30 @@ def __get_legal_moves__(board, board_size):
 
     return legal_moves
 
+
 @njit
 def __get_legal_moves_map__(board_size, valid_moves):
-    legal_moves_map = np.zeros((board_size, board_size))
+    legal_moves_map = np.zeros((board_size[0], board_size[1]))
     for move in valid_moves:
         legal_moves_map[move[0]][move[1]] = 1
     return legal_moves_map
 
 
-# @njit
+@njit
 def count_connections(board, board_size):
-    # TODO: Adapt for Connect4 -> Change to return longest connected rows (eg. 2x row of 3)
     """
     Calculates the longest connections and their number for both players
 
     :return a dictionary of the form {color: (connection_length, number_of_connections)}
     """
 
-    connections = {config.BLACK: (1, 0), config.WHITE: (1, 0)}
+    connections = [(1, 0), (1, 0)]
 
     for col in range(board_size[1]):
         for row in range(board_size[0]):
             if board[row, col] != EMPTY:
-                for d in DIRECTIONS:
-
+                for i in range(len(DIRECTIONS)):
+                    d = DIRECTIONS[i]
                     color = board[row, col]
                     length = 0
                     new_pos = np.array([row, col])
@@ -130,15 +131,23 @@ def count_connections(board, board_size):
                         length += 1
                         new_pos += d
 
-                    if length > 1 and length == connections[color][0]:  # Connection of same length
-                        connections[color] = (connections[color][0], connections[color][1]+1)
-                    elif length > connections[color][0]:  # Connection of greater length
-                        connections[color] = (length, 1)
+                    if length > 1 and length == connections[color_map(color)][0]:  # Connection of same length
+                        connections[color_map(color)] = (connections[color_map(color)][0], connections[color_map(color)][1]+1)
+                    elif length > connections[color_map(color)][0]:  # Connection of greater length
+                        connections[color_map(color)] = (length, 1)
 
     return connections
 
 
-# @njit
+@njit
+def color_map(color):
+    if color > 0:
+        return 0
+    if color < 0:
+        return 1
+
+
+@njit
 def __get_representation_njit__(board, board_size, color, other_color):
     out = np.full((board_size[0], board_size[1]), config.EMPTY, dtype=np.float64)
 
