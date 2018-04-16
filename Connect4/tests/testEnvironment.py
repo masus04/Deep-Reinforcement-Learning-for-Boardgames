@@ -5,11 +5,11 @@ import os
 from datetime import datetime
 
 import Connect4.config as config
-from Connect4.environment.board import OthelloBoard
-from Connect4.environment.game import Othello
+from Connect4.environment.board import Connect4Board
+from Connect4.environment.game import Connect4
 from Connect4.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer, ExpertPlayer
 from Connect4.experiments.Connect4BaseExperiment import Connect4BaseExperiment
-# from Connect4.environment.evaluation import evaluate_against_base_players
+from Connect4.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
 
 
@@ -18,7 +18,7 @@ class TestEnvironment(unittest.TestCase):
     TEST_EPISODES = 20
 
     def test_Board_ApplyValidMoves(self):
-        board = OthelloBoard()
+        board = Connect4Board()
         self.assertEqual(board.get_valid_moves(config.BLACK), {(5,0), (5,1), (5,2), (5,3), (5,4), (5,5), (5,6)}, msg="Valid moves incorrect")
         self.assertEqual(board.get_valid_moves(config.WHITE), {(5,0), (5,1), (5,2), (5,3), (5,4), (5,5), (5,6)}, msg="Valid moves incorrect")
         board.apply_move((5, 3), config.BLACK)
@@ -26,99 +26,96 @@ class TestEnvironment(unittest.TestCase):
         self.assertEqual(board.get_valid_moves(config.WHITE), {(5,0), (5,1), (5,2), (4,3), (5,4), (5,5), (5,6)}, msg="Valid moves incorrect")
 
     def test_Board_ApplyIllegalMove(self):
-        board = OthelloBoard()
-        board.apply_move((2,3), config.BLACK)
+        board = Connect4Board()
+        board.apply_move((5,3), config.BLACK)
         self.assertEqual(board.illegal_move, None)
 
         board.apply_move((1, 1), config.BLACK)
+        print("î Intended illegal move î")
         self.assertEqual(board.illegal_move, config.BLACK)
 
     def test_Board_GameWon(self):
 
-        # Case 1: Full board
-        board = OthelloBoard()
+        # Case 1: Deterministic win
+        board = Connect4Board()
         self.assertIsNone(board.game_won(), msg="Empty Board")
-        board.apply_move((2, 3), config.BLACK)
-        board.apply_move((2, 2), config.WHITE)
-        board.apply_move((2, 1), config.BLACK)
-        board.apply_move((1, 1), config.WHITE)
-        board.apply_move((5, 4), config.BLACK)
-        board.apply_move((5, 5), config.WHITE)
-        board.apply_move((5, 6), config.BLACK)
-        board.apply_move((6, 6), config.WHITE)
-        self.assertIsNone(board.game_won(), msg="Empty Board")
+        board.apply_move((5, 3), config.BLACK)
+        board.apply_move((5, 2), config.WHITE)
+        board.apply_move((4, 2), config.BLACK)
+        board.apply_move((4, 3), config.WHITE)
+        board.apply_move((5, 1), config.BLACK)
+        board.apply_move((4, 1), config.WHITE)
+        board.apply_move((3, 1), config.BLACK)
+        self.assertIsNone(board.game_won(), msg="No Winner yet")
 
-        for col in range(len(board.board)):
-            for tile in range(len(board.board)):
-                if board.board[col, tile] == config.EMPTY:
-                    board.board[col, tile] = config.BLACK
-
-        board.legal_moves = {}  # This is required because moves were directly set to the board instead of using apply_move
-        self.assertEqual(board.game_won(), config.BLACK, msg="Black wins by stone count")
-
-        # Case 2: No valid moves
-        board = OthelloBoard()
-        board.apply_move((3, 2), config.BLACK)
-        board.apply_move((4, 5), config.BLACK)
-        self.assertEqual(board.game_won(), config.BLACK, msg="Black wins by stone count after no players could perform any legal moves")
-
-        # Case 3: Regular, deterministic game
-        for i in range(32):
-            game = Othello((DeterministicPlayer(), DeterministicPlayer()))
-            game.run_simulations(1)
-            winner = game.board.game_won()
-            self.assertEqual(winner, config.WHITE, "Winner of deterministic game was not Black")
+        board.apply_move((5, 0), config.WHITE)
+        board.apply_move((4, 0), config.BLACK)
+        board.apply_move((3, 0), config.WHITE)
+        board.apply_move((2, 0), config.BLACK)
+        self.assertEqual(board.game_won(), config.BLACK, msg="Black wins")
 
     def test_Board_Representation(self):
-        iterator = Connect4BaseExperiment.AlternatingColorIterator()
-        boards = []
-        inverses = []
+        board = Connect4Board()
+        board.apply_move((5, 3), config.BLACK)
+        board.apply_move((5, 2), config.WHITE)
+        board.apply_move((4, 2), config.BLACK)
+        board.apply_move((4, 3), config.WHITE)
+        board.apply_move((5, 1), config.BLACK)
+        board.apply_move((4, 1), config.WHITE)
+        board.apply_move((3, 1), config.BLACK)
+        board.apply_move((5, 0), config.WHITE)
+        board.apply_move((4, 0), config.BLACK)
+        board.apply_move((3, 0), config.WHITE)
+        board.apply_move((2, 0), config.BLACK)
 
-        for i in range(10):
-            board = OthelloBoard()
-            inverse_board = OthelloBoard()
-            inverse_board.board[3, 3] = config.BLACK
-            inverse_board.board[3, 4] = config.WHITE
-            inverse_board.board[4, 4] = config.BLACK
-            inverse_board.board[4, 3] = config.WHITE
-            for j in range(30):
-                color = iterator.__next__()
-                legal_moves = board.get_valid_moves(color)
-                if legal_moves:
-                    move = random.choice(list(legal_moves))
+        inv_board = Connect4Board()
+        inv_board.apply_move((5, 3), config.WHITE)
+        inv_board.apply_move((5, 2), config.BLACK)
+        inv_board.apply_move((4, 2), config.WHITE)
+        inv_board.apply_move((4, 3), config.BLACK)
+        inv_board.apply_move((5, 1), config.WHITE)
+        inv_board.apply_move((4, 1), config.BLACK)
+        inv_board.apply_move((3, 1), config.WHITE)
+        inv_board.apply_move((5, 0), config.BLACK)
+        inv_board.apply_move((4, 0), config.WHITE)
+        inv_board.apply_move((3, 0), config.BLACK)
+        inv_board.apply_move((2, 0), config.WHITE)
 
-                    board.apply_move(move, color)
-                    boards.append(board.copy())
+        self.assertTrue((board.get_representation(config.WHITE) == inv_board.get_representation(config.BLACK)).all(), "Representationn failed")
 
-                    inverse_board.apply_move(move, board.other_color(color))
-                    inverses.append((inverse_board.copy()))
+    def test_countConnections(self):
+        board = Connect4Board()
+        board.apply_move((5, 3), config.BLACK)
+        board.apply_move((5, 2), config.WHITE)
+        board.apply_move((4, 2), config.BLACK)
+        board.apply_move((4, 3), config.WHITE)
+        board.apply_move((5, 1), config.BLACK)
+        board.apply_move((4, 1), config.WHITE)
 
-        for i in range(len(boards)):
-            rep = boards[i].get_representation(config.WHITE)
-            self.assertTrue((rep == inverses[i].board).all(), msg="Inverting board failed")
+        self.assertEqual(board.count_connections()[config.BLACK], (2, 2), "Count connections failed")
+        self.assertEqual(board.count_connections()[config.WHITE], (2, 2), "Count connections failed")
 
-    def test_Board_CountStones(self):
-        board = OthelloBoard()
-        self.assertEqual((2, 2), board.count_stones())
+        board.apply_move((3, 1), config.BLACK)
+        board.apply_move((5, 0), config.WHITE)
+        board.apply_move((4, 0), config.BLACK)
+        board.apply_move((3, 0), config.WHITE)
+        board.apply_move((2, 0), config.BLACK)
 
-        board.apply_move((2, 3), config.BLACK)
-        board.apply_move((2, 2), config.WHITE)
-        board.apply_move((2, 1), config.BLACK)
-        board.apply_move((1, 1), config.WHITE)
+        self.assertEqual(board.count_connections()[config.BLACK], (4, 1), "Count connections failed")
+        self.assertEqual(board.count_connections()[config.WHITE], (3, 1), "Count connections failed")
 
-        self.assertEqual((4, 4), board.count_stones())
 
     def test_ExperiencedVsRandom(self):
         player1 = ExperiencedPlayer()
         player2 = RandomPlayer()
-        simulation = Othello([player1, player2])
+        simulation = Connect4([player1, player2])
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         print("Average Result Experienced vs Random: %s" % np.mean(results))
 
     def testRandomPlayer(self):
         player1 = RandomPlayer()
         player2 = RandomPlayer()
-        simulation = Othello([player1, player2])
+        simulation = Connect4([player1, player2])
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         self.assertTrue(len(results) == self.TEST_EPISODES)
         self.assertTrue(None not in results)
@@ -128,7 +125,7 @@ class TestEnvironment(unittest.TestCase):
     def test_ExperiencedPlayer(self):
         player1 = ExperiencedPlayer()
         player2 = ExperiencedPlayer()
-        simulation = Othello([player1, player2])
+        simulation = Connect4([player1, player2])
         results, losses = simulation.run_simulations(self.TEST_EPISODES)
         self.assertTrue(len(results) == self.TEST_EPISODES)
         self.assertTrue(None not in results)
@@ -156,7 +153,7 @@ class TestEnvironment(unittest.TestCase):
     def test_Performance(self):
         p1 = RandomPlayer()
         p2 = RandomPlayer()
-        simulation = Othello([p1, p2])
+        simulation = Connect4([p1, p2])
         N = 500
 
         start = datetime.now()

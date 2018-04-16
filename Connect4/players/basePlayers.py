@@ -50,21 +50,15 @@ class ExperiencedPlayer(Player):
         self.block_mid = block_mid
 
     def get_move(self, board):
-        # TODO: Rewrite this method for Connect4
-        valid_moves = board.get_valid_moves(self.color)
+        valid_moves = list(board.get_valid_moves(self.color))
+        afterstates = [board.copy().apply_move(move, self.color) for move in valid_moves]
+        afterstates = [(self.__evaluate_board__(afterstate)) for afterstate in afterstates]
+        arg = np.argmax(afterstates)
+        return valid_moves[arg]
 
-        attacks = []
-        for move in valid_moves:
-            afterstate = board.copy().apply_move(move, self.color)
-            if afterstate.game_won() == self.color:
-                return move
-
-            attacks.append((self.evaluate_heuristic_table(afterstate), move))
-
-        try:
-            return max(attacks)[1]
-        except ValueError:
-            return None
+    def __evaluate_board__(self, boardstate):
+        connections = boardstate.count_connections()
+        return connections[self.color][0] ** 5 * connections[self.color][1]
 
 
 class ExpertPlayer(Player):

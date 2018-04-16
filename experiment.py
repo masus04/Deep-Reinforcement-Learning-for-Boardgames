@@ -74,8 +74,8 @@ class Experiment(ABC):
         """
         Returns Black and White alternately, starting with WHITE
         """
-        def __init__(self):
-            self.colors = [self.config.BLACK, self.config.WHITE]
+        def __init__(self, black, white):
+            self.colors = [black, white]
 
         def __iter__(self):
             return self

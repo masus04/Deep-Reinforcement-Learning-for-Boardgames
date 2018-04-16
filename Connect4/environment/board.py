@@ -8,7 +8,7 @@ from Connect4.config import BLACK, WHITE, EMPTY
 DIRECTIONS = np.array([[0, 1], [1, -1], [1, 0], [1, 1]])  # Check bottom right (dynamic programming)
 
 
-class OthelloBoard(Board):
+class Connect4Board(Board):
     """
     Represents a board of Othello and all actions that can be taken on it.
     """
@@ -34,7 +34,7 @@ class OthelloBoard(Board):
         if color is None:
             raise BoardException("Illegal color provided: %s" % color)
 
-        if move in self.legal_moves:  # More than just placed stone in taken set
+        if move in self.get_valid_moves(color):  # More than just placed stone in taken set
             self.board[move[0], move[1]] = color
         else:
             print("!! Illegal move !!")
@@ -44,12 +44,18 @@ class OthelloBoard(Board):
         return self
 
     def game_won(self):
-        # TODO: Adapt for Connect4
+        connections = self.count_connections()
+
+        if connections[config.BLACK][0] == 4:
+            return config.BLACK
+
+        if connections[config.WHITE][0] == 4:
+            return config.WHITE
+
         if len(self.get_valid_moves(config.BLACK) | self.get_valid_moves(config.WHITE)) == 0:
-            stones = self.count_connections()
-            return config.BLACK if stones[0] > stones[1] else config.WHITE if stones[0] < stones[1] else config.EMPTY
-        else:
-            return None
+            return config.EMPTY
+
+        return None
 
     def get_representation(self, color):
         if color == BLACK:
@@ -68,7 +74,7 @@ class OthelloBoard(Board):
             return __get_legal_moves_map__(self.board_size, legal_moves)
 
     def copy(self):
-        return OthelloBoard(self)
+        return Connect4Board(self)
 
     def count_connections(self):
         return count_connections(self.board, self.board_size)
@@ -120,24 +126,24 @@ def count_connections(board, board_size):
                     color = board[row, col]
                     length = 0
                     new_pos = np.array([row, col])
-                    while in_bounds(new_pos) and board[new_pos[0], new_pos[1]] == color:
+                    while in_bounds(board_size, new_pos) and board[new_pos[0], new_pos[1]] == color:
                         length += 1
                         new_pos += d
 
                     if length > 1 and length == connections[color][0]:  # Connection of same length
-                        connections[color][1] += 1
+                        connections[color] = (connections[color][0], connections[color][1]+1)
                     elif length > connections[color][0]:  # Connection of greater length
                         connections[color] = (length, 1)
 
     return connections
 
 
-@njit
+# @njit
 def __get_representation_njit__(board, board_size, color, other_color):
-    out = np.full((board_size, board_size), config.EMPTY, dtype=np.float64)
+    out = np.full((board_size[0], board_size[1]), config.EMPTY, dtype=np.float64)
 
-    for i in range(board_size):
-        for j in range(board_size):
+    for i in range(board_size[0]):
+        for j in range(board_size[1]):
             if board[i, j] == color:
                 out[i,j] = other_color
             elif board[i, j] == other_color:

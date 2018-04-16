@@ -1,10 +1,10 @@
 import numpy as np
 
-import Othello.config as config
-from Othello.environment.board import OthelloBoard
+import Connect4.config as config
+from Connect4.environment.board import Connect4Board
 
 
-class Othello:
+class Connect4:
 
     def __init__(self, players):
         self.player1 = players[0]
@@ -24,7 +24,7 @@ class Othello:
         :param player2:
         :return: The original color of the winning player
         """
-        self.board = OthelloBoard()
+        self.board = Connect4Board()
         players = player1, player2
 
         while True:
