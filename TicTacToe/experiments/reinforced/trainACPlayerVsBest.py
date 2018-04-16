@@ -70,15 +70,15 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     COMMENT = "BOOTSTRAP"
-    ITERATIONS = 2
+    ITERATIONS = 5
 
     start = datetime.now()
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 1000000
+        GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = uniform(6e-4, 1e-5)  # random()*1e-9 + 1e-5
+        LR = uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
