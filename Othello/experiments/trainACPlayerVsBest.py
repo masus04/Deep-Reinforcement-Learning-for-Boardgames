@@ -76,7 +76,7 @@ if __name__ == '__main__':
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
         GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = uniform(4e-5, 4e-6)  # random()*1e-9 + 1e-5
+        LR = uniform(1e-4, 4e-6)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
