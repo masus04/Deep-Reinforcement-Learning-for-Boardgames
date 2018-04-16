@@ -30,7 +30,7 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
         self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
-            self.simulation = TicTacToe([self.player1, self.player2])
+            self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()

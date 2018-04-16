@@ -3,10 +3,10 @@ from random import random, choice, uniform
 import numpy as np
 
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
-from TicTacToe.players.acPlayer import FCACPlayer
-from TicTacToe.environment.game import TicTacToe
-from TicTacToe.environment.evaluation import evaluate_against_base_players, format_overview
+from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
+from Othello.players.acPlayer import FCACPlayer
+from Othello.environment.game import Othello
+from Othello.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer
 
 
@@ -30,7 +30,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
         self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
-            self.simulation = TicTacToe([self.player1, self.player2])
+            self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
@@ -38,7 +38,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
             if self.opponent is None:
                 self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False, block_mid=True)))
-                self.simulation = TicTacToe([self.player1, self.player2])
+                self.simulation = Othello([self.player1, self.player2])
 
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode

@@ -2,9 +2,10 @@ from datetime import datetime
 from random import random, choice, uniform
 import numpy as np
 
+import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
-from TicTacToe.players.acPlayer import FCACPlayer
+from TicTacToe.players.acPlayer import SmallFCACPlayer, FCACPlayer, ConvACPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer
@@ -27,7 +28,7 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = TicTacToe([self.player1, self.player2])
@@ -51,14 +52,14 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
             score, results, overview = evaluate_against_base_players(self.player1)
             self.add_results(results)
-            # self.add_scores(main_score, opponent_score)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     overview = format_overview(overview)
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s" % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview))
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s\ntook: %s"
+                        % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview, config.time_diff(start_time)))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
@@ -66,14 +67,14 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 10
+    ITERATIONS = 1
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 1000000
+        GAMES = 100000
         EVALUATIONS = 1000
-        LR = random()*1e-9 + 1e-5  # uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-5
+        LR = random()*1e-9 + 1e-4  # uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
