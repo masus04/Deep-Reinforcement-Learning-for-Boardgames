@@ -32,7 +32,7 @@ class ACStrategy(Strategy):
         distribution = Categorical(probs)
         action = distribution.sample()
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (action.data[0] // config.BOARD_SIZE[0], action.data[0] % config.BOARD_SIZE[1])
         if self.train:
             self.log_probs.append(distribution.log_prob(action))
             self.state_values.append(state_value)

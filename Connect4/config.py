@@ -16,7 +16,7 @@ LABEL_LOSS = WHITE
 LABEL_DRAW = EMPTY
 
 # Board parameters
-BOARD_SIZE = (6, 7)
+BOARD_SIZE = (8, 8)
 
 EVALUATION_GAMES = 20
 

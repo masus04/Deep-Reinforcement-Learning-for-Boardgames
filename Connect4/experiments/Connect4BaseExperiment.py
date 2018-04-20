@@ -1,4 +1,4 @@
-import Othello.config as config
+import Connect4.config as config
 from experiment import Experiment
 
 

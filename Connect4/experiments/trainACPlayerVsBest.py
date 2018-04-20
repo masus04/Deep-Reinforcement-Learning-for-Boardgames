@@ -3,7 +3,7 @@ from random import random, uniform, randint
 import numpy as np
 
 from Connect4.experiments.Connect4BaseExperiment import Connect4BaseExperiment
-from Connect4.players.acPlayer import FCACPlayer
+from Connect4.players.acPlayer import FCACPlayer, ConvACPlayer
 from Connect4.players.basePlayers import ExperiencedPlayer
 from Connect4.environment.game import Connect4
 from Connect4.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -25,7 +25,7 @@ class TrainACPlayerVsBest(Connect4BaseExperiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -68,7 +68,7 @@ class TrainACPlayerVsBest(Connect4BaseExperiment):
 if __name__ == '__main__':
 
     COMMENT = "BOOTSTRAP"
-    ITERATIONS = 5
+    ITERATIONS = 1
 
     start = datetime.now()
     for i in range(ITERATIONS):
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
         GAMES = 10000000
         EVALUATIONS = 1000  # 100 * randint(10, 500)
-        LR = uniform(4e-5, 4e-6)  # random()*1e-9 + 1e-5
+        LR = uniform(3e-5, 1e-5)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
