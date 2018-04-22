@@ -28,7 +28,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)  # ConvACPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = Othello([self.player1, self.player2])
@@ -67,14 +67,14 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 5
+    ITERATIONS = 10
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 1000000
         EVALUATIONS = 1000
-        LR = uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
+        LR = uniform(1e-4, 1e-5)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
