@@ -2,6 +2,7 @@ from datetime import datetime
 from random import random, choice, uniform
 import numpy as np
 
+import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
@@ -27,7 +28,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
     def run(self, lr, batch_size, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = Othello([self.player1, self.player2])
@@ -58,7 +59,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
                     overview = format_overview(overview)
                     self.plot_and_save(
                         "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s" % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview))
+                        "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s\nTime: %s" % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview, config.time_diff(start_time)))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self

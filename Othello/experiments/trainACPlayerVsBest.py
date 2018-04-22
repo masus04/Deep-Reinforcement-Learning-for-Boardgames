@@ -2,6 +2,7 @@ from datetime import datetime
 from random import random, uniform, randint
 import numpy as np
 
+import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
 from Othello.players.basePlayers import ExperiencedPlayer
@@ -25,7 +26,7 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -52,7 +53,7 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "%s vs BEST LR: %s" % (COMMENT, lr),
-                        "%s Train %s vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (COMMENT, self.player1, lr, episode*games_per_evaluation, score))
+                        "%s Train %s vs Best version of self\nLR: %s Games: %s \nFinal score: %s\nTime: %s" % (COMMENT, self.player1, lr, episode*games_per_evaluation, score, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
