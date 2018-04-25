@@ -50,7 +50,11 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
+            if self.opponent is None:
+                score, results, overview = evaluate_against_base_players(self.player1)
+            else:
+                score, results, overview = evaluate_against_base_players(self.player1, evaluation_players=[self.opponent])
+
             self.add_results(results)
             # self.add_scores(main_score, opponent_score)
 
@@ -67,18 +71,18 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 10
+    ITERATIONS = 1
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 1000000
         EVALUATIONS = 1000
-        LR = uniform(1e-4, 1e-5)  # random()*1e-9 + 1e-5
+        LR = 5e-4  # uniform(1e-4, 1e-5)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-        OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
+        OPPONENT = ExperiencedPlayer(deterministic=True, block_mid=False)
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
