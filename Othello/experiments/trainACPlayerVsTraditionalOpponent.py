@@ -4,7 +4,7 @@ import numpy as np
 
 import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
+from Othello.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer
 from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, format_overview
@@ -38,7 +38,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
         for episode in range(1, self.evaluations+1):
 
             if self.opponent is None:
-                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False, block_mid=True)))
+                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False)))
                 self.simulation = Othello([self.player1, self.player2])
 
             # train
@@ -71,24 +71,24 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
+    ITERATIONS = 10
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 1000000
+        GAMES = 100000
         EVALUATIONS = 1000
-        LR = 5e-4  # uniform(1e-4, 1e-5)  # random()*1e-9 + 1e-5
+        LR = uniform(1e-2, 1e-4)  # random()*1e-9 + 1e-5
         BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-        OPPONENT = ExperiencedPlayer(deterministic=True, block_mid=False)
+        OPPONENT = DeterministicPlayer()  # ExperiencedPlayer(deterministic=True)
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
         print()
-        experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
+        # experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
 
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 

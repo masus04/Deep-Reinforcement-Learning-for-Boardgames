@@ -2,15 +2,15 @@ import os
 from datetime import datetime
 from random import random
 
-import TicTacToe.config as config
-from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
-# from TicTacToe.players.acPlayer import FCACPlayer
-from TicTacToe.players.basePlayers import ExperiencedPlayer
-from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
+import Othello.config as config
+from Othello.players.reinforcePlayer import FCReinforcePlayer, ConvReinforcePlayer
+from Othello.players.acPlayer import FCACPlayer
+from Othello.players.basePlayers import ExperiencedPlayer
+from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from plotting import Printer
 
 
-class TrainPGStrategySupervised(TicTacToeBaseExperiment):
+class TrainPGStrategySupervised(OthelloBaseExperiment):
 
     def __init__(self, games, episodes):
         super(TrainPGStrategySupervised, self).__init__()
@@ -30,7 +30,7 @@ class TrainPGStrategySupervised(TicTacToeBaseExperiment):
         player = FCReinforcePlayer(lr=lr)
         player.color = config.BLACK
 
-        expert = ExperiencedPlayer(deterministic=True, block_mid=True)
+        expert = ExperiencedPlayer(deterministic=True)
         expert.color = config.BLACK
 
         training_set = self.generate_supervised_training_data(self.games, expert)

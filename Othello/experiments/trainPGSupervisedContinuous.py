@@ -2,16 +2,16 @@ import os
 from datetime import datetime
 from random import random
 
-import TicTacToe.config as config
-from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.acPlayer import FCACPlayer, ConvACPlayer
-from TicTacToe.players.reinforcePlayer import FCReinforcePlayer, ConvReinforcePlayer
-from TicTacToe.players.basePlayers import ExperiencedPlayer, RandomPlayer
-from TicTacToe.environment.board import TicTacToeBoard
+import Othello.config as config
+from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
+from Othello.players.reinforcePlayer import FCReinforcePlayer, ConvReinforcePlayer
+from Othello.players.basePlayers import ExperiencedPlayer, RandomPlayer
+from Othello.environment.board import OthelloBoard
 from plotting import Printer
 
 
-class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
+class TrainPGSupervisedContinuous(OthelloBaseExperiment):
 
     def __init__(self, games, evaluation_period):
         super(TrainPGSupervisedContinuous, self).__init__()
@@ -44,7 +44,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         start = datetime.now()
         for game in range(self.games):
             rewards = []
-            board = TicTacToeBoard()
+            board = OthelloBoard()
 
             for i in range(9):
                 expert_move = expert.get_move(board)
@@ -90,11 +90,11 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 100000
+    GAMES = 1000000
     BATCH_SIZE = 32
     LR = random()*1e-9 + 1e-4
 
-    EVALUATION_PERIOD = 1000
+    EVALUATION_PERIOD = 100
 
     experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
     reward = experiment.run(lr=LR, batch_size=BATCH_SIZE)

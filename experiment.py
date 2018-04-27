@@ -75,7 +75,8 @@ class Experiment(ABC):
         Returns Black and White alternately, starting with WHITE
         """
         def __init__(self):
-            self.colors = [self.config.BLACK, self.config.WHITE]
+            from Othello.config import BLACK, WHITE
+            self.colors = [BLACK, WHITE]
 
         def __iter__(self):
             return self

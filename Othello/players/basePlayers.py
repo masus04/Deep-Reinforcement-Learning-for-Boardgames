@@ -56,9 +56,8 @@ class ExperiencedPlayer(Player):
                                 [-25, -25,  2,  2,  2,  2, -25, -25],
                                 [100, -25, 10,  5,  5, 10, -25, 100]])
 
-    def __init__(self, deterministic=True, block_mid=False):
+    def __init__(self, deterministic=True):
         self.deterministic = deterministic
-        self.block_mid = block_mid
 
     def get_move(self, board):
         valid_moves = board.get_valid_moves(self.color)
