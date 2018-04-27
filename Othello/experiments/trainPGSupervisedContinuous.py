@@ -32,13 +32,13 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
         player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
         player.color = config.BLACK
 
-        expert = ExperiencedPlayer(deterministic=True, block_mid=True)
+        expert = ExperiencedPlayer(deterministic=True)
         expert.color = config.BLACK
 
         generator = RandomPlayer()
         color_iterator = self.AlternatingColorIterator()
 
-        validation_set = self.generate_supervised_training_data(EVALUATION_GAMES, ExperiencedPlayer(deterministic=True, block_mid=True))
+        validation_set = self.generate_supervised_training_data(EVALUATION_GAMES, ExperiencedPlayer(deterministic=True))
 
         print("Training ReinforcedPlayer supervised continuously with LR: %s" % lr)
         start = datetime.now()
@@ -46,7 +46,7 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
             rewards = []
             board = OthelloBoard()
 
-            for i in range(9):
+            while len(board.get_valid_moves(expert.color)) != 0:
                 expert_move = expert.get_move(board)
                 player_move = player.get_move(board)
 
@@ -54,8 +54,11 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
                 rewards.append(reward)
 
                 # prepare for next sample
+                color = color_iterator.__next__()
+                generator.color = color
                 move = generator.get_move(board)
-                board.apply_move(move, color_iterator.__next__())
+                if move is not None:
+                    board.apply_move(move, color)
 
             average_reward = sum(rewards) / len(rewards)
             player.strategy.rewards = rewards
