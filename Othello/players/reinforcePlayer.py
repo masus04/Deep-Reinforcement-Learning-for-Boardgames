@@ -68,6 +68,12 @@ class PGStrategy(abstract.Strategy):
         return abs(policy_loss.data[0])
 
 
+class SmallFCReinforcePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+        super(SmallFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
+                                                else PGStrategy(lr, batch_size, model=FCPolicyModel()))
+
+
 class FCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None

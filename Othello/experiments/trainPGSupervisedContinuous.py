@@ -5,7 +5,7 @@ from random import random
 import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
-from Othello.players.reinforcePlayer import FCReinforcePlayer, ConvReinforcePlayer
+from Othello.players.reinforcePlayer import FCReinforcePlayer, SmallFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from Othello.environment.board import OthelloBoard
 from plotting import Printer
@@ -29,7 +29,7 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
 
         EVALUATION_GAMES = 10
 
-        player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
+        player = SmallFCReinforcePlayer(lr=lr, batch_size=batch_size)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True)

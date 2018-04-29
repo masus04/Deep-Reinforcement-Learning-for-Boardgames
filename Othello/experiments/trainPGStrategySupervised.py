@@ -3,7 +3,7 @@ from datetime import datetime
 from random import random
 
 import Othello.config as config
-from Othello.players.reinforcePlayer import FCReinforcePlayer, ConvReinforcePlayer
+from Othello.players.reinforcePlayer import FCReinforcePlayer, SmallFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.acPlayer import FCACPlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
@@ -27,7 +27,7 @@ class TrainPGStrategySupervised(OthelloBaseExperiment):
         print("Training PGStrategy supervised on %s games for %s Episodes - LR: %s" % (self.games, self.episodes, lr))
         TEST_GAMES = 1
 
-        player = FCReinforcePlayer(lr=lr)
+        player = SmallFCReinforcePlayer(lr=lr)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True)
