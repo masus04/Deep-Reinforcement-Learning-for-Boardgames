@@ -27,7 +27,7 @@ class TrainPGStrategySupervised(OthelloBaseExperiment):
         print("Training PGStrategy supervised on %s games for %s Episodes - LR: %s" % (self.games, self.episodes, lr))
         TEST_GAMES = 1
 
-        player = SmallFCReinforcePlayer(lr=lr)
+        player = FCReinforcePlayer(lr=lr)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True)

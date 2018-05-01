@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 import TicTacToe.config as config
 import abstractClasses as abstract
 from abstractClasses import LearningPlayer
-from models8x8 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models8x8 import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
 from abstractClasses import PlayerException
 
 
@@ -78,6 +78,12 @@ class FCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                 else PGStrategy(lr, batch_size, model=LargeFCPolicyModel()))
+
+
+class HugeFCReinforcePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+        super(HugeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
+                                                else PGStrategy(lr, batch_size, model=HugeFCPolicyModel()))
 
 
 class ConvReinforcePlayer(LearningPlayer):

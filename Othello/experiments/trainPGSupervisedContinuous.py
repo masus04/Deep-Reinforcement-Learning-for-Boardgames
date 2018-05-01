@@ -5,7 +5,7 @@ from random import random
 import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
-from Othello.players.reinforcePlayer import FCReinforcePlayer, SmallFCReinforcePlayer, ConvReinforcePlayer
+from Othello.players.reinforcePlayer import SmallFCReinforcePlayer, FCReinforcePlayer, HugeFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from Othello.environment.board import OthelloBoard
 from plotting import Printer
@@ -29,7 +29,7 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
 
         EVALUATION_GAMES = 10
 
-        player = SmallFCReinforcePlayer(lr=lr, batch_size=batch_size)
+        player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True)
@@ -93,13 +93,16 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 1000000
-    BATCH_SIZE = 32
-    LR = random()*1e-9 + 1e-4
+    ITERATIONS = 5
 
-    EVALUATION_PERIOD = 100
+    for i in range(ITERATIONS):
+        GAMES = 5000000
+        BATCH_SIZE = 32
+        LR = random()*1e-9 + 1e-4
 
-    experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
-    reward = experiment.run(lr=LR, batch_size=BATCH_SIZE)
+        EVALUATION_PERIOD = 100
 
-    print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)
+        experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
+        reward = experiment.run(lr=LR, batch_size=BATCH_SIZE)
+
+        print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)

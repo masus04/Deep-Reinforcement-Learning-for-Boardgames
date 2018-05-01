@@ -75,6 +75,54 @@ class LargeFCPolicyModel(abstract.Model):
         return p, vf
 
 
+class HugeFCPolicyModel(abstract.Model):
+
+    def __init__(self, ac_policy=False):
+        super(HugeFCPolicyModel, self).__init__()
+        self.ac_policy = ac_policy
+
+        self.board_size = config.BOARD_SIZE
+        intermediate_size = 128
+
+        self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=intermediate_size)
+        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.fc4 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+
+        self.fc5 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.fc6 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+
+        self.policy_head1 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.policy_head2 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
+
+        self.vf_head1 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.vf_head2 = torch.nn.Linear(in_features=intermediate_size, out_features=1)
+
+        self.__xavier_initialization__()
+
+        if config.CUDA:
+            self.cuda(0)
+
+    def forward(self, input, legal_moves_map):
+        x = input.view(-1, self.board_size ** 2)
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
+        x = F.leaky_relu(self.fc3(x))
+        x = F.leaky_relu(self.fc4(x))
+
+        x = F.leaky_relu(self.fc5(x))
+        x = F.leaky_relu(self.fc6(x))
+
+        p = F.leaky_relu(self.policy_head1(x))
+        p = self.policy_head2(p)
+        p = self.legal_softmax(p, legal_moves_map)
+
+        vf = F.leaky_relu(self.vf_head1(x))
+        vf = self.vf_head2(vf)
+
+        return p, vf
+
+
 class ConvPolicyModel(abstract.Model):
 
     def __init__(self, ac_policy=False):
@@ -113,6 +161,7 @@ class ConvPolicyModel(abstract.Model):
         x = F.relu(self.conv7(x))
         x = F.relu(self.conv8(x))
 
+        # TODO: Give more flexibility to both outputs!?
         x = self.reduce(x)
         x = x.view(-1, self.board_size**2)
 
