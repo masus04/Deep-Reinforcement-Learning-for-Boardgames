@@ -45,7 +45,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
             self.add_results(("Losses", np.mean(losses)))
 
             # evaluate  # TODO: Test this
-            if episode / 1000 == 0:
+            if episode % 1000 == 0:
                 self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
                 score, results, overview = evaluate_against_base_players(self.player1)
                 self.add_results(results)
