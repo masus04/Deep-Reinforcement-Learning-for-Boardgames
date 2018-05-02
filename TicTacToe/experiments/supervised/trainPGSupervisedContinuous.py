@@ -4,7 +4,7 @@ from random import random
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.acPlayer import FCACPlayer, ConvACPlayer
+from TicTacToe.players.acPlayer import LargeFCACPlayer, ConvACPlayer
 from TicTacToe.players.reinforcePlayer import FCReinforcePlayer, ConvReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from TicTacToe.environment.board import TicTacToeBoard

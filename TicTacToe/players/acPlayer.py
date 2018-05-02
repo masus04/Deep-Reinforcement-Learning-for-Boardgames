@@ -71,15 +71,15 @@ class ACStrategy(Strategy):
         return abs(loss.data[0])
 
 
-class SmallFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
-        super(SmallFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, batch_size, model=FCPolicyModel(ac_policy=True)))
-
-
 class FCACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
+                                         else ACStrategy(lr, batch_size, model=FCPolicyModel(ac_policy=True)))
+
+
+class LargeFCACPlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+        super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, batch_size, model=LargeFCPolicyModel(ac_policy=True)))
 
 

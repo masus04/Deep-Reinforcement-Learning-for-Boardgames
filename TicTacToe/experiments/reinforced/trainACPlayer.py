@@ -3,7 +3,7 @@ from random import random
 import numpy as np
 
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.acPlayer import FCACPlayer
+from TicTacToe.players.acPlayer import FCACPlayer, LargeFCACPlayer, ConvACPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players
 from plotting import Printer
@@ -42,16 +42,17 @@ class TrainACPlayer(TicTacToeBaseExperiment):
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
-            # evaluate
-            self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
-            self.add_results(results)
+            # evaluate  # TODO: Test this
+            if episode / 1000 == 0:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+                score, results, overview = evaluate_against_base_players(self.player1)
+                self.add_results(results)
 
-            if not silent:
-                if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
-                    self.plot_and_save(
-                        "ReinforcementTraining LR: %s" % lr,
-                        "Train ACPlayer vs self with shared network\nLR: %s Games: %s" % (lr, episode*games_per_evaluation))
+                if not silent:
+                    if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                        self.plot_and_save(
+                            "ReinforcementTraining LR: %s" % lr,
+                            "Train ACPlayer vs self with shared network\nLR: %s Games: %s" % (lr, episode*games_per_evaluation))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self

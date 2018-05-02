@@ -4,7 +4,7 @@ import numpy as np
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.acPlayer import SmallFCACPlayer, FCACPlayer, ConvACPlayer
+from TicTacToe.players.acPlayer import FCACPlayer, LargeFCACPlayer, ConvACPlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -26,7 +26,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -44,17 +44,18 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
-            # evaluate
-            self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
-            self.add_results(results)
+            # evaluate  # TODO: Test this
+            if episode / 1000 == 0:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+                score, results, overview = evaluate_against_base_players(self.player1)
+                self.add_results(results)
 
-            if not silent:
-                if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
-                    self.plot_and_save(
-                        "%s vs BEST LR: %s" % (COMMENT, lr),
-                        "%s Train %s vs Best version of self\nLR: %s Games: %s\nTime: %s"
-                        % (COMMENT, self.player1, lr, episode*games_per_evaluation, config.time_diff(start_time)))
+                if not silent:
+                    if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                        self.plot_and_save(
+                            "%s vs BEST" % (self.player1),
+                            "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                            % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -69,7 +70,6 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    COMMENT = "BOOTSTRAP"
     ITERATIONS = 5
 
     start = datetime.now()

@@ -2,6 +2,7 @@ from datetime import datetime
 from random import random
 import numpy as np
 
+import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
@@ -16,7 +17,7 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
         super(TrainReinforcePlayerVsBest, self).__init__()
         self.games = games
         self.evaluations = evaluations
-        self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
+        self.pretrained_player = pretrained_player if pretrained_player is not None else None
 
         self.__plotter__.line3_name = "ExperiencedPlayer score"
 
@@ -43,16 +44,18 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
-            # evaluate
-            self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
-            self.add_results(results)
+            # evaluate  # TODO: Test this
+            if episode / 1000 == 0:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+                score, results, overview = evaluate_against_base_players(self.player1)
+                self.add_results(results)
 
-            if not silent:
-                if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
-                    self.plot_and_save(
-                        "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                if not silent:
+                    if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                        self.plot_and_save(
+                            "%s vs BEST" % (self.player1),
+                            "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                            % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):

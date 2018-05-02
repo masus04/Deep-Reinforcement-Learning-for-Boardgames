@@ -70,6 +70,9 @@ class Experiment(ABC):
     def num_episodes(self):
         return self.__plotter__.num_episodes
 
+    def __str__(self):
+        return self.__class__.__name__
+
     class AlternatingColorIterator:
         """
         Returns Black and White alternately, starting with WHITE

@@ -5,7 +5,7 @@ import numpy as np
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
-from TicTacToe.players.acPlayer import SmallFCACPlayer, FCACPlayer, ConvACPlayer
+from TicTacToe.players.acPlayer import FCACPlayer, LargeFCACPlayer, ConvACPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer

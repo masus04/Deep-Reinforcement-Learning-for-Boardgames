@@ -67,6 +67,12 @@ class PGStrategy(abstract.Strategy):
 class FCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
+                                                else PGStrategy(lr, batch_size, model=FCPolicyModel()))
+
+
+class LargeFCReinforcePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+        super(LargeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                 else PGStrategy(lr, batch_size, model=LargeFCPolicyModel()))
 
 

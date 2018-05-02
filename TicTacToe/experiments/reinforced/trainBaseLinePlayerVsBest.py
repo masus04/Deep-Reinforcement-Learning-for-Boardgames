@@ -53,9 +53,9 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs BEST LR: %s" % (COMMENT, lr),
-                        "%s Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
-                        % (COMMENT, self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
+                        "%s vs BEST" % (self.player1),
+                        "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                        % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -70,7 +70,6 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    COMMENT = "BASELINE"
     ITERATIONS = 1
 
     start = datetime.now()
