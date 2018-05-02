@@ -20,7 +20,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
     def run(self):
         LR = 1e-5 + random()*1e-9
         GAMES = 200000
-        EVALUATIONS = GAMES / 100
+        EVALUATIONS = GAMES // 100
 
         # ACTOR CRITIC
         for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
