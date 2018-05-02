@@ -11,10 +11,10 @@ from TicTacToe.environment.evaluation import evaluate_against_base_players, eval
 from plotting import Printer
 
 
-class TrainACPlayerVsBest(TicTacToeBaseExperiment):
+class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
-        super(TrainACPlayerVsBest, self).__init__()
+        super(TrainBaselinePlayerVsBest, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -43,6 +43,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
+            # self.add_results(("BEST", np.mean(results)))
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
@@ -53,8 +54,8 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "%s vs BEST LR: %s" % (COMMENT, lr),
-                        "%s Train %s vs Best version of self\nLR: %s Games: %s\nTime: %s"
-                        % (COMMENT, self.player1, lr, episode*games_per_evaluation, config.time_diff(start_time)))
+                        "%s Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                        % (COMMENT, self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -70,7 +71,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     COMMENT = "BASELINE"
-    ITERATIONS = 2
+    ITERATIONS = 1
 
     start = datetime.now()
     for i in range(ITERATIONS):
@@ -83,7 +84,7 @@ if __name__ == '__main__':
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
-        experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+        experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
         print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
