@@ -2,6 +2,7 @@ from datetime import datetime
 from random import random
 import numpy as np
 
+import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, ConvBaselinePlayer
 from Othello.players.basePlayers import ExperiencedPlayer
@@ -44,17 +45,16 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
             self.add_results(("Losses", np.mean(losses)))
 
             # evaluate
-            if episode % 1000 == 0:
+            if episode*games_per_evaluation % 1000 == 0:
                 self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
                 score, results, overview = evaluate_against_base_players(self.player1)
                 self.add_results(results)
 
-                if not silent:
-                    if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
-                        self.plot_and_save(
-                            "%s vs BEST" % (self.player1),
-                            "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
-                            % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
+                if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                    self.plot_and_save(
+                        "%s vs BEST" % (self.player1),
+                        "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                        % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -70,8 +70,8 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 10000
-    EVALUATIONS = GAMES//100
-    LR = random()*1e-9 + 2e-5
+    EVALUATIONS = GAMES//10
+    LR = random()*1e-9 + 1e-5
     BATCH_SIZE = 32
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")

@@ -46,12 +46,12 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
             # self.add_results(("BEST", np.mean(results)))
 
             # evaluate
-            self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
-            self.add_results(results)
+            if episode*games_per_evaluation % 1000 == 0:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+                score, results, overview = evaluate_against_base_players(self.player1)
+                self.add_results(results)
 
-            if not silent:
-                if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "%s vs BEST" % (self.player1),
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
