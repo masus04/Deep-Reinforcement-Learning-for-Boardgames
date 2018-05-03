@@ -3,7 +3,7 @@ from random import random
 import numpy as np
 
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.reinforcePlayer import FCReinforcePlayer
+from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCPolicyModel, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -44,15 +44,17 @@ class TrainReinforcePlayerVsBest(OthelloBaseExperiment):
             self.add_results(("Losses", np.mean(losses)))
 
             # evaluate
-            self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
-            self.add_results(results)
+            if episode % 1000 == 0:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+                score, results, overview = evaluate_against_base_players(self.player1)
+                self.add_results(results)
 
-            if not silent:
-                if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
-                    self.plot_and_save(
-                        "ReinforcementTraining LR: %s" % lr,
-                        "Train ReinforcementPlayer vs Best version of self\nLR: %s Games: %s \nFinal score: %s" % (lr, episode*games_per_evaluation, score))
+                if not silent:
+                    if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
+                        self.plot_and_save(
+                            "%s vs BEST" % (self.player1),
+                            "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                            % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
@@ -68,7 +70,7 @@ class TrainReinforcePlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 10000
-    EVALUATIONS = 100
+    EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 2e-5
     BATCH_SIZE = 32
 

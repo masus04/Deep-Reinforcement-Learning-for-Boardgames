@@ -50,10 +50,10 @@ class ACStrategy(Strategy):
 
         # ----------------------------------------------------------- #
         # Use either Discount (and baseline),
-        # rewards = self.discount_rewards(self.rewards, self.gamma)
-        # rewards = self.rewards_baseline(rewards)
+        rewards = self.discount_rewards(self.rewards, self.gamma)
+        rewards = self.rewards_baseline(rewards)
         # Or Bootstrapping
-        rewards = self.bootstrap_rewards()
+        # rewards = self.bootstrap_rewards()
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
@@ -71,21 +71,21 @@ class ACStrategy(Strategy):
         return abs(loss.data[0])
 
 
-class FCACPlayer(LearningPlayer):
+class FCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
-        super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
+        super(FCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, batch_size, model=FCPolicyModel(ac_policy=True)))
 
 
-class LargeFCACPlayer(LearningPlayer):
+class LargeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
-        super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
+        super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, batch_size, model=LargeFCPolicyModel(ac_policy=True)))
 
 
-class ConvACPlayer(LearningPlayer):
+class ConvBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
-        super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
+        super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
                                            else ACStrategy(lr, batch_size, model=ConvPolicyModel(ac_policy=True)))
 
 

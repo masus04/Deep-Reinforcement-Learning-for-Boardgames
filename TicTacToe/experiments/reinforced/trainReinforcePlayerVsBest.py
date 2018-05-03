@@ -44,7 +44,7 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
-            # evaluate  # TODO: Test this
+            # evaluate
             if episode % 1000 == 0:
                 self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
                 score, results, overview = evaluate_against_base_players(self.player1)
@@ -71,7 +71,7 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 100000
-    EVALUATIONS = 1000
+    EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 2e-5
     BATCH_SIZE = 32
 

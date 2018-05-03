@@ -1,20 +1,19 @@
 from datetime import datetime
-from random import random, uniform, randint
+from random import random
 import numpy as np
 
-import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
+from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, ConvBaselinePlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
 from plotting import Printer
 
 
-class TrainACPlayerVsBest(OthelloBaseExperiment):
+class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
-        super(TrainACPlayerVsBest, self).__init__()
+        super(TrainBaselinePlayerVsBest, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -26,7 +25,7 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         return self
 
     def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr, batch_size=batch_size)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -70,23 +69,16 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
+    GAMES = 10000
+    EVALUATIONS = GAMES//100
+    LR = random()*1e-9 + 2e-5
+    BATCH_SIZE = 32
 
-    start = datetime.now()
-    for i in range(ITERATIONS):
+    PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
-        print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 10000000
-        EVALUATIONS = GAMES//100
-        LR = uniform(1e-4, 4e-6)  # random()*1e-9 + 1e-5
-        BATCH_SIZE = 1
+    experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+    experiment.run(lr=LR, batch_size=BATCH_SIZE)
 
-        PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
-
-        experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-        experiment.run(lr=LR, batch_size=BATCH_SIZE)
-
-        print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
-        if PLAYER:
-            print("Pretrained on %s legal moves" % 1000000)
-    print("Experiment completed successfully, took %s" % (datetime.now()-start))
+    print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+    if PLAYER:
+        print("Pretrained on %s legal moves" % 1000000)
