@@ -2,6 +2,7 @@ from datetime import datetime
 from random import random
 import numpy as np
 
+import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCPolicyModel, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer
@@ -68,7 +69,7 @@ class TrainReinforcePlayerVsBest(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 10000
+    GAMES = 10000000
     EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 2e-5
     BATCH_SIZE = 32

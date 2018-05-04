@@ -69,7 +69,7 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 100000
+    GAMES = 1000000
     EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 2e-5
     BATCH_SIZE = 32

@@ -69,7 +69,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 10000
+    GAMES = 10000000
     EVALUATIONS = GAMES//10
     LR = random()*1e-9 + 1e-5
     BATCH_SIZE = 32
