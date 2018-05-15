@@ -83,6 +83,12 @@ class LargeFCACPlayer(LearningPlayer):
                                          else ACStrategy(lr, batch_size, model=LargeFCPolicyModel(ac_policy=True)))
 
 
+class HugeFCACPlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+        super(HugeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
+                                         else ACStrategy(lr, batch_size, model=HugeFCACPlayer(ac_policy=True)))
+
+
 class ConvACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, batch_size=1):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
