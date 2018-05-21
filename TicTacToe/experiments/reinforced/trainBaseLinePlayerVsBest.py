@@ -25,8 +25,8 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, batch_size, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, batch_size=batch_size)
+    def run(self, lr, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -79,12 +79,11 @@ if __name__ == '__main__':
         GAMES = 1000000
         EVALUATIONS = 5000  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-5  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
-        BATCH_SIZE = 1
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
         experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-        experiment.run(lr=LR, batch_size=BATCH_SIZE)
+        experiment.run(lr=LR)
 
         print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
         if PLAYER:

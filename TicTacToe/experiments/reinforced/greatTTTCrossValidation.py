@@ -26,21 +26,21 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
         for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
             experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
             print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-            experiment.run(lr=LR, batch_size=1)
+            experiment.run(lr=LR)
             experiment.reset()
 
         # BASELINE
         for player in [FCBaseLinePlayer(LR), LargeFCBaseLinePlayer(LR)]:
             experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
             print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-            experiment.run(lr=LR, batch_size=1)
+            experiment.run(lr=LR)
             experiment.reset()
 
         # REINFORCE
         for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
             experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
             print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-            experiment.run(lr=LR, batch_size=1)
+            experiment.run(lr=LR)
             experiment.reset()
 
 

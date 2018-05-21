@@ -10,16 +10,14 @@ from abstractClasses import PlayerException
 
 class PGStrategy(abstract.Strategy):
 
-    def __init__(self, lr, batch_size, gamma=config.GAMMA,  model=None):
+    def __init__(self, lr, gamma=config.GAMMA,  model=None):
         super(PGStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
-        self.batch_size = batch_size
 
         self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
-        self.batches = []
 
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
@@ -54,13 +52,8 @@ class PGStrategy(abstract.Strategy):
 
         self.optimizer.zero_grad()
         policy_loss = torch.cat(policy_losses).sum()/len(policy_losses)
-        self.batches.append(policy_loss)
-
-        if len(self.batches) >= self.batch_size:
-            batch_loss = torch.cat(self.batches).sum()/len(self.batches)
-            batch_loss.backward()
-            self.optimizer.step()
-            del self.batches[:]
+        policy_loss.backward()
+        self.optimizer.step()
 
         del self.rewards[:]
         del self.log_probs[:]
@@ -69,24 +62,24 @@ class PGStrategy(abstract.Strategy):
 
 
 class FCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, batch_size, model=FCPolicyModel()))
+                                                else PGStrategy(lr, model=FCPolicyModel()))
 
 
 class LargeFCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, batch_size, model=LargeFCPolicyModel()))
+                                                else PGStrategy(lr, model=LargeFCPolicyModel()))
 
 
 class HugeFCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, batch_size, model=HugeFCPolicyModel()))
+                                                else PGStrategy(lr, model=HugeFCPolicyModel()))
 
 
 class ConvReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(ConvReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                  else PGStrategy(lr, batch_size, model=ConvPolicyModel()))
+                                                  else PGStrategy(lr, model=ConvPolicyModel()))

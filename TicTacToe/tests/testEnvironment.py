@@ -167,7 +167,7 @@ class TestEnvironment(unittest.TestCase):
         p1 = ttt_players.RandomPlayer()
         evaluate_against_base_players(p1, silent=False)
 
-        p2 = FCReinforcePlayer(lr=1e-5, batch_size=1)
+        p2 = FCReinforcePlayer(lr=1e-5)
         evaluate_against_base_players(p2, silent=False)
 
 

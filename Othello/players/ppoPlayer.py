@@ -10,11 +10,10 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class PPOStrategy(Strategy):
 
-    def __init__(self, lr, batch_size=1, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, gamma=config.GAMMA, model=None):
         super(PPOStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
-        self.batch_size = batch_size
 
         self.model = model if model else FCPolicyModel(ac_policy=True)
         self.model.ac_policy = True
@@ -83,9 +82,9 @@ class PPOStrategy(Strategy):
 
 
 class FCPPOPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(FCPPOPlayer, self).__init__(strategy=strategy if strategy is not None
-                                          else PPOStrategy(lr, batch_size, model=LargeFCPolicyModel(ac_policy=True)))
+                                          else PPOStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
 
 
 @jit

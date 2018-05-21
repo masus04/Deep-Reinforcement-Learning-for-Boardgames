@@ -27,8 +27,8 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
         self.__init__(self.max_games)
         return self
 
-    def run(self, lr, batch_size, termination_criterion, silent=False):
-        self.player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
+    def run(self, lr, termination_criterion, silent=False):
+        self.player = FCReinforcePlayer(lr=lr)
         self.player.color = config.BLACK
 
         generator = RandomPlayer()
@@ -43,7 +43,7 @@ class PretrainLegalMoves(TicTacToeBaseExperiment):
 
             if not silent:
                 if Printer.print_episode(game, self.max_games, datetime.now() - start):
-                    plot_name = "Pretraining %s using %s layers on legal moves\nlr: %s batch size: %s" % (self.player.__class__.__name__, LAYERS, lr, batch_size)
+                    plot_name = "Pretraining %s using %s layers on legal moves\nlr: %s" % (self.player.__class__.__name__, LAYERS, lr)
                     plot_info = "%sGames - Final reward: %s \nTime: %s" % (game, reward, config.time_diff(start))
                     self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
                     if (100*game/self.max_games) % 10 == 0:
@@ -88,12 +88,11 @@ if __name__ == '__main__':
 
     MAX_GAMES = 100000
     TERMINATION_CRITERION = 500
-    BATCH_SIZE = 32
     LR = random()*1e-9 + 1e-3
 
     EVALUATION_PERIOD = 100
 
     experiment = PretrainLegalMoves(max_games=MAX_GAMES)
-    reward = experiment.run(lr=LR, batch_size=BATCH_SIZE, termination_criterion=TERMINATION_CRITERION)
+    reward = experiment.run(lr=LR, termination_criterion=TERMINATION_CRITERION)
 
     print("Successfully trained %s Layers on %s games" % (LAYERS, experiment.__plotter__.num_episodes))

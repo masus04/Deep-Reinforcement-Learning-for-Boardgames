@@ -12,15 +12,15 @@ from Othello.environment.evaluation import evaluate_against_base_players
 class TestPlayers(unittest.TestCase):
 
     def test_ReinforcementPlayer(self):
-        reinforce = FCReinforcePlayer(lr=1e-5, batch_size=1)
+        reinforce = FCReinforcePlayer(lr=1e-5)
         evaluate_against_base_players(reinforce, silent=False)
 
     def test_ACPlayer(self):
-        actor_critic = FCACPlayer(lr=1e-5, batch_size=1)
+        actor_critic = FCACPlayer(lr=1e-5)
         evaluate_against_base_players(actor_critic, silent=False)
 
     def test_PPOPlayer(self):
-        ppo = FCPPOPlayer(lr=1e-5, batch_size=1)
+        ppo = FCPPOPlayer(lr=1e-5)
         evaluate_against_base_players(ppo, silent=False)
 
 

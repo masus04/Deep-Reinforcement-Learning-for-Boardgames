@@ -25,11 +25,11 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluation_period=self.evaluation_period)
         return self
 
-    def run(self, lr, batch_size=1, silent=False):
+    def run(self, lr, silent=False):
 
         EVALUATION_GAMES = 10
 
-        player = FCReinforcePlayer(lr=lr, batch_size=batch_size)
+        player = FCReinforcePlayer(lr=lr)
         player.color = config.BLACK
 
         expert = ExperiencedPlayer(deterministic=True, block_mid=True)
@@ -81,7 +81,7 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 
             if not silent:
                 if Printer.print_episode(game + 1, self.games, datetime.now() - start):
-                    plot_name = "Supervised Continuous training of %s batch size: %s" % (player, batch_size)
+                    plot_name = "Supervised Continuous training of %s" % (player)
                     plot_info = "%s Games - Final reward: %s \nTime: %s" % (game+1, average_reward, config.time_diff(start))
                     self.plot_and_save(plot_name, plot_name + "\n" + plot_info)
 
@@ -91,12 +91,11 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 100000
-    BATCH_SIZE = 32
     LR = random()*1e-9 + 1e-4
 
     EVALUATION_PERIOD = 1000
 
     experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
-    reward = experiment.run(lr=LR, batch_size=BATCH_SIZE)
+    reward = experiment.run(lr=LR)
 
     print("Successfully trained on %s games" % experiment.__plotter__.num_episodes)

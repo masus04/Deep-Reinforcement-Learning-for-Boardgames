@@ -23,9 +23,9 @@ class TrainACPlayer(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, batch_size, silent=False):
+    def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, batch_size=batch_size)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         # Player2 shares the same weights but does not change them.
         self.player2 = self.player1.copy(shared_weights=True)
@@ -63,13 +63,12 @@ if __name__ == '__main__':
     GAMES = 100000
     EVALUATIONS = 1000
     LR = random() * 1e-9 + 1e-5
-    BATCH_SIZE = 1
 
     PLAYER = None  # Experiment.load_player("FCACPlayer pretrained on traditional opponents.pth")
 
     print("Training ACPlayer vs self with lr: %s" % LR)
     experiment = TrainACPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-    experiment.run(lr=LR, batch_size=BATCH_SIZE)
+    experiment.run(lr=LR)
 
     print("\nSuccessfully trained on %s games" % experiment.num_episodes)
     if PLAYER:

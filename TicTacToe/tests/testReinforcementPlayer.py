@@ -15,16 +15,16 @@ from abstractClasses import PlayerException, Model, Strategy
 class TestReinforcePlayer(unittest.TestCase):
 
     def test_CreateReinforcementPlayer(self):
-        FCReinforcePlayer(lr=0.001, batch_size=1)
+        FCReinforcePlayer(lr=0.001)
 
     def test_DummyForwardPass(self):
         board = TicTacToeBoard()
-        value_function = PGStrategy(lr=0.001, batch_size=1)
+        value_function = PGStrategy(lr=0.001)
         value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
     def test_DummyUpdate(self):
         board = TicTacToeBoard()
-        value_function = PGStrategy(lr=0.001, batch_size=1)
+        value_function = PGStrategy(lr=0.001)
         value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
         move = RandomPlayer.get_move(board)
@@ -36,7 +36,7 @@ class TestReinforcePlayer(unittest.TestCase):
         value_function.evaluate(board.board, board.get_legal_moves_map(config.BLACK))
 
     def test_DummyTrainReinforcePlayer(self):
-        player1 = FCReinforcePlayer(lr=0.001, batch_size=1)
+        player1 = FCReinforcePlayer(lr=0.001)
         player2 = RandomPlayer()
 
         simulation = TicTacToe([player1, player2])

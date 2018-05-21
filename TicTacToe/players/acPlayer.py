@@ -10,11 +10,10 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class ACStrategy(Strategy):
 
-    def __init__(self, lr, batch_size=1, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, gamma=config.GAMMA, model=None):
         super(ACStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
-        self.batch_size = batch_size
 
         self.model = model if model else FCPolicyModel(ac_policy=True)
         self.model.ac_policy = True
@@ -72,21 +71,21 @@ class ACStrategy(Strategy):
 
 
 class FCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, batch_size, model=FCPolicyModel(ac_policy=True)))
+                                         else ACStrategy(lr, model=FCPolicyModel(ac_policy=True)))
 
 
 class LargeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, batch_size, model=LargeFCPolicyModel(ac_policy=True)))
+                                         else ACStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
 
 
 class ConvACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, batch_size=1):
+    def __init__(self, lr=config.LR, strategy=None):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, batch_size, model=ConvPolicyModel(ac_policy=True)))
+                                         else ACStrategy(lr, model=ConvPolicyModel(ac_policy=True)))
 
 
 @jit
