@@ -190,7 +190,7 @@ class LearningPlayer(Player):
         return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights))
 
     def __str__(self):
-        return "[%s lr:%s width:%s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.intermediate_size if self.strategy.intermediate_size is not None else self.model.conv_channels)
+        return "[%s lr:%s width:%s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model.intermediate_size if self.strategy.model.intermediate_size is not None else self.model.conv_channels)
 
 
 class PlayerException(Exception):
