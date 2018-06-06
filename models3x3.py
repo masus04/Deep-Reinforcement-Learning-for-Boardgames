@@ -12,13 +12,13 @@ class FCPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        intermediate_size = 128
+        self.intermediate_size = 128
 
-        self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=intermediate_size)
-        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=self.intermediate_size)
+        self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
 
-        self.policy_head = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
-        self.vf_head = torch.nn.Linear(in_features=intermediate_size, out_features=1)
+        self.policy_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
+        self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
         self.__xavier_initialization__()
 
@@ -45,17 +45,17 @@ class LargeFCPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        intermediate_size = 128
+        self.intermediate_size = 128
 
-        self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=intermediate_size)
-        self.fc2 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.fc3 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
+        self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
+        self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
+        self.fc3 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
 
-        self.policy_head1 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.policy_head2 = torch.nn.Linear(in_features=intermediate_size, out_features=self.board_size ** 2)
+        self.policy_head1 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
+        self.policy_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
 
-        self.vf_head1 = torch.nn.Linear(in_features=intermediate_size, out_features=intermediate_size)
-        self.vf_head2 = torch.nn.Linear(in_features=intermediate_size, out_features=1)
+        self.vf_head1 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
+        self.vf_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
         self.__xavier_initialization__()
 
