@@ -60,11 +60,11 @@ class Experiment(ABC):
         self.last_plot.savefig(self.path + file_name + ".png")
         self.last_plot.close("all")
 
-    def save_player(self, player, description):
+    def save_player(self, player, description=""):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
-        torch.save(player, self.path + player.__class__.__name__ + " " + description + ".pth")
+        torch.save(player, self.path + player.__str__() + " " + description + ".pth")
 
     @property
     def num_episodes(self):
