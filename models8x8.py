@@ -45,7 +45,7 @@ class LargeFCPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 128
+        self.intermediate_size = 512
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
@@ -82,7 +82,7 @@ class HugeFCPolicyModel(abstract.Model):
         self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 128
+        self.intermediate_size = 1024
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
