@@ -25,7 +25,7 @@ LR = 1e-5
 GAMMA = 1  # 0.95   # Reward discounting factor
 CLIP = 0.1          # Clipping parameter for PPO
 
-CUDA = False  # torch.cuda.is_available() # Cuda is slower, probably because of small models and batch sizes
+CUDA = torch.cuda.is_available()
 
 
 def get_color_from_player_number(code):

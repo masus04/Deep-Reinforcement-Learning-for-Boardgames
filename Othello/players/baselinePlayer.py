@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 from numba import jit
 
 import TicTacToe.config as config
-from models8x8 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models8x8 import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 
@@ -80,6 +80,12 @@ class LargeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
+
+
+class HugeFCBaselinePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None):
+        super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
+                                         else ACStrategy(lr, model=HugeFCPolicyModel(ac_policy=True)))
 
 
 class ConvBaselinePlayer(LearningPlayer):
