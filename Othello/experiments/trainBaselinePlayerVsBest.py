@@ -35,7 +35,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
         self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
-        self.replacements = []
+        self.replacements = (0, 0)
         start_time = datetime.now()
         for episode in range(1, self.evaluations+1):
             # train
@@ -53,17 +53,17 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "%s vs BEST" % (self.player1),
-                        "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
-                        % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
-                    self.save_player(self.player1)
+                        "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
+                        % (self.player1, episode*games_per_evaluation, self.evaluations, self.replacements[0]/self.replacements[1], config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
             # if evaluate_both_players(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train = False
-                self.replacements.append(episode)
+                self.replacements = self.replacements[0] + 1, self.replacements[1] + 1
+            else:
+                self.replacements = self.replacements[0], self.replacements[1] + 1
 
-        print("Best player replaced after episodes: %s" % self.replacements)
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
@@ -71,11 +71,15 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 5000000
-    EVALUATIONS = GAMES//20
+    EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 1e-5
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
     experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR)
-    experiment.player1.save()
+    experiment.save_player(experiment.player1)
+
+    print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+    if PLAYER:
+        print("Pretrained on %s legal moves" % 1000000)
