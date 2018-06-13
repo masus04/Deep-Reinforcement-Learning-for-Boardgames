@@ -5,6 +5,7 @@ import numpy as np
 import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer
+from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, HugeFCBaselinePlayer, ConvBaselinePlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer
@@ -27,6 +28,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
     def run(self, lr, silent=False):
 
+        self.player1 = self.pretrained_player if self.pretrained_player else HugeFCBaselinePlayer(lr=lr)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = Othello([self.player1, self.player2])
