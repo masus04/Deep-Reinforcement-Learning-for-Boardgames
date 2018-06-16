@@ -66,6 +66,7 @@ class BaselinePGStrategy(Strategy):
         del self.log_probs[:]
         del self.state_values[:]
         del self.board_samples[:]
+        del self.legal_moves[:]
 
         return abs(loss.data[0])
 
