@@ -57,8 +57,8 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
                 experiment.reset()
 
         if mode == TRADITIONAL:
-            pretrained_player = None
-            opponent = None
+            PLAYER = None
+            OPPONENT = None
 
             # ACTOR CRITIC
             for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
@@ -69,14 +69,14 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
 
             # BASELINE
             for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
-                experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONSpretrained_player=PLAYER, opponent=OPPONENT)
+                experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(player=player, lr=LR)
                 experiment.reset()
 
             # REINFORCE
             for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
-                experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONSpretrained_player=PLAYER, opponent=OPPONENT)
+                experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(player=player, lr=LR)
                 experiment.reset()
