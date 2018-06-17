@@ -81,7 +81,7 @@ if __name__ == '__main__':
         LR = uniform(1e-2, 1e-4)  # random()*1e-9 + 1e-5
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-        OPPONENT = DeterministicPlayer()  # ExperiencedPlayer(deterministic=True)
+        OPPONENT = None  # ExperiencedPlayer(deterministic=True)
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
