@@ -20,10 +20,10 @@ BEST = 0
 TRADITIONAL = 1
 SUPERVISED = 2
 
-class GreatTTTCrossValidation(OthelloBaseExperiment):
+class GreatOthelloCrossValidation(OthelloBaseExperiment):
 
     def __init__(self):
-        super(GreatTTTCrossValidation, self).__init__()
+        super(GreatOthelloCrossValidation, self).__init__()
 
     def reset(self):
         super().__init__()
