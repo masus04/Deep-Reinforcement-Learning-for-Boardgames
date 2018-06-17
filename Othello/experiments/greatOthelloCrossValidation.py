@@ -64,21 +64,21 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
             for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
                 experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                experiment.run(player=player, lr=LR)
+                experiment.run(lr=LR)
                 experiment.reset()
 
             # BASELINE
             for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
                 experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                experiment.run(player=player, lr=LR)
+                experiment.run(lr=LR)
                 experiment.reset()
 
             # REINFORCE
             for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
                 experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                experiment.run(player=player, lr=LR)
+                experiment.run(lr=LR)
                 experiment.reset()
 
         if mode == SUPERVISED:
