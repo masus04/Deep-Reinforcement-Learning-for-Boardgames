@@ -104,7 +104,7 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     for i in range(1):
-        greatCrossVal = GreatTTTCrossValidation()
+        greatCrossVal = GreatOthelloCrossValidation()
         greatCrossVal.run(mode=TRADITIONAL)
 
     print("\n| Great TicTacToe Crossvalidation completed |")
