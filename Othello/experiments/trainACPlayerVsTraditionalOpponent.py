@@ -62,7 +62,6 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     overview = format_overview(overview)
                     self.plot_and_save(
-                        self.plot_and_save(
                         "%s vs TRADITIONAL OPPONENT" % (self.player1),
                         "Train %s vs %s\nGames: %s Evaluations: %s\nTime: %s"
                         % (self.player1, self.opponent, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
