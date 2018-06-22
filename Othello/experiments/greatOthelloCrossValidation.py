@@ -12,9 +12,9 @@ from Othello.experiments.trainReinforcePlayerVsTraditionalOpponent import TrainR
 
 from Othello.experiments.trainPGSupervisedContinuous import TrainPGSupervisedContinuous
 
-from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCReinforcePlayer, ConvReinforcePlayer
-from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, ConvBaselinePlayer
-from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer, ConvACPlayer
+from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCReinforcePlayer, HugeFCReinforcePlayer, ConvReinforcePlayer
+from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, HugeFCBaselinePlayer, ConvBaselinePlayer
+from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer, HugeFCACPlayer, ConvACPlayer
 
 BEST = 0
 TRADITIONAL = 1
@@ -36,21 +36,21 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
 
         if mode == BEST:
             # ACTOR CRITIC
-            for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+            for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
                 experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(lr=LR)
                 experiment.reset()
 
             # BASELINE
-            for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
+            for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
                 experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(lr=LR)
                 experiment.reset()
 
             # REINFORCE
-            for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+            for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
                 experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(lr=LR)
@@ -61,21 +61,21 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
             OPPONENT = None
 
             # ACTOR CRITIC
-            for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+            for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
                 experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(lr=LR)
                 experiment.reset()
 
             # BASELINE
-            for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
+            for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
                 experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(lr=LR)
                 experiment.reset()
 
             # REINFORCE
-            for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+            for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
                 experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(lr=LR)
@@ -83,21 +83,21 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
 
         if mode == SUPERVISED:
             # ACTOR CRITIC
-            for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+            for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
                 experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(player=player, lr=LR)
                 experiment.reset()
 
             # BASELINE
-            for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
+            for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
                 experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(player=player, lr=LR)
                 experiment.reset()
 
             # REINFORCE
-            for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+            for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
                 experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
                 print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                 experiment.run(player=player, lr=LR)
