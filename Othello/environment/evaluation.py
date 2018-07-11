@@ -8,7 +8,7 @@ from Othello.environment.game import Othello
 from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 
 
-def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), NovicePlayer(), ExperiencedPlayer()], silent=True):
+def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), NovicePlayer(), ExperiencedPlayer()], games=config.EVALUATION_GAMES, silent=True):
     """
     Standardized evaluation against base players.
 
@@ -28,7 +28,7 @@ def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), No
     results = []
     for e_player in evaluation_players:
         simulation = Othello([player, e_player])
-        rewards, losses = simulation.run_simulations(config.EVALUATION_GAMES)
+        rewards, losses = simulation.run_simulations(games)
         results.append([e_player.__str__(), rewards])
 
         if not silent:
@@ -72,14 +72,14 @@ def to_status(label):
         return "l"
 
 
-def evaluate_against_each_other(player1, player2):
+def evaluate_against_each_other(player1, player2, games=config.EVALUATION_GAMES):
     """
     Evaluates player1 vs player2 using direct matches in oder to determine which one is used as new reference player
     :param player1:
     :param player2:
     :return: True if player1 scores at least as high as player2
     """
-    score, results, overview = evaluate_against_base_players(player1, [player2])
+    score, results, overview = evaluate_against_base_players(player1, [player2], games=games)
     return score >= 0
 
 

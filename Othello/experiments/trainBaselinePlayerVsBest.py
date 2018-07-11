@@ -56,8 +56,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, self.replacements[0]/self.replacements[1], config.time_diff(start_time)))
 
-            if evaluate_against_each_other(self.player1, self.player2):
-            # if evaluate_both_players(self.player1, self.player2):
+            if evaluate_against_each_other(self.player1, self.player2, games=4):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train = False
                 self.replacements = self.replacements[0] + 1, self.replacements[1] + 1
@@ -71,7 +70,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     GAMES = 5000000
-    EVALUATIONS = GAMES//100
+    EVALUATIONS = GAMES//10000
     LR = random()*1e-9 + 1e-5
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")

@@ -30,8 +30,8 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
 
     def run(self, mode):
         LR = 1e-5 + random()*1e-9
-        GAMES = 500000
-        EVALUATION_PERIOD = 100
+        GAMES = 1000000
+        EVALUATION_PERIOD = 10000
         EVALUATIONS = GAMES // EVALUATION_PERIOD
 
         if mode == BEST:
