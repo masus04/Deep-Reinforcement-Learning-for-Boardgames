@@ -56,7 +56,6 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
                 score, results, overview = evaluate_against_base_players(self.player1, evaluation_players=[self.opponent])
 
             self.add_results(results)
-            # self.add_scores(main_score, opponent_score)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
