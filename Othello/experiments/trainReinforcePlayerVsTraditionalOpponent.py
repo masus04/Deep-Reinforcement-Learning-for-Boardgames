@@ -45,13 +45,11 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
-            # self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
             score, results, overview = evaluate_against_base_players(self.player1)
             self.add_results(results)
-            # self.add_scores(main_score, opponent_score)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):

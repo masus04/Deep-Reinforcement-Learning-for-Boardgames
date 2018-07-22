@@ -35,14 +35,6 @@ class Plotter:
                 self.values[val[0]] = DataResolutionManager()
                 self.values[val[0]].append(val[1])
 
-    def add_score(self, score, second_score=None):
-        if score is not None:
-            self.num_episodes += 1
-            self.scores.append(score)
-
-        if second_score is not None:
-            self.second_scores.append(second_score)
-
     def plot(self, title):
 
         if self.values:
