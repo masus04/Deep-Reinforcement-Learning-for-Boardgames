@@ -28,7 +28,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else HugeFCBaselinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaselinePlayer(lr=lr)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = Othello([self.player1, self.player2])
@@ -76,8 +76,8 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 500000
-        EVALUATIONS = GAMES//100
+        GAMES = 1500000
+        EVALUATIONS = GAMES//1000
         LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
