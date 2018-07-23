@@ -259,8 +259,7 @@ class Strategy(ABC):
 
     def rewards_baseline(self, rewards):
         # TODO: Catch illegal use of this method
-        rewards = [rewards[i] - self.model(config.make_variable([self.board_samples[i]]), config.make_variable([self.legal_moves[i]]))[1].data[0, 0] for i in range(len(self.board_samples))]
-        return rewards
+        return [rewards[i] - self.state_values.data[0, 0] for i in range(len(self.rewards))]
 
 
 class Model(torch.nn.Module):
