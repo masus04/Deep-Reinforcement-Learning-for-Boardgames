@@ -28,7 +28,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else HugeFCACPlayer(lr=lr)  # ConvACPlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCACPlayer(lr=lr)  # ConvACPlayer(lr=lr)
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = Othello([self.player1, self.player2])
