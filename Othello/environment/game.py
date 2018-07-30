@@ -59,8 +59,9 @@ class Othello:
             if switch_colors and episode != 0 and episode % 2 == 0:
                 simulation_players[0].color, simulation_players[1].color = simulation_players[1].color, simulation_players[0].color
 
-            if switch_players and episode != 0 and episode + 1 % 2:
-                simulation_players = list(reversed(simulation_players))
+            # Alternate starting color, effectively resulting in 4 starting positions rather than 2.
+            # if switch_players and episode != 0 and episode + 1 % 2:
+            #    simulation_players = list(reversed(simulation_players))
 
             winner = self.__run__(simulation_players[0], simulation_players[1])
             player_losses = []
