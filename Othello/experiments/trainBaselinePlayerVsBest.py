@@ -29,7 +29,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
         if self.milestones and random() < 0.2:
             self.player1 = choice(self.milestones)
         else:
-            self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaselinePlayer(lr=lr)
+            self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)

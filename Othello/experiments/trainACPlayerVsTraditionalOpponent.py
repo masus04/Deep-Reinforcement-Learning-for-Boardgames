@@ -33,7 +33,7 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
         if self.milestones and random() < 0.2:
             self.player1 = choice(self.milestones)
         else:
-            self.player1 = self.pretrained_player if self.pretrained_player else LargeFCACPlayer(lr=lr)  # ConvACPlayer(lr=lr)
+            self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)  # ConvACPlayer(lr=lr)
 
         if self.opponent is not None:
             self.player2 = self.opponent
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 2000000
+        GAMES = 5000000
         EVALUATIONS = GAMES//1000
         LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
 
