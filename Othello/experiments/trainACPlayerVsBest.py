@@ -4,7 +4,7 @@ import numpy as np
 
 import Othello.config as config
 from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.acPlayer import FCACPlayer, LargeFCPolicyModel, HugeFCACPlayer, ConvACPlayer
+from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer, HugeFCACPlayer, ConvACPlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -29,7 +29,7 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         if self.milestones and random() < 0.2:
             self.player1 = choice(self.milestones)
         else:
-            self.player1 = self.pretrained_player if self.pretrained_player else HugeFCACPlayer(lr=lr)
+            self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
