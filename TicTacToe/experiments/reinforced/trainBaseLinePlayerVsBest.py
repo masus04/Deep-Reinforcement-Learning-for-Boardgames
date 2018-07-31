@@ -43,7 +43,6 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
-            # self.add_results(("BEST", np.mean(results)))
 
             # evaluate
             if episode*games_per_evaluation % 1000 == 0:
@@ -58,7 +57,6 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
                         % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
-            # if evaluate_both_players(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train = False
                 self.replacements.append(episode)
@@ -76,8 +74,8 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 1000000
-        EVALUATIONS = 5000  # 100 * randint(10, 500)
+        GAMES = 100000
+        EVALUATIONS = GAMES/100  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-5  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
