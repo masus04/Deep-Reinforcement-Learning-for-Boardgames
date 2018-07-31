@@ -46,12 +46,9 @@ class ACStrategy(Strategy):
 
         if len(self.log_probs) != len(self.rewards) or len(self.log_probs) != len(self.state_values):
             raise PlayerException("log_probs length must be equal to rewards length as well as state_values length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.state_values)))
-
         # ----------------------------------------------------------- #
-        # Use either Discount (and baseline),
-        # rewards = self.discount_rewards(self.rewards, self.gamma)
-        # rewards = self.rewards_baseline(rewards)
-        # Or Bootstrapping
+
+        # Bootstrapping
         rewards = self.bootstrap_rewards()
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
@@ -95,7 +92,7 @@ def calculate_loss(log_probs, state_values, rewards):
     value_losses = []
 
     for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
-        policy_losses.append(-log_prob * (reward - state_value.data[0][0]))
+        policy_losses.append(-log_prob * reward)
         value_losses.append(F.smooth_l1_loss(state_value, reward))
 
     return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()

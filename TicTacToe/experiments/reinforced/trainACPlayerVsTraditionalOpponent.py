@@ -19,8 +19,7 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
         self.opponent = opponent
-
-        self.__plotter__.line3_name = "opponent score"
+        self.milestones = []
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
@@ -28,7 +27,11 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else ConvACPlayer(lr=lr)
+        if self.milestones and random() < 0.2:
+            self.player1 = choice(self.milestones)
+        else:
+            self.player1 = self.pretrained_player if self.pretrained_player else LargeFCACPlayer(lr=lr)
+
         if self.opponent is not None:
             self.player2 = self.opponent
             self.simulation = TicTacToe([self.player1, self.player2])
@@ -61,6 +64,10 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
                         "Train %s vs traditional opponents: %s \nLR: %s Games: %s\n%s\ntook: %s"
                         % (self.player1, self.opponent, lr, episode*games_per_evaluation, overview, config.time_diff(start_time)))
 
+            # If x/5th of training is completed, save milestone
+            if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
+                self.milestones.append(self.player1.copy(shared_weights=False))
+
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
@@ -68,13 +75,14 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     ITERATIONS = 1
+    MILESTONES = True
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 100000
         EVALUATIONS = 1000
-        LR = random()*1e-9 + 1e-4  # uniform(1e-3, 1e-4)  # random()*1e-9 + 1e-5
+        LR = random()*1e-9 + 1e-5  # uniform(1e-3, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
         OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)

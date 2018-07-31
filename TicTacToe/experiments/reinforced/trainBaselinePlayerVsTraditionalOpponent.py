@@ -52,7 +52,6 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
-            # self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 100000
-        EVALUATIONS = GAMES//100
+        EVALUATIONS = 1000
         LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")

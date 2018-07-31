@@ -4,7 +4,7 @@ import numpy as np
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.reinforcePlayer import FCReinforcePlayer
+from TicTacToe.players.reinforcePlayer import FCReinforcePlayer, LargeFCReinforcePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -26,7 +26,7 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCReinforcePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     GAMES = 1000000
     EVALUATIONS = GAMES//100
-    LR = random()*1e-9 + 2e-5
+    LR = random()*1e-9 + 1e-5
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 

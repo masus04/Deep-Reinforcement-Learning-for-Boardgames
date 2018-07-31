@@ -1,5 +1,5 @@
 from datetime import datetime
-from random import random, uniform, randint
+from random import random, choice, uniform
 import numpy as np
 
 import TicTacToe.config as config
@@ -18,15 +18,17 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
-
-        self.__plotter__.line3_name = "ExperiencedPlayer score"
+        self.milestones = []
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
+        if self.milestones and random() < 0.2:
+            self.player1 = choice(self.milestones)
+        else:
+            self.player1 = self.pretrained_player if self.pretrained_player else LargeFCACPlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -57,10 +59,13 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
                         % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
-            # if evaluate_both_players(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train = False
                 self.replacements.append(episode)
+
+            # If x/5th of training is completed, save milestone
+            if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
+                self.milestones.append(self.player1.copy(shared_weights=False))
 
         print("Best player replaced after episodes: %s" % self.replacements)
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
@@ -69,15 +74,16 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 5
+    ITERATIONS = 1
+    MILESTONES = True
 
     start = datetime.now()
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 100000
+        GAMES = 1000000
         EVALUATIONS = GAMES//100
-        LR = uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
+        LR = random()*1e-9 + 1e-5  # uniform(1e-4, 2e-5)
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
