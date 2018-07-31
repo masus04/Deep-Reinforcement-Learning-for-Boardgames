@@ -21,8 +21,6 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
         self.opponent = opponent
         self.milestones = []
 
-        self.__plotter__.line3_name = "opponent score"
-
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
         return self

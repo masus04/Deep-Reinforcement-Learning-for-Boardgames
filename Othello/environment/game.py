@@ -6,7 +6,7 @@ from Othello.environment.board import OthelloBoard
 
 class Othello:
 
-    def __init__(self, players):
+    def __init__(self, players, gui=None):
         self.player1 = players[0]
         self.player2 = players[1]
 
@@ -15,6 +15,8 @@ class Othello:
 
         for player in players:
             player.original_color = player.color
+
+        self.gui = gui
 
     def __run__(self, player1, player2):
         """
@@ -26,14 +28,22 @@ class Othello:
         """
         self.board = OthelloBoard()
         players = player1, player2
+        if self.gui:
+            self.gui.show_game(self.board)
 
         while True:
             if len(self.board.get_valid_moves(players[0].color)) > 0:
                 move = players[0].get_move(self.board)
                 self.board.apply_move(move, players[0].color)
 
+                if self.gui:
+                    self.gui.flash_move(move, players[0].color)
+                    self.gui.update(self.board, players[1])
+
                 winner = self.board.game_won()
                 if winner:
+                    if self.gui:
+                        self.gui.show_winner(winner, self.board)
                     return config.get_label_from_winner_color(player1, player2, winner)
 
             players = list(reversed(players))

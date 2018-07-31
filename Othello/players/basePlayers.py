@@ -7,6 +7,17 @@ from Othello.players.heuristics import OthelloHeuristic
 from Othello.players.search_based_ai import GameArtificialIntelligence
 
 
+class HumanPlayer(Player):
+
+    def get_move(self, board):
+        valid_moves = board.get_valid_moves(self.color)
+        self.gui.highlight_valid_moves(valid_moves)
+        while True:
+            move = self.gui.get_move_by_mouse()
+            if move in valid_moves:
+                return move
+
+
 class RandomPlayer(Player):
     """
     Applies a random valid move
