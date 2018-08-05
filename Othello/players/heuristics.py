@@ -52,9 +52,9 @@ class OthelloHeuristic(object):
                 return -OthelloHeuristic.WIN-1 + self.evaluate_piece_count(board, current_player, other_player, OthelloHeuristic.END_GAME)
 
         # Determine Game State to Determine Heuristic Values
-        if board.empty_spaces >= 45:
+        if board.get_empty_spaces() >= 45:
             game_state = OthelloHeuristic.START_GAME
-        elif board.empty_spaces >= 2:
+        elif board.get_empty_spaces() >= 2:
             game_state = OthelloHeuristic.MID_GAME
         else:
             game_state = OthelloHeuristic.END_GAME
@@ -96,13 +96,14 @@ class OthelloHeuristic(object):
         return score
 
     def evaluate_piece_count(self, board, current_player, other_player, game_state):
+        stone_count = board.count_stones()
         score = 0
-        if current_player == WHITE:
-            score += self.PIECE_COUNT_FACTOR[game_state]*board.white_pieces
-            score -= self.PIECE_COUNT_FACTOR[game_state]*board.black_pieces
+        if current_player == BLACK:
+            score += self.PIECE_COUNT_FACTOR[game_state]*stone_count[0]
+            score -= self.PIECE_COUNT_FACTOR[game_state]*stone_count[1]
         else:
-            score += self.PIECE_COUNT_FACTOR[game_state]*board.black_pieces
-            score -= self.PIECE_COUNT_FACTOR[game_state]*board.white_pieces
+            score += self.PIECE_COUNT_FACTOR[game_state] * stone_count[1]
+            score -= self.PIECE_COUNT_FACTOR[game_state] * stone_count[0]
         return score
 
     def evaluate_corner_pieces(self, board, current_player, other_player, game_state):

@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 import numpy as np
+from random import random
 from copy import deepcopy
 from abc import ABC, abstractmethod
 
@@ -82,6 +83,9 @@ class Board(ABC):
         :return: The color of the opposing player
         """
         return __other_color__(color)
+
+    def __lt__(self, other):
+        return random()
 
 
 def __other_color__(color):

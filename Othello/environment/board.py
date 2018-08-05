@@ -80,8 +80,15 @@ class OthelloBoard(Board):
     def copy(self):
         return OthelloBoard(self)
 
+    def child_nodes(self, color):
+        return [(self.copy().apply_move(move=move, color=color), move) for move in self.get_valid_moves(color)]
+
     def count_stones(self):
         return __count_stones__(self.board, self.board_size)
+
+    def get_empty_spaces(self):
+        stone_count = self.count_stones()
+        return self.board_size**2 - stone_count[0] - stone_count[1]
 
 
 """   ---  Numba implementations  ---   '''

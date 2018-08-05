@@ -37,7 +37,7 @@ class TicTacToe:
 
             players = list(reversed(players))
 
-    def run_simulations(self, episodes, switch_colors=True, switch_players=True):
+    def run_simulations(self, episodes, switch_colors=True, switch_players=False):
         """
         Runs a number of games using the given players and returns statistics over all games run.
 

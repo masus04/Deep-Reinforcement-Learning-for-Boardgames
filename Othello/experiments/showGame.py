@@ -5,7 +5,8 @@ import numpy as np
 import Othello.config as config
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.environment.gui import Gui
-from Othello.players.basePlayers import HumanPlayer, RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer
+from Othello.players.heuristics import OthelloHeuristic
+from Othello.players.basePlayers import HumanPlayer, RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer, SearchPlayer
 from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer, HugeFCACPlayer, ConvACPlayer
 from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, HugeFCBaselinePlayer, ConvBaselinePlayer
 from Othello.environment.game import Othello
@@ -28,14 +29,14 @@ class ShowGame(OthelloBaseExperiment):
 
     def run(self):
         game = Othello((self.player1, self.player2), gui=self.gui)
-        game.run_simulations(2)
+        game.run_simulations(4)
         return self
 
 
 if __name__ == '__main__':
 
-    PLAYER1 = HumanPlayer()
-    PLAYER2 = RandomPlayer()
+    PLAYER1 = FCBaselinePlayer(lr=1e-5)  # HumanPlayer()
+    PLAYER2 = SearchPlayer(search_depth=1, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
     start = datetime.now()
 
     experiment = ShowGame(player1=PLAYER1, player2=PLAYER2)

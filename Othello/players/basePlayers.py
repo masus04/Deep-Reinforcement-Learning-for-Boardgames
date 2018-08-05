@@ -107,8 +107,9 @@ class SearchPlayer(Player):
 
     def __init__(self, search_depth=3, strategy=OthelloHeuristic.DEFAULT_STRATEGY):
         super(SearchPlayer, self).__init__()
-        self.time_limit = search_depth
+        self.search_depth = search_depth
         self.ai = GameArtificialIntelligence(OthelloHeuristic(strategy).evaluate)
 
     def get_move(self, board):
-        return self.ai.move_search(board, self.time_limit, self.color, board.other_color(self.color))
+        return self.ai.move_search(board, self.search_depth, self.color, board.other_color(self.color))
+

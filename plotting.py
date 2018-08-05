@@ -18,9 +18,6 @@ class Plotter:
 
         self.values = dict()
 
-    def add_loss(self, loss):
-        self.losses.append(loss)
-
     def add_values(self, values):
         """
         Accepts a list of tuples (score_name, score) and adds it to the internal representation to be plotted

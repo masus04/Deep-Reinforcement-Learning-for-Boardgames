@@ -15,18 +15,18 @@ class GameArtificialIntelligence(object):
         self.other_player = other_player
         possible_moves = starting_node.get_valid_moves(current_player)
         if len(possible_moves) == 1:
-            return possible_moves[0]
+            return list(possible_moves)[0]
         depth = 0
-        score = -sys.maxsize - 1
+        score = -sys.maxsize
         move = None
         time_start = datetime.datetime.now()
         WIN = sys.maxsize - 1000
         self.queue = PriorityQueue(len(possible_moves))
         self.first = True
-        while depth <= search_depth and starting_node.empty_spaces >= depth:
+        while depth <= search_depth and starting_node.get_empty_spaces() >= depth:
             depth += 1
             (new_move, new_score) = self.alpha_beta_wrapper(starting_node, depth, current_player, other_player)
-            if new_move is not None and not self.cutoff:
+            if new_move is not None:
                 move = new_move
                 score = new_score
                 # print "Got to Depth:", depth
@@ -73,9 +73,6 @@ class GameArtificialIntelligence(object):
         return sha1(node.board.data).hexdigest()
 
     def alpha_beta_search(self, node, depth, current_player, other_player, alpha=-sys.maxsize-1, beta=sys.maxsize, maximizing=True):
-        if datetime.datetime.now() > self.time_done - datetime.timedelta(milliseconds=10):
-            self.cutoff = True
-            return None
         if depth == 0 or node.game_won() is not None:
             key = self.keyify(node, self.player)
             if key in self.trans_table:

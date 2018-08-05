@@ -48,7 +48,7 @@ class Othello:
 
             players = list(reversed(players))
 
-    def run_simulations(self, episodes, switch_colors=True, switch_players=True):
+    def run_simulations(self, episodes, switch_colors=True, switch_players=False):
         """
         Runs a number of games using the given players and returns statistics over all games run.
 
@@ -70,8 +70,8 @@ class Othello:
                 simulation_players[0].color, simulation_players[1].color = simulation_players[1].color, simulation_players[0].color
 
             # Alternate starting color, effectively resulting in 4 starting positions rather than 2.
-            # if switch_players and episode != 0 and episode + 1 % 2:
-            #    simulation_players = list(reversed(simulation_players))
+            if switch_players and episode != 0 and episode + 1 % 2:
+                simulation_players = list(reversed(simulation_players))
 
             winner = self.__run__(simulation_players[0], simulation_players[1])
             player_losses = []

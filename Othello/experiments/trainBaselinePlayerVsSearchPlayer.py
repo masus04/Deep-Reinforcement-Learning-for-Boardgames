@@ -29,24 +29,22 @@ class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
         self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
 
-        if self.opponent is not None:
+        if self.opponent is None:
+            self.player2 = SearchPlayer(search_depth=1, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
+        else:
             self.player2 = self.opponent
-            self.simulation = Othello([self.player1, self.player2])
+
+        self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
         for episode in range(1, self.evaluations+1):
-
-            if self.opponent is None:
-                self.player2 = SearchPlayer(strategy=choice[1, 2, 3])
-                self.simulation = Othello([self.player1, self.player2])
 
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
-            # self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
@@ -76,12 +74,12 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 5000000
+        GAMES = 5000
         EVALUATIONS = GAMES//1000
         LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-        OPPONENT = SearchPlayer(search_depth=1, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
+        OPPONENT = None
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)

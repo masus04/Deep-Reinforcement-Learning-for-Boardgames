@@ -44,7 +44,6 @@ class TrainACPlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
-            # self.add_loss(sum(losses) / len(losses))    # losses are interesting during training
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
