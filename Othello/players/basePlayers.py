@@ -105,9 +105,9 @@ class ExpertPlayer(Player):
 
 class SearchPlayer(Player):
 
-    def __init__(self, time_limit=5, strategy=OthelloHeuristic.DEFAULT_STRATEGY):
+    def __init__(self, search_depth=3, strategy=OthelloHeuristic.DEFAULT_STRATEGY):
         super(SearchPlayer, self).__init__()
-        self.time_limit = time_limit
+        self.time_limit = search_depth
         self.ai = GameArtificialIntelligence(OthelloHeuristic(strategy).evaluate)
 
     def get_move(self, board):

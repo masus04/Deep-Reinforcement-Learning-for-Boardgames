@@ -4,7 +4,8 @@ import numpy as np
 
 import Othello.config as config
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer
+from Othello.players.basePlayers import SearchPlayer
+from Othello.players.heuristics import OthelloHeuristic
 from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, HugeFCBaselinePlayer, ConvBaselinePlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, format_overview
@@ -37,7 +38,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
         for episode in range(1, self.evaluations+1):
 
             if self.opponent is None:
-                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False)))
+                self.player2 = SearchPlayer(strategy=choice[1, 2, 3])
                 self.simulation = Othello([self.player1, self.player2])
 
             # train
@@ -80,7 +81,7 @@ if __name__ == '__main__':
         LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-        OPPONENT = None  # ExperiencedPlayer(deterministic=True)
+        OPPONENT = SearchPlayer(search_depth=1, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)

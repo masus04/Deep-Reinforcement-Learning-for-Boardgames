@@ -10,24 +10,20 @@ class GameArtificialIntelligence(object):
         self.heuristic = heuristic_fn
         self.trans_table = dict()
 
-    def move_search(self, starting_node, time_limit, current_player, other_player):
+    def move_search(self, starting_node, search_depth, current_player, other_player):
         self.player = current_player
         self.other_player = other_player
         possible_moves = starting_node.get_valid_moves(current_player)
         if len(possible_moves) == 1:
-            # print("Only 1 Possible Move:", possible_moves[0])
             return possible_moves[0]
         depth = 0
         score = -sys.maxsize - 1
         move = None
         time_start = datetime.datetime.now()
-        self.time_done = time_start + datetime.timedelta(seconds=time_limit)
-        time_cutoff = time_start + datetime.timedelta(seconds=time_limit/2.0)
-        self.cutoff = False
         WIN = sys.maxsize - 1000
         self.queue = PriorityQueue(len(possible_moves))
         self.first = True
-        while datetime.datetime.now() < time_cutoff and not self.cutoff and starting_node.empty_spaces >= depth:
+        while depth <= search_depth and starting_node.empty_spaces >= depth:
             depth += 1
             (new_move, new_score) = self.alpha_beta_wrapper(starting_node, depth, current_player, other_player)
             if new_move is not None and not self.cutoff:
