@@ -2,7 +2,7 @@ from random import random
 
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
 from TicTacToe.experiments.reinforced.trainACPlayerVsBest import TrainACPlayerVsBest
-from TicTacToe.experiments.reinforced.trainBaseLinePlayerVsBest import TrainBaselinePlayerVsBest
+from TicTacToe.experiments.reinforced.trainBaselinePlayerVsBest import TrainBaselinePlayerVsBest
 from TicTacToe.experiments.reinforced.trainReinforcePlayerVsBest import TrainReinforcePlayerVsBest
 from TicTacToe.players.reinforcePlayer import FCReinforcePlayer, LargeFCReinforcePlayer, ConvReinforcePlayer
 from TicTacToe.players.baselinePlayer import FCBaseLinePlayer, LargeFCBaseLinePlayer, ConvBaseLinePlayer

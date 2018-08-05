@@ -1,19 +1,20 @@
 from abc import ABC
 from datetime import datetime
 
-import Othello.config as config
+import Othello.config as conf
 from Othello.players.basePlayers import RandomPlayer
 from Othello.environment.board import OthelloBoard
 from experiment import Experiment
 
 
 class OthelloBaseExperiment(Experiment):
+    config = conf
 
     def __init__(self):
-        super(OthelloBaseExperiment, self).__init__(config)
+        super(OthelloBaseExperiment, self).__init__()
 
-    @staticmethod
-    def generate_supervised_training_data(games, labeling_strategy):
+    @classmethod
+    def generate_supervised_training_data(cls, games, labeling_strategy):
         """
         Generates training data by applying random moves to a board and labeling each sample with the move that :param labeling_strategy would have taken given the board.
 
@@ -22,7 +23,7 @@ class OthelloBaseExperiment(Experiment):
         :return: a list of tuples(board_sample, move_label)
         """
 
-        labeling_strategy.color = config.BLACK
+        labeling_strategy.color = cls.config.BLACK
 
         generator = RandomPlayer()
         color_iterator = OthelloBaseExperiment.AlternatingColorIterator()

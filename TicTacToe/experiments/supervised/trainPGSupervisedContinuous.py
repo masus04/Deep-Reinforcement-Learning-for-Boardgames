@@ -19,8 +19,6 @@ class TrainPGSupervisedContinuous(TicTacToeBaseExperiment):
         self.games = games
         self.evaluation_period = evaluation_period
 
-        self.__plotter__.line3_name = "evaluation score"
-
     def reset(self):
         self.__init__(games=self.games, evaluation_period=self.evaluation_period)
         return self

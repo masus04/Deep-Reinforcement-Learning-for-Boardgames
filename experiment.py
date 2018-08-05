@@ -8,13 +8,12 @@ from plotting import Plotter
 class Experiment(ABC):
     """ Base class for running experiments. Provides a plotter as well as path handling. DO NOT FORGET TO CALL super()"""
 
-    def __init__(self, config):
+    def __init__(self):
         self.experiment_name = self.__class__.__name__
         self.__plotter__ = Plotter()
         self.last_plot = None
 
-        self.config = config
-        self.path = config.TIC_TAC_TOE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
+        self.path = self.config.TIC_TAC_TOE_DIR + "/experiments/artifacts/%s/" % self.experiment_name
 
     @abstractmethod
     def run(self, silent=False):
@@ -24,8 +23,9 @@ class Experiment(ABC):
     def reset(self):
         pass
 
-    def load_player(self, player_name):
-        filename = self.config.findInSubdirectory(player_name, self.config.TIC_TAC_TOE_DIR + "/experiments")
+    @classmethod
+    def load_player(cls, player_name):
+        filename = cls.config.findInSubdirectory(player_name, cls.config.TIC_TAC_TOE_DIR + "/experiments")
         return torch.load(filename)
 
     def add_results(self, results):

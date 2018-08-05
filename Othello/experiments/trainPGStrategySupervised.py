@@ -6,7 +6,7 @@ import Othello.config as config
 from Othello.players.reinforcePlayer import FCReinforcePlayer, SmallFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.acPlayer import FCACPlayer
 from Othello.players.basePlayers import ExperiencedPlayer
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from plotting import Printer
 
 

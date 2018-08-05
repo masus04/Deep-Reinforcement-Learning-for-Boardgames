@@ -19,8 +19,6 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
 
-        self.__plotter__.line3_name = "ExperiencedPlayer score"
-
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self

@@ -1,6 +1,6 @@
 from random import random
 
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 
 from Othello.experiments.trainACPlayerVsBest import TrainACPlayerVsBest
 from Othello.experiments.trainBaselinePlayerVsBest import TrainBaselinePlayerVsBest

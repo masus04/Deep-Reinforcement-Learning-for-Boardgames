@@ -2,7 +2,7 @@ import unittest
 
 import Othello.config as config
 from Othello.environment.game import Othello
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.reinforcePlayer import FCReinforcePlayer
 from Othello.players.acPlayer import FCACPlayer
 from Othello.players.ppoPlayer import FCPPOPlayer

@@ -8,7 +8,7 @@ import Othello.config as config
 from Othello.environment.board import OthelloBoard
 from Othello.environment.game import Othello
 from Othello.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer, ExpertPlayer, SearchPlayer
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.environment.evaluation import evaluate_against_base_players
 from plotting import Plotter
 

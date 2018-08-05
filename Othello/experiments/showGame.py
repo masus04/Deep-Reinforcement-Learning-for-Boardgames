@@ -3,7 +3,7 @@ from random import random, choice, uniform
 import numpy as np
 
 import Othello.config as config
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.environment.gui import Gui
 from Othello.players.basePlayers import HumanPlayer, RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer
 from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer, HugeFCACPlayer, ConvACPlayer

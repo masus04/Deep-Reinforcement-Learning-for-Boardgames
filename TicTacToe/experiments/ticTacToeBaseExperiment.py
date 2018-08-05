@@ -1,19 +1,20 @@
 from datetime import datetime
 from abc import ABC
 
-import TicTacToe.config as config
+import TicTacToe.config as conf
 from TicTacToe.environment.board import TicTacToeBoard
 from TicTacToe.players.basePlayers import ExperiencedPlayer, RandomPlayer
 from experiment import Experiment
 
 
 class TicTacToeBaseExperiment(Experiment):
+    config = conf
 
     def __init__(self):
-        super(TicTacToeBaseExperiment, self).__init__(config)
+        super(TicTacToeBaseExperiment, self).__init__()
 
-    @staticmethod
-    def generate_supervised_training_data(games, labeling_strategy):
+    @classmethod
+    def generate_supervised_training_data(cls, games, labeling_strategy):
         """
         Generates training data by applying random moves to a board and labeling each sample with the move that :param labeling_strategy would have taken given the board.
 
@@ -22,7 +23,7 @@ class TicTacToeBaseExperiment(Experiment):
         :return: a list of tuples(board_sample, move_label)
         """
 
-        labeling_strategy.color = config.BLACK
+        labeling_strategy.color = cls.config.BLACK
 
         generator = RandomPlayer()
         color_iterator = TicTacToeBaseExperiment.AlternatingColorIterator()

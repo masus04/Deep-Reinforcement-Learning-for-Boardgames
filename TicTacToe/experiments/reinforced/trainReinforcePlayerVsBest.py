@@ -19,8 +19,6 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player if pretrained_player is not None else None
 
-        self.__plotter__.line3_name = "ExperiencedPlayer score"
-
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
@@ -57,7 +55,6 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
                         % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             if evaluate_against_each_other(self.player1, self.player2):
-            # if evaluate_both_players(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train = False
                 self.replacements.append(episode)

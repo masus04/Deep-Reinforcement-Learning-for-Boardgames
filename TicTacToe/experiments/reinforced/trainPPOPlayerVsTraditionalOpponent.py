@@ -19,8 +19,6 @@ class TrainPPOPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
         self.opponent = opponent
 
-        self.__plotter__.line3_name = "opponent score"
-
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
         return self

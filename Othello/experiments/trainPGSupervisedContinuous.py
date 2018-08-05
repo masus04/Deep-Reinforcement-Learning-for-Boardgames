@@ -3,7 +3,7 @@ from datetime import datetime
 from random import random
 
 import Othello.config as config
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.acPlayer import FCACPlayer, ConvACPlayer
 from Othello.players.reinforcePlayer import FCReinforcePlayer, FCReinforcePlayer, HugeFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer, RandomPlayer
@@ -18,8 +18,6 @@ class TrainPGSupervisedContinuous(OthelloBaseExperiment):
 
         self.games = games
         self.evaluation_period = evaluation_period
-
-        self.__plotter__.line3_name = "evaluation score"
 
     def reset(self):
         self.__init__(games=self.games, evaluation_period=self.evaluation_period)

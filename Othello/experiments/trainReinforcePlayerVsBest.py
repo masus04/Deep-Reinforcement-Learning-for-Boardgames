@@ -3,7 +3,7 @@ from random import random
 import numpy as np
 
 import Othello.config as config
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCPolicyModel, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.environment.game import Othello
@@ -18,8 +18,6 @@ class TrainReinforcePlayerVsBest(OthelloBaseExperiment):
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
-
-        self.__plotter__.line3_name = "ExperiencedPlayer score"
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)

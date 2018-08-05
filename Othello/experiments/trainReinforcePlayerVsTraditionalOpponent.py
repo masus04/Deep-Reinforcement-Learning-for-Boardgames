@@ -2,7 +2,7 @@ from datetime import datetime
 from random import random, choice
 import numpy as np
 
-from Othello.experiments.OthelloBaseExperiment import OthelloBaseExperiment
+from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 from Othello.players.reinforcePlayer import FCReinforcePlayer
 from Othello.environment.game import Othello
@@ -18,8 +18,6 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
         self.opponent = opponent
-
-        self.__plotter__.line3_name = "opponent score"
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
