@@ -12,10 +12,10 @@ from Othello.environment.evaluation import evaluate_against_base_players, format
 from plotting import Printer
 
 
-class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
+class TrainBaselinePlayerVsSearchPlayer(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player, opponent):
-        super(TrainBaselinePlayerVsTraditionalOpponent, self).__init__()
+        super(TrainBaselinePlayerVsSearchPlayer, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -45,6 +45,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
+            self.add_results((str(self.player2), np.mean(results)))
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
@@ -68,21 +69,20 @@ class TrainBaselinePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
 
 if __name__ == '__main__':
-
     ITERATIONS = 1
     start = datetime.now()
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 5000
-        EVALUATIONS = GAMES//1000
+        GAMES = 500000
+        EVALUATIONS = 1000
         LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
         OPPONENT = None
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
-        experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+        experiment = TrainBaselinePlayerVsSearchPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
         experiment.run(lr=LR)
         experiment.save_player(experiment.player1)
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
