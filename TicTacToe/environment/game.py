@@ -32,7 +32,7 @@ class TicTacToe:
             self.board.apply_move(move, players[0].color)
 
             winner = self.board.game_won()
-            if winner:
+            if winner is not None:
                 return config.get_label_from_winner_color(player1, player2, winner)
 
             players = list(reversed(players))

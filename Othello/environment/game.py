@@ -41,7 +41,7 @@ class Othello:
                     self.gui.update(self.board, players[1])
 
                 winner = self.board.game_won()
-                if winner:
+                if winner is not None:
                     if self.gui:
                         self.gui.show_winner(winner, self.board)
                     return config.get_label_from_winner_color(player1, player2, winner)

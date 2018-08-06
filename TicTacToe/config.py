@@ -9,7 +9,7 @@ TIC_TAC_TOE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Black > White because these are also used as rewards and for scoring.
 BLACK = 1
 WHITE = -1
-EMPTY = 0
+EMPTY = 0.1
 
 LABEL_WIN = BLACK
 LABEL_LOSS = WHITE

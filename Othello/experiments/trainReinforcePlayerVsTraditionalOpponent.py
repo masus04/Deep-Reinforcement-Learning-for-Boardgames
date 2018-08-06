@@ -35,7 +35,7 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
         for episode in range(1, self.evaluations+1):
 
             if self.opponent is None:
-                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False, block_mid=True)))
+                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False)))
                 self.simulation = Othello([self.player1, self.player2])
 
             # train
