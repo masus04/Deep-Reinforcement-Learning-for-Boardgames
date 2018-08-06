@@ -60,10 +60,9 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
 
 
 if __name__ == '__main__':
-
-    GAMES = 100000
-    EVALUATIONS = 1000
-    LR = random()*1e-9 + 1e-4
+    GAMES = 5000000
+    EVALUATIONS = GAMES // 1000
+    LR = random()*1e-9 + 1e-5
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
     OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
