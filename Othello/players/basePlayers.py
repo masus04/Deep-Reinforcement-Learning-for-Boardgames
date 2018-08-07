@@ -113,3 +113,5 @@ class SearchPlayer(Player):
     def get_move(self, board):
         return self.ai.move_search(board, self.search_depth, self.color, board.other_color(self.color))
 
+    def register_winner(self, winner_color):
+        self.ai.trans_table = dict()  # Clear move cache after each game.
