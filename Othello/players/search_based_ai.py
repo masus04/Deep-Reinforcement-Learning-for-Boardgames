@@ -19,8 +19,6 @@ class GameArtificialIntelligence(object):
         depth = 0
         score = -sys.maxsize
         move = None
-        time_start = datetime.datetime.now()
-        WIN = sys.maxsize - 1000
         self.queue = PriorityQueue(len(possible_moves))
         self.first = True
         while depth <= search_depth and starting_node.get_empty_spaces() >= depth:
@@ -30,9 +28,6 @@ class GameArtificialIntelligence(object):
                 move = new_move
                 score = new_score
                 # print "Got to Depth:", depth
-            else:
-                # print "Cutoff at depth", depth
-                pass
         return move
 
     def alpha_beta_wrapper(self, node, depth, current_player, other_player):
@@ -113,9 +108,6 @@ class GameArtificialIntelligence(object):
             return beta
 
     def alpha_beta_search_trans(self, node, depth, current_player, other_player, alpha=-sys.maxsize-1, beta=sys.maxsize, maximizing=True):
-        if datetime.datetime.now() > self.time_done - datetime.timedelta(milliseconds=10):
-            self.cutoff = True
-            return None
         if depth == 0 or node.game_won() is not None:
             return self.heuristic(node, self.player, self.other_player)
         children = node.child_nodes(current_player)
