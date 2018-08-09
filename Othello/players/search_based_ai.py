@@ -19,8 +19,6 @@ class GameArtificialIntelligence(object):
         depth = 0
         score = -sys.maxsize
         move = None
-        time_start = datetime.datetime.now()
-        WIN = sys.maxsize - 1000
         self.queue = PriorityQueue(len(possible_moves))
         self.first = True
         while depth <= search_depth and starting_node.get_empty_spaces() >= depth:
@@ -30,9 +28,6 @@ class GameArtificialIntelligence(object):
                 move = new_move
                 score = new_score
                 # print "Got to Depth:", depth
-            else:
-                # print "Cutoff at depth", depth
-                pass
         return move
 
     def alpha_beta_wrapper(self, node, depth, current_player, other_player):
@@ -105,72 +100,6 @@ class GameArtificialIntelligence(object):
             else:
                 for (child, move) in children:
                     new_beta = self.alpha_beta_search(child, depth-1, other_player, current_player, alpha, beta)
-                    if new_beta is None:
-                        return None
-                    beta = min(beta, new_beta)
-                    if beta <= alpha:
-                        break
-            return beta
-
-    def alpha_beta_search_trans(self, node, depth, current_player, other_player, alpha=-sys.maxsize-1, beta=sys.maxsize, maximizing=True):
-        if datetime.datetime.now() > self.time_done - datetime.timedelta(milliseconds=10):
-            self.cutoff = True
-            return None
-        if depth == 0 or node.game_won() is not None:
-            return self.heuristic(node, self.player, self.other_player)
-        children = node.child_nodes(current_player)
-        if maximizing:
-            if len(children) == 0:
-                node.board.flags.writeable = False
-                key = self.keyify(node, other_player)
-                if key in self.trans_table and self.trans_table[key][0] >= depth-1:
-                    new_alpha = self.trans_table[key][1]
-                else:
-                    new_alpha = self.alpha_beta_search(node, depth-1, other_player, current_player, alpha, beta, False)
-                    if new_alpha is not None:
-                        self.trans_table[key] = (depth-1, new_alpha)
-                if new_alpha is None:
-                    return None
-                alpha = max(alpha, new_alpha)
-            else:
-                for (child, move) in children:
-                    child.board.flags.writeable = False
-                    key = self.keyify(child, other_player)
-                    if key in self.trans_table and self.trans_table[key][0] >= depth-1:
-                        new_alpha = self.trans_table[key][1]
-                    else:
-                        new_alpha = self.alpha_beta_search(child, depth-1, other_player, current_player, alpha, beta, False)
-                        if new_alpha is not None:
-                            self.trans_table[key] = (depth-1, new_alpha)
-                    if new_alpha is None:
-                        return None
-                    alpha = max(alpha, new_alpha)
-                    if alpha >= beta:
-                        break
-            return alpha
-        else:
-            if len(children) == 0:
-                node.board.flags.writeable = False
-                key = self.keyify(node, other_player)
-                if key in self.trans_table and self.trans_table[key][0] >= depth-1:
-                    new_beta = self.trans_table[key][1]
-                else:
-                    new_beta = self.alpha_beta_search(node, depth-1, other_player, current_player, alpha, beta)
-                    if new_beta is not None:
-                        self.trans_table[key] = (depth-1, new_beta)
-                if new_beta is None:
-                    return None
-                beta = min(beta, new_beta)
-            else:
-                for (child, move) in children:
-                    child.board.flags.writeable = False
-                    key = self.keyify(child, other_player)
-                    if key in self.trans_table and self.trans_table[key][0] >= depth-1:
-                        new_beta = self.trans_table[key][1]
-                    else:
-                        new_beta = self.alpha_beta_search(child, depth-1, other_player, current_player, alpha, beta)
-                        if new_beta is not None:
-                            self.trans_table[key] = (depth-1, new_beta)
                     if new_beta is None:
                         return None
                     beta = min(beta, new_beta)
