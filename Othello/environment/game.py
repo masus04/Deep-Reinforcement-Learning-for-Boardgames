@@ -77,7 +77,8 @@ class Othello:
             player_losses = []
             for player in simulation_players:
                 loss = player.register_winner(winner)
-                player_losses.append(loss)
+                if loss is not None:
+                    player_losses.append(loss)
 
             losses += player_losses
             results.append(winner)

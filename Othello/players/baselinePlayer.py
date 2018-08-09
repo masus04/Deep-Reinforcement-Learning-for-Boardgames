@@ -8,10 +8,10 @@ from models8x8 import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, Conv
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 
-class ACStrategy(Strategy):
+class BaselineStrategy(Strategy):
 
     def __init__(self, lr, gamma=config.GAMMA, model=None):
-        super(ACStrategy, self).__init__()
+        super(BaselineStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
 
@@ -40,7 +40,6 @@ class ACStrategy(Strategy):
         return move
 
     def update(self):
-        # ---------------------- Error Logging ---------------------- #
         if not self.train:
             return 0
 
@@ -70,25 +69,25 @@ class ACStrategy(Strategy):
 class FCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else ACStrategy(lr, model=FCPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=FCPolicyModel(ac_policy=True)))
 
 
 class LargeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else ACStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
 
 
 class HugeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else ACStrategy(lr, model=HugeFCPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=HugeFCPolicyModel(ac_policy=True)))
 
 
 class ConvBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else ACStrategy(lr, model=ConvPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=ConvPolicyModel(ac_policy=True)))
 
 
 @jit

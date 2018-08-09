@@ -135,7 +135,7 @@ class Player(ABC):
         :param winner_color: The color used to represent the winner of the game that just finished.
         :return: A loss measure for the whole game if available. This is used mostly for plotting statistics.
         """
-        return 0
+        return None
 
     def save(self):
         """
