@@ -1,6 +1,5 @@
 import numpy as np
 from numba import njit
-from numba.types import Array
 
 import Othello.config as config
 from abstractClasses import Board, BoardException

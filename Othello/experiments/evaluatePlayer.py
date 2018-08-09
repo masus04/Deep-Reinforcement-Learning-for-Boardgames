@@ -4,7 +4,7 @@ from datetime import datetime
 import Othello.config as conf
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.environment.evaluation import evaluate_against_each_other
-from Othello.players.basePlayers import RandomPlayer, HumanPlayer, SearchPlayer
+from Othello.players.basePlayers import RandomPlayer, ExperiencedPlayer, HumanPlayer, SearchPlayer
 
 
 class EvaluatePlayer(OthelloBaseExperiment):
@@ -16,8 +16,8 @@ class EvaluatePlayer(OthelloBaseExperiment):
     def reset(self):
         super().__init__()
 
-    def run(self, player1, player2):
-        evaluate_against_each_other(player1, player2, games=GAMES, silent=False)
+    def run(self, player1, player2, games):
+        evaluate_against_each_other(player1, player2, games=games, silent=False)
 
 
 if __name__ == '__main__':
@@ -30,6 +30,6 @@ if __name__ == '__main__':
     GAMES = 10
 
     experiment = EvaluatePlayer()
-    experiment.run(player1=PLAYER1, player2=PLAYER2)
+    experiment.run(player1=PLAYER1, player2=PLAYER2, games=GAMES)
 
     print("\n| Evaluation completed, took %s |" % conf.time_diff(START_TIME))
