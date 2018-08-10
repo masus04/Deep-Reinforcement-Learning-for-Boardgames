@@ -89,6 +89,12 @@ class OthelloBoard(Board):
         stone_count = self.count_stones()
         return self.board_size**2 - stone_count[0] - stone_count[1]
 
+    def __eq__(self, other):
+        return (self.board == other.board).all()
+
+    def __hash__(self):
+        return hash(str(self.board))
+
 
 """   ---  Numba implementations  ---   '''
 Numba 0.36 does not yet fully support custom types.
@@ -205,5 +211,3 @@ def __get_representation_njit__(board, board_size, color, other_color):
 @njit
 def in_bounds(board_size, position):
     return position[0] >= 0 and position[1] >= 0 and position[0] < board_size and position[1] < board_size
-
-
