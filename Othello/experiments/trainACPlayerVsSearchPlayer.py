@@ -6,16 +6,16 @@ import Othello.config as config
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.basePlayers import SearchPlayer
 from Othello.players.heuristics import OthelloHeuristic
-from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, HugeFCBaselinePlayer, ConvBaselinePlayer
+from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, format_overview
 from plotting import Printer
 
 
-class TrainBaselinePlayerVsSearchPlayer(OthelloBaseExperiment):
+class TrainACPlayerVsSearchPlayer(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player, opponent):
-        super(TrainBaselinePlayerVsSearchPlayer, self).__init__()
+        super(TrainACPlayerVsSearchPlayer, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
@@ -27,7 +27,7 @@ class TrainBaselinePlayerVsSearchPlayer(OthelloBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         if self.opponent is None:
             self.player2 = SearchPlayer(search_depth=1, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         OPPONENT = None
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
-        experiment = TrainBaselinePlayerVsSearchPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+        experiment = TrainACPlayerVsSearchPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
         experiment.run(lr=LR)
         experiment.save_player(experiment.player1)
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
