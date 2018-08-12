@@ -40,7 +40,7 @@ class Gui:
         self.tip_img = pygame.image.load(os.path.join(local_path, "images","tip.bmp")).convert()
         self.clear_img = pygame.image.load(os.path.join(local_path, "images","nada.bmp")).convert()
 
-        pygame.display.set_caption('Othello by Robert Gruener')
+        pygame.display.set_caption('Othello Gym')
         # Ignore mouse motion (greatly reduces resources when not needed)
         pygame.event.set_blocked(pygame.MOUSEMOTION)
 
@@ -60,7 +60,7 @@ class Gui:
         elif player_color == BLACK:
             msg = font.render("Black player wins", True, self.RED)
         else:
-            msg = font.render( "Tie!", True, self.RED)
+            msg = font.render("Tie!", True, self.RED)
         msg2 = font.render("Press Mouse To Restart Game", True, self.RED)
 
         self.screen.blit(msg, msg.get_rect(centerx = self.screen.get_width()/2 - 175, centery = 225))
@@ -106,7 +106,7 @@ class Gui:
         elif color == WHITE:
             img = self.white_img
         else:
-            img = self.tip_img
+            img = self.clear_img
 
         x = pos[0]*self.SQUARE_SIZE + self.BOARD[0]
         y = pos[1]*self.SQUARE_SIZE + self.BOARD[1]
