@@ -194,7 +194,7 @@ class LearningPlayer(Player):
         return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights))
 
     def __str__(self):
-        return "[%s lr:%s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model)
+        return "[%s lr %s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model)
 
 
 class PlayerException(Exception):
@@ -303,4 +303,4 @@ class Model(torch.nn.Module):
         return total_param
 
     def __str__(self):
-        return "%s %s" % (self.__class__.__name__, ("intermediate size: %s" % self.intermediate_size) if self.intermediate_size is not None else "conv channels: %s" % self.conv_channels)
+        return "%s %s" % (self.__class__.__name__, ("intermediate size %s" % self.intermediate_size) if self.intermediate_size is not None else "conv channels %s" % self.conv_channels)

@@ -117,4 +117,4 @@ class SearchPlayer(Player):
         self.ai.trans_table = dict()  # Clear move cache after each game.
 
     def __str__(self):
-        return "[%s search depth: %s]" % (self.__class__.__name__, self.search_depth)
+        return "[%s search depth %s]" % (self.__class__.__name__, self.search_depth)
