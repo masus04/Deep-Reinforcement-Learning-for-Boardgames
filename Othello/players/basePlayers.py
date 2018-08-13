@@ -115,3 +115,6 @@ class SearchPlayer(Player):
 
     def register_winner(self, winner_color):
         self.ai.trans_table = dict()  # Clear move cache after each game.
+
+    def __str__(self):
+        return "[%s search depth: %s]" % (self.__class__.__name__, self.search_depth)
