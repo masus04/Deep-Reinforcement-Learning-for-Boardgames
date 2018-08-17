@@ -18,8 +18,7 @@ class TrainBaselinePlayerVsBest_Pretrained(OthelloBaseExperiment):
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
-        if MILESTONES:
-            self.milestones = []
+        self.milestones = []
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
@@ -56,7 +55,7 @@ class TrainBaselinePlayerVsBest_Pretrained(OthelloBaseExperiment):
 
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs BEST" % (self.player1),
+                        "%s vs BEST" % (self.player1 + " milestones" if MILESTONES else ""),
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, self.replacements[0]/self.replacements[1], config.time_diff(start_time)))
 

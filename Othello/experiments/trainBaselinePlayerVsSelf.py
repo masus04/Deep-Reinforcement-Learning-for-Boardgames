@@ -11,15 +11,14 @@ from Othello.environment.evaluation import evaluate_against_base_players, evalua
 from plotting import Printer
 
 
-class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
+class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
 
     def __init__(self, games, evaluations, pretrained_player=None):
-        super(TrainBaselinePlayerVsBest, self).__init__()
+        super(TrainBaselinePlayerVsSelf, self).__init__()
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
-        if MILESTONES:
-            self.milestones = []
+        self.milestones = []
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
@@ -54,7 +53,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs BEST" % (self.player1),
+                        "%s vs BEST" % (self.player1 + " milestones" if MILESTONES else ""),
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, self.replacements[0]/self.replacements[1], config.time_diff(start_time)))
 
@@ -75,7 +74,7 @@ if __name__ == '__main__':
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
-    experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+    experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     experiment.run(lr=LR)
     experiment.save_player(experiment.player1)
 
