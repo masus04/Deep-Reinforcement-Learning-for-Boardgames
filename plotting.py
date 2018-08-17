@@ -43,6 +43,7 @@ class Plotter:
                 lines.append(series)
             df = pd.DataFrame(lines)
 
+        # DEPRECATED
         else:
             line1_values = self.losses.get_values()
 

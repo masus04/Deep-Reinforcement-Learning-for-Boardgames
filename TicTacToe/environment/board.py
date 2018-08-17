@@ -90,7 +90,7 @@ def __game_won__(board, board_size, valid_moves):
                     return BLACK
                 if __recursive_game_won__(board, board_size, (i, j), direction, WHITE, 0):
                     return WHITE
-    return False
+    return None
 
 
 @njit

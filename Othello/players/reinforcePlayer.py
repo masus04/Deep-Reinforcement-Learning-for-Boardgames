@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 import Othello.config as config
 import abstractClasses as abstract
 from abstractClasses import LearningPlayer, PlayerException
-from models8x8 import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
+from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
 
 
 class PGStrategy(abstract.Strategy):

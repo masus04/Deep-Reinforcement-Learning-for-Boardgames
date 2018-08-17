@@ -27,11 +27,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        # If milestones exist, use them with probability p
-        if self.milestones and random() < 0.2:
-            self.player1 = choice(self.milestones)
-        else:
-            self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaseLinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
 
         if self.opponent is not None:
             self.player2 = self.opponent
@@ -68,10 +64,6 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
                         "Train %s vs %s\nGames: %s Evaluations: %s\nTime: %s"
                         % (self.player1, self.opponent, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
-            # If x/5th of training is completed, save milestone
-            if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
-                self.milestones.append(self.player1.copy(shared_weights=False))
-
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
@@ -86,7 +78,7 @@ if __name__ == '__main__':
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
         GAMES = 100000
         EVALUATIONS = 1000
-        LR = random()*1e-9 + 1e-5  # uniform(1e-2, 1e-4)
+        LR = random()*1e-15 + 1e-4  # uniform(1e-2, 1e-4)
 
         PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
         OPPONENT = None  # ExperiencedPlayer(deterministic=True)

@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 import TicTacToe.config as config
 import abstractClasses as abstract
 from abstractClasses import LearningPlayer
-from models3x3 import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
 from abstractClasses import PlayerException
 
 

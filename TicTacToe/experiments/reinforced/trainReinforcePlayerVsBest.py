@@ -66,9 +66,9 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 1000000
+    GAMES = 100000
     EVALUATIONS = GAMES//100
-    LR = random()*1e-9 + 1e-5
+    LR = random()*1e-9 + 1e-4
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 

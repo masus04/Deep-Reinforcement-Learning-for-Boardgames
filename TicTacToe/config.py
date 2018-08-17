@@ -9,7 +9,7 @@ TIC_TAC_TOE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Black > White because these are also used as rewards and for scoring.
 BLACK = 1
 WHITE = -1
-EMPTY = 0.1
+EMPTY = 0
 
 LABEL_WIN = BLACK
 LABEL_LOSS = WHITE
@@ -19,10 +19,10 @@ LABEL_DRAW = EMPTY
 BOARD_SIZE = 3
 WIN_LINE_LENGTH = 3
 
-EVALUATION_GAMES = 40
+EVALUATION_GAMES = 20
 
 # Network parameters
-LR = 1e-4
+LR = 1e-5
 GAMMA = 1  # 0.95   # Reward discounting factor
 CLIP = 0.1          # Clipping parameter for PPO
 

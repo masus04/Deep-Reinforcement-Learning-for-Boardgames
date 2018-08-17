@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 from numba import jit
 
 import Othello.config as config
-from models8x8 import FCPolicyModel, LargeFCPolicyModel
+from models import FCPolicyModel, LargeFCPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 
