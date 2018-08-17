@@ -18,24 +18,19 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
-        self.milestones = []
+        if MILESTONES:
+            self.milestones = []
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
     def run(self, lr, silent=False):
-        # If milestones exist, use them with probability p
-        if self.milestones and random() < 0.2:
-            self.player1 = choice(self.milestones)
-        else:
-            self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
         self.player2.strategy.train = False
-
-        self.simulation = Othello([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         self.replacements = []
@@ -44,6 +39,11 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
+            # If milestones exist, use them with probability p
+            if self.milestones and random() < 0.2:
+                self.player2 = choice(self.milestones)
+
+            self.simulation = Othello([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
@@ -76,7 +76,7 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     ITERATIONS = 1
-    MILESTONES = True
+    MILESTONES = False
 
     start = datetime.now()
     for i in range(ITERATIONS):

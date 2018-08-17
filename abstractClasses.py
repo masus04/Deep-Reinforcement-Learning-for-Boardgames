@@ -167,6 +167,7 @@ class LearningPlayer(Player):
 
     def __init__(self, strategy):
         super(LearningPlayer, self).__init__()
+        self.milestones = None
 
         if issubclass(strategy.__class__, Strategy):
             self.strategy = strategy
@@ -194,7 +195,10 @@ class LearningPlayer(Player):
         return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights))
 
     def __str__(self):
-        return "[%s lr %s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model)
+        representation = "[%s lr %s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model)
+        if self.milestones is not None:
+            representation += " with milestones"
+        return representation
 
 
 class PlayerException(Exception):
