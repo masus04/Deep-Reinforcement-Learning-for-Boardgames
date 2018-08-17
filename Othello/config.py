@@ -21,11 +21,11 @@ BOARD_SIZE = 8
 EVALUATION_GAMES = 20
 
 # Network parameters
-LR = 1e-5
+LR = 1e-4
 GAMMA = 1  # 0.95   # Reward discounting factor
 CLIP = 0.1          # Clipping parameter for PPO
 
-CUDA = torch.cuda.is_available()
+CUDA = False  # torch.cuda.is_available()
 
 
 def get_color_from_player_number(code):

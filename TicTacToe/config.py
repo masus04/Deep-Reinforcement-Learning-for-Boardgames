@@ -22,7 +22,7 @@ WIN_LINE_LENGTH = 3
 EVALUATION_GAMES = 40
 
 # Network parameters
-LR = 1e-5
+LR = 1e-4
 GAMMA = 1  # 0.95   # Reward discounting factor
 CLIP = 0.1          # Clipping parameter for PPO
 
