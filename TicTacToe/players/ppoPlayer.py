@@ -43,7 +43,7 @@ class PPOStrategy(Strategy):
 
         # ---------------------- Error Logging ---------------------- #
         if not self.train:
-            return 0
+            return None
 
         if len(self.log_probs) != len(self.rewards) or len(self.log_probs) != len(self.state_values):
             raise PlayerException(

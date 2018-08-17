@@ -36,7 +36,7 @@ class PGStrategy(abstract.Strategy):
 
     def update(self):
         if not self.train:
-            return 0
+            return None
 
         if len(self.log_probs) != len(self.rewards):
             raise abstract.PlayerException("log_probs length must be equal to rewards length. Got %s - %s" % (len(self.log_probs), len(self.rewards)))

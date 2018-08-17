@@ -36,9 +36,9 @@ class Plotter:
 
         if self.values:
             lines = []
-            max_length = len(max(self.values.items(), key=lambda a: len(a))[1])
+            max_length = max([len(values[1].get_values()) for values in self.values.items()])
             for key in self.values:
-                values = self.__scale__(self.values[key].get_values(), max_length)
+                values = self.__scale__(self.values[key].get_values(), max_length+1)
                 series = pd.Series(values, name=key)
                 lines.append(series)
             df = pd.DataFrame(lines)

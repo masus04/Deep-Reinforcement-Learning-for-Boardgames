@@ -41,7 +41,7 @@ class BaselinePGStrategy(Strategy):
     def update(self):
         # ---------------------- Error Logging ---------------------- #
         if not self.train:
-            return 0
+            return None
 
         if len(self.log_probs) != len(self.rewards) or len(self.log_probs) != len(self.state_values):
             raise PlayerException("log_probs length must be equal to rewards length as well as state_values length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.state_values)))
