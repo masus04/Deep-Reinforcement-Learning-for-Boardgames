@@ -21,20 +21,14 @@ class PGStrategy(abstract.Strategy):
 
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
-        legal_moves_map = config.make_variable(legal_moves_map)
-        probs, _ = self.model(input, legal_moves_map)
 
-        try:
-            distribution = Categorical(probs)
-            action = distribution.sample()
-        except RuntimeError:
-            self.model(input, legal_moves_map)
-            raise PlayerException("sum(probs) <= 0:\n%s\n board:\n%s\nlegal moves:\n%s" % (probs, board_sample, legal_moves_map))
+        probs, _ = self.model(input, config.make_variable(legal_moves_map))
+        distribution = Categorical(probs)
+        action = distribution.sample()
 
         move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
-        log_prob = distribution.log_prob(action)
         if self.train:
-            self.log_probs.append(log_prob)
+            self.log_probs.append(distribution.log_prob(action))
         return move
 
     def update(self):
@@ -64,22 +58,22 @@ class PGStrategy(abstract.Strategy):
 class FCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, model=FCPolicyModel()))
+            else PGStrategy(lr, model=FCPolicyModel()))
 
 
 class LargeFCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, model=LargeFCPolicyModel()))
+            else PGStrategy(lr, model=LargeFCPolicyModel()))
 
 
 class HugeFCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                else PGStrategy(lr, model=HugeFCPolicyModel()))
+            else PGStrategy(lr, model=HugeFCPolicyModel()))
 
 
 class ConvReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-                                                  else PGStrategy(lr, model=ConvPolicyModel()))
+            else PGStrategy(lr, model=ConvPolicyModel()))
