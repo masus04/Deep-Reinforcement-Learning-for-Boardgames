@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 from numba import jit
 
-import TicTacToe.config as config
+import Othello.config as config
 from models8x8 import FCPolicyModel, LargeFCPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
@@ -15,7 +15,7 @@ class PPOStrategy(Strategy):
         self.lr = lr
         self.gamma = gamma
 
-        self.model = model if model else FCPolicyModel()
+        self.model = model if model else FCPolicyModel(config=config)
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -83,7 +83,7 @@ class PPOStrategy(Strategy):
 class FCPPOPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCPPOPlayer, self).__init__(strategy=strategy if strategy is not None
-                                          else PPOStrategy(lr, model=LargeFCPolicyModel()))
+                                          else PPOStrategy(lr, model=LargeFCPolicyModel(config=config)))
 
 
 @jit

@@ -2,12 +2,11 @@ import torch
 from torch.nn import functional as F
 
 import abstractClasses as abstract
-from TicTacToe import config as config
 
 
 class FCPolicyModel(abstract.Model):
 
-    def __init__(self):
+    def __init__(self, config):
         super(FCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
@@ -39,7 +38,7 @@ class FCPolicyModel(abstract.Model):
 
 class LargeFCPolicyModel(abstract.Model):
 
-    def __init__(self):
+    def __init__(self, config):
         super(LargeFCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
@@ -75,7 +74,7 @@ class LargeFCPolicyModel(abstract.Model):
 
 class HugeFCPolicyModel(abstract.Model):
 
-    def __init__(self):
+    def __init__(self, config):
         super(HugeFCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
@@ -122,7 +121,7 @@ class HugeFCPolicyModel(abstract.Model):
 
 class ConvPolicyModel(abstract.Model):
 
-    def __init__(self):
+    def __init__(self, config):
         super(ConvPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE

@@ -4,7 +4,7 @@ import numpy as np
 
 import Othello.config as config
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
-from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCPolicyModel, ConvReinforcePlayer
+from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.basePlayers import ExperiencedPlayer
 from Othello.environment.game import Othello
 from Othello.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other

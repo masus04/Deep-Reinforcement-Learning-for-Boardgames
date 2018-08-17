@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 from numba import jit
 
-import TicTacToe.config as config
+import Othello.config as config
 from models8x8 import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
@@ -15,7 +15,7 @@ class BaselineStrategy(Strategy):
         self.lr = lr
         self.gamma = gamma
 
-        self.model = model if model else FCPolicyModel()
+        self.model = model if model else FCPolicyModel(config=config)
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -68,25 +68,25 @@ class BaselineStrategy(Strategy):
 class FCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=FCPolicyModel()))
+            else BaselineStrategy(lr, model=FCPolicyModel(config=config)))
 
 
 class LargeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=LargeFCPolicyModel()))
+            else BaselineStrategy(lr, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=HugeFCPolicyModel()))
+            else BaselineStrategy(lr, model=HugeFCPolicyModel(config=config)))
 
 
 class ConvBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=ConvPolicyModel()))
+            else BaselineStrategy(lr, model=ConvPolicyModel(config=config)))
 
 
 @jit

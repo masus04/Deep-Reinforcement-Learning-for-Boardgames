@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 1000000
+        GAMES = 1000
         EVALUATIONS = GAMES//1000
         LR = random()*1e-9 + 1e-4  # uniform(1e-2, 1e-4)
 

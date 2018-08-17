@@ -14,7 +14,7 @@ class PGStrategy(abstract.Strategy):
         self.lr = lr
         self.gamma = gamma
 
-        self.model = model if model else FCPolicyModel()  # PGFCModel()
+        self.model = model if model else FCPolicyModel(config=config)  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
     def evaluate(self, board_sample, legal_moves_map):
@@ -56,22 +56,22 @@ class PGStrategy(abstract.Strategy):
 class FCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=FCPolicyModel()))
+            else PGStrategy(lr, model=FCPolicyModel(config=config)))
 
 
 class LargeFCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=LargeFCPolicyModel()))
+            else PGStrategy(lr, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=HugeFCPolicyModel()))
+            else PGStrategy(lr, model=HugeFCPolicyModel(config=config)))
 
 
 class ConvReinforcePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=ConvPolicyModel()))
+            else PGStrategy(lr, model=ConvPolicyModel(config=config)))
