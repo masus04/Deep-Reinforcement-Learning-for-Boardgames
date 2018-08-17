@@ -30,7 +30,7 @@ class TrainBaselinePlayerVsSearchPlayer(OthelloBaseExperiment):
         self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
 
         if self.opponent is None:
-            self.player2 = SearchPlayer(search_depth=2, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
+            self.player2 = SearchPlayer(search_depth=2, strategy=OthelloHeuristic.RGRUENER_STRATEGY)
         else:
             self.player2 = self.opponent
 

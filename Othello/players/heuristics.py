@@ -10,20 +10,22 @@ class OthelloHeuristic(object):
     MID_GAME = 1
     END_GAME = 2
 
-    DEFAULT_STRATEGY = 0
+    RGRUENER_STRATEGY = 0
     PURE_SAVE_STONES_STRATEGY = 1
     PURE_MOBILITY_STRATEGY = 2
-    GREEDY_STRATEGY = 3
+    MASUS_STRATEGY = 3
+    GREEDY_STRATEGY = 4
 
-    def __init__(self, strategy=DEFAULT_STRATEGY):
-        if strategy == self.DEFAULT_STRATEGY:
+
+    def __init__(self, strategy=RGRUENER_STRATEGY):
+        if strategy == self.RGRUENER_STRATEGY:
             self.PIECE_COUNT_FACTOR = [0, 0, 1]
             self.CORNER_FACTOR = [1000, 1000, 0]
             self.MOBILITY_FACTOR = [250, 300, 0]
             self.EDGE_FACTOR = [25, 25, 0]
             self.CORNER_EDGE_FACTOR = [400, 400, 0]
             self.STABILITY_FACTOR = [120, 120, 0]
-            self.SAVE_STONES_FACTOR = [1000, 1000, 0]
+            self.SAVE_STONES_FACTOR = [0, 0, 0]
         else:
             self.PIECE_COUNT_FACTOR = [0, 0, 1]
             self.CORNER_FACTOR = [0, 0, 0]
@@ -37,6 +39,10 @@ class OthelloHeuristic(object):
             self.SAVE_STONES_FACTOR = [1, 1, 0]
 
         if strategy == self.PURE_MOBILITY_STRATEGY:
+            self.MOBILITY_FACTOR = [1, 1, 0]
+
+        if strategy == self.MASUS_STRATEGY:
+            self.SAVE_STONES_FACTOR = [3, 3, 0]
             self.MOBILITY_FACTOR = [1, 1, 0]
 
         if strategy == self.GREEDY_STRATEGY:

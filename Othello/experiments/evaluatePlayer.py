@@ -25,9 +25,9 @@ if __name__ == '__main__':
     START_TIME = datetime.now()
 
     LR = 1e-5 + random() * 1e-9
-    PLAYER1 = SearchPlayer(search_depth=3, strategy=0)
-    PLAYER2 = ExperiencedPlayer()  # RandomPlayer()
-    GAMES = 50
+    PLAYER1 = SearchPlayer(search_depth=5, strategy=SearchPlayer.RGRUENER_STRATEGY)
+    PLAYER2 = SearchPlayer(search_depth=5, strategy=SearchPlayer.MASUS_STRATEGY)  # RandomPlayer()
+    GAMES = 8
 
     experiment = EvaluatePlayer()
     experiment.run(player1=PLAYER1, player2=PLAYER2, games=GAMES)

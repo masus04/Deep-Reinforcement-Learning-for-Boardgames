@@ -104,8 +104,13 @@ class ExpertPlayer(Player):
 
 
 class SearchPlayer(Player):
+    RGRUENER_STRATEGY = OthelloHeuristic.RGRUENER_STRATEGY
+    MASUS_STRATEGY = OthelloHeuristic.MASUS_STRATEGY
+    PURE_SAVE_STONES_STRATEGY = OthelloHeuristic.PURE_SAVE_STONES_STRATEGY
+    PURE_MOBILITY_STRATEGY = OthelloHeuristic.PURE_MOBILITY_STRATEGY
+    GREEDY_STRATEGY = OthelloHeuristic.GREEDY_STRATEGY
 
-    def __init__(self, search_depth=3, strategy=OthelloHeuristic.DEFAULT_STRATEGY):
+    def __init__(self, search_depth=3, strategy=OthelloHeuristic.RGRUENER_STRATEGY):
         super(SearchPlayer, self).__init__()
         self.search_depth = search_depth
         self.ai = GameArtificialIntelligence(OthelloHeuristic(strategy).evaluate)

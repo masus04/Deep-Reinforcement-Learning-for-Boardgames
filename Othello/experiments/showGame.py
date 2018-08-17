@@ -35,8 +35,8 @@ class ShowGame(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    PLAYER1 = FCBaselinePlayer(lr=1e-5)  # HumanPlayer()
-    PLAYER2 = SearchPlayer(search_depth=1, strategy=OthelloHeuristic.DEFAULT_STRATEGY)
+    PLAYER1 = SearchPlayer(search_depth=3, strategy=OthelloHeuristic.PURE_MOBILITY_STRATEGY)
+    PLAYER2 = SearchPlayer(search_depth=2, strategy=OthelloHeuristic.GREEDY_STRATEGY)
     start = datetime.now()
 
     experiment = ShowGame(player1=PLAYER1, player2=PLAYER2)
