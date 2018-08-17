@@ -15,8 +15,7 @@ class BaselineStrategy(Strategy):
         self.lr = lr
         self.gamma = gamma
 
-        self.model = model if model else FCPolicyModel(ac_policy=True)
-        self.model.ac_policy = True
+        self.model = model if model else FCPolicyModel()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -69,25 +68,25 @@ class BaselineStrategy(Strategy):
 class FCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=FCPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=FCPolicyModel()))
 
 
 class LargeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=LargeFCPolicyModel()))
 
 
 class HugeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=HugeFCPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=HugeFCPolicyModel()))
 
 
 class ConvBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=ConvPolicyModel(ac_policy=True)))
+            else BaselineStrategy(lr, model=ConvPolicyModel()))
 
 
 @jit

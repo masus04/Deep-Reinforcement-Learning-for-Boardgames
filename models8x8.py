@@ -7,9 +7,8 @@ from TicTacToe import config as config
 
 class FCPolicyModel(abstract.Model):
 
-    def __init__(self, ac_policy=False):
+    def __init__(self):
         super(FCPolicyModel, self).__init__()
-        self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
         self.intermediate_size = 128
@@ -40,9 +39,8 @@ class FCPolicyModel(abstract.Model):
 
 class LargeFCPolicyModel(abstract.Model):
 
-    def __init__(self, ac_policy=False):
+    def __init__(self):
         super(LargeFCPolicyModel, self).__init__()
-        self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
         self.intermediate_size = 512
@@ -77,9 +75,8 @@ class LargeFCPolicyModel(abstract.Model):
 
 class HugeFCPolicyModel(abstract.Model):
 
-    def __init__(self, ac_policy=False):
+    def __init__(self):
         super(HugeFCPolicyModel, self).__init__()
-        self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
         self.intermediate_size = 1024
@@ -125,9 +122,8 @@ class HugeFCPolicyModel(abstract.Model):
 
 class ConvPolicyModel(abstract.Model):
 
-    def __init__(self, ac_policy=False):
+    def __init__(self):
         super(ConvPolicyModel, self).__init__()
-        self.ac_policy = ac_policy
 
         self.board_size = config.BOARD_SIZE
         self.self.conv_channels = 32

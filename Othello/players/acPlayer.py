@@ -15,8 +15,7 @@ class ACStrategy(Strategy):
         self.lr = lr
         self.gamma = gamma
 
-        self.model = model if model else FCPolicyModel(ac_policy=True)
-        self.model.ac_policy = True
+        self.model = model if model else FCPolicyModel()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -69,25 +68,25 @@ class ACStrategy(Strategy):
 class FCACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=FCPolicyModel(ac_policy=True)))
+                                         else ACStrategy(lr, model=FCPolicyModel()))
 
 
 class LargeFCACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
+                                         else ACStrategy(lr, model=LargeFCPolicyModel()))
 
 
 class HugeFCACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=HugeFCPolicyModel(ac_policy=True)))
+                                         else ACStrategy(lr, model=HugeFCPolicyModel()))
 
 
 class ConvACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                           else ACStrategy(lr, model=ConvPolicyModel(ac_policy=True)))
+                                           else ACStrategy(lr, model=ConvPolicyModel()))
 
 
 @jit

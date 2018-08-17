@@ -15,8 +15,7 @@ class PPOStrategy(Strategy):
         self.lr = lr
         self.gamma = gamma
 
-        self.model = model if model else FCPolicyModel(ac_policy=True)
-        self.model.ac_policy = True
+        self.model = model if model else FCPolicyModel()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
@@ -84,7 +83,7 @@ class PPOStrategy(Strategy):
 class FCPPOPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCPPOPlayer, self).__init__(strategy=strategy if strategy is not None
-                                          else PPOStrategy(lr, model=LargeFCPolicyModel(ac_policy=True)))
+                                          else PPOStrategy(lr, model=LargeFCPolicyModel()))
 
 
 @jit
