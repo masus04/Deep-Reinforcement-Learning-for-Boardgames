@@ -55,7 +55,7 @@ class TrainBaselinePlayerVsBest_Pretrained(OthelloBaseExperiment):
 
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs BEST" % (self.player1 + " milestones" if MILESTONES else ""),
+                        "%s vs BEST" % (self.player1.__str__() + " milestones" if MILESTONES else ""),
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, self.replacements[0]/self.replacements[1], config.time_diff(start_time)))
 
