@@ -57,7 +57,7 @@ def make_variable(lst):
     return var
 
 
-def findInSubdirectory(filename, subdirectory=''):
+def find_in_subdirectory(filename, subdirectory=''):
     if subdirectory:
         path = subdirectory
     else:

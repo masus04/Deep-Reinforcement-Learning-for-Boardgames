@@ -25,7 +25,7 @@ class Experiment(ABC):
 
     @classmethod
     def load_player(cls, player_name):
-        filename = cls.config.findInSubdirectory(player_name, cls.config.TIC_TAC_TOE_DIR + "/experiments")
+        filename = cls.config.find_in_subdirectory(player_name, cls.config.TIC_TAC_TOE_DIR + "/experiments")
         return torch.load(filename)
 
     def add_results(self, results):

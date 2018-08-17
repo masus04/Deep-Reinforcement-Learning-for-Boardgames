@@ -3,9 +3,8 @@ from torch.distributions import Categorical
 
 import Othello.config as config
 import abstractClasses as abstract
-from abstractClasses import LearningPlayer
+from abstractClasses import LearningPlayer, PlayerException
 from models8x8 import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
-from abstractClasses import PlayerException
 
 
 class PGStrategy(abstract.Strategy):
@@ -18,11 +17,10 @@ class PGStrategy(abstract.Strategy):
         self.model = model if model else FCPolicyModel()  # PGFCModel()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
-
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
 
-        probs, _ = self.model(input, config.make_variable(legal_moves_map))
+        probs, state_value = self.model(input, config.make_variable(legal_moves_map))
         distribution = Categorical(probs)
         action = distribution.sample()
 
@@ -36,7 +34,7 @@ class PGStrategy(abstract.Strategy):
             return 0
 
         if len(self.log_probs) != len(self.rewards):
-            raise abstract.PlayerException("log_probs length must be equal to rewards length. Got %s - %s" % (len(self.log_probs), len(self.rewards)))
+            raise PlayerException("log_probs length must be equal to rewards length. Got %s - %s" % (len(self.log_probs), len(self.rewards)))
 
         rewards = self.discount_rewards(self.rewards, self.gamma)
         rewards = config.make_variable(torch.FloatTensor(rewards))
