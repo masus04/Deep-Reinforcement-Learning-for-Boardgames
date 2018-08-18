@@ -43,7 +43,7 @@ class PGStrategy(abstract.Strategy):
         policy_losses = [(-log_prob * reward) for log_prob, reward in zip(self.log_probs, rewards)]
 
         self.optimizer.zero_grad()
-        policy_loss = torch.cat(policy_losses).sum()/len(policy_losses)
+        policy_loss = torch.mean(policy_losses)
         policy_loss.backward()
         self.optimizer.step()
 
