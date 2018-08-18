@@ -40,10 +40,10 @@ class PGStrategy(abstract.Strategy):
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
-        policy_losses = [(-log_prob * reward) for log_prob, reward in zip(self.log_probs, rewards)]
+        policy_losses = [(-log_prob * reward / len(self.log_probs)) for log_prob, reward in zip(self.log_probs, rewards)]
 
         self.optimizer.zero_grad()
-        policy_loss = torch.mean(policy_losses)
+        policy_loss = torch.cat(policy_losses).sum()
         policy_loss.backward()
         self.optimizer.step()
 
