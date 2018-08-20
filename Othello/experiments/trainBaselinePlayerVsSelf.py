@@ -53,13 +53,14 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
 
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs BEST" % (self.player1 + " milestones" if MILESTONES else ""),
+                        "%s vs BEST" % (self.player1.__str__() + (" milestones" if MILESTONES else "")),
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             # If x/5th of training is completed, save milestone
             if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
                 self.milestones.append(self.player1.copy(shared_weights=False))
+                self.milestones[-1].strategy.train = False
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
