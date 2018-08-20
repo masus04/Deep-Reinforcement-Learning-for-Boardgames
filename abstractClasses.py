@@ -165,7 +165,7 @@ class Player(ABC):
 
 class LearningPlayer(Player):
 
-    def __init__(self, strategy):
+    def __init__(self, strategy, online=None):
         super(LearningPlayer, self).__init__()
 
         if issubclass(strategy.__class__, Strategy):
@@ -189,9 +189,11 @@ class LearningPlayer(Player):
         Returns a clean copy of the player and all its attributes.
 
         :param shared_weights: If True, the returned player shares a Model and therefore the weights with the original player
-        :return:
         """
-        return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights))
+        try:
+            return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights))
+        except:
+            return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights), online=self.online)
 
     def __str__(self):
         return "[%s lr %s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model)
@@ -208,7 +210,7 @@ class Strategy(ABC):
     The strategy contains and trains a model that is capable of
     """
 
-    def __init__(self):
+    def __init__(self, online=None):
         self.lr = None
         self.model = None
         self.optimizer = None
@@ -226,9 +228,9 @@ class Strategy(ABC):
 
     def copy(self, shared_weights=True):
         if shared_weights:
-            strategy = self.__class__(model=self.model, lr=self.lr)
+            strategy = self.__class__(model=self.model, lr=self.lr, online=self.online)
         else:
-            strategy = self.__class__(model=self.model.copy(), lr=self.lr)
+            strategy = self.__class__(model=self.model.copy(), lr=self.lr, online=self.online)
 
         strategy.train = deepcopy(self.train)
         strategy.log_probs = deepcopy(self.log_probs)

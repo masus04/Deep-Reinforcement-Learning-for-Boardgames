@@ -7,6 +7,7 @@ import numpy as np
 from scipy.interpolate import UnivariateSpline
 import matplotlib.pyplot as plt
 import pandas as pd
+from collections import OrderedDict
 
 import TicTacToe.config as config
 
@@ -16,7 +17,7 @@ class Plotter:
     def __init__(self):
         HISTORY_SIZE = 1000
 
-        self.values = dict()
+        self.values = OrderedDict()
 
     def add_values(self, values):
         """

@@ -27,7 +27,7 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCACPlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         if self.opponent is not None:
             self.player2 = self.opponent
@@ -66,24 +66,21 @@ class TrainACPlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
     MILESTONES = True
     start = datetime.now()
 
-    for i in range(ITERATIONS):
-        print("Iteration %s/%s" % (i + 1, ITERATIONS))
-        GAMES = 100000
-        EVALUATIONS = 1000
-        LR = random()*1e-15 + 1e-4  # uniform(1e-3, 1e-4)
+    GAMES = 50000
+    EVALUATIONS = 500
+    LR = random()*1e-15 + 1e-4  # uniform(1e-3, 1e-4)
 
-        PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-        OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
+    PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
+    OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
 
-        print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
-        experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
-        experiment.run(lr=LR)
-        print()
-        experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
+    print("Training ACPlayer vs %s with lr: %s" % (OPPONENT, LR))
+    experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+    experiment.run(lr=LR)
+    print()
+    experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
 
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 

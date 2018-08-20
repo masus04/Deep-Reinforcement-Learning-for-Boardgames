@@ -24,7 +24,7 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaseLinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)

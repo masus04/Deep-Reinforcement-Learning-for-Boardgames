@@ -66,7 +66,7 @@ class TrainReinforcePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     MILESTONES = True
-    GAMES = 100000
+    GAMES = 50000
     EVALUATIONS = 1000
     LR = random()*1e-9 + 1e-4
 
