@@ -25,16 +25,11 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        if self.milestones and random() < 0.2:
-            self.player1 = choice(self.milestones)
-        else:
-            self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, online=False)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
         self.player2.strategy.train = False
-
-        self.simulation = TicTacToe([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         self.replacements = []
@@ -42,7 +37,10 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         for episode in range(1, self.evaluations+1):
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
+            if self.milestones and random() < 0.2:
+                self.player2 = choice(self.milestones)
 
+            self.simulation = TicTacToe([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
@@ -66,6 +64,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
             # If x/5th of training is completed, save milestone
             if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
                 self.milestones.append(self.player1.copy(shared_weights=False))
+                self.milestones[-1].strategy.train = False
 
         print("Best player replaced after episodes: %s" % self.replacements)
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
@@ -75,7 +74,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     ITERATIONS = 1
-    MILESTONES = True
+    MILESTONES = False
 
     start = datetime.now()
     for i in range(ITERATIONS):

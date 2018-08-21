@@ -69,19 +69,20 @@ if __name__ == '__main__':
     MILESTONES = True
     start = datetime.now()
 
-    GAMES = 50000
-    EVALUATIONS = 500
-    LR = random()*1e-15 + 1e-4  # uniform(1e-3, 1e-4)
+    for i in range(15):
+        GAMES = 50000
+        EVALUATIONS = 500
+        LR = uniform(1e-4, 1e-5)  # random()*1e-15 + 5e-5  # uniform(1e-3, 1e-4)
 
-    PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-    OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
+        PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
+        OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
 
-    print("Training ACPlayer vs %s with lr: %s" % (OPPONENT, LR))
-    experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
-    experiment.run(lr=LR)
-    print()
-    experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
+        print("Training ACPlayer vs %s with lr: %s" % (OPPONENT, LR))
+        experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+        experiment.run(lr=LR)
+        print()
+        experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
 
-    print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
+        print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 
     print("took: %s" % (datetime.now() - start))

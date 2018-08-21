@@ -27,7 +27,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaseLinePlayer(lr=lr)
 
         if self.opponent is not None:
             self.player2 = self.opponent
