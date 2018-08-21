@@ -42,15 +42,17 @@ class LargeFCPolicyModel(abstract.Model):
         super(LargeFCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 512
+        self.intermediate_size = 128
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.fc3 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
-        self.fc4 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
 
-        self.policy_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
-        self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
+        self.policy_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
+        self.policy_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
+
+        self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
+        self.vf_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
         self.__xavier_initialization__()
 
@@ -62,12 +64,13 @@ class LargeFCPolicyModel(abstract.Model):
         x = F.leaky_relu(self.fc1(x))
         x = F.leaky_relu(self.fc2(x))
         x = F.leaky_relu(self.fc3(x))
-        x = F.leaky_relu(self.fc4(x))
 
         p = self.policy_head(x)
+        p = self.policy_head2(p)
         p = self.legal_softmax(p, legal_moves_map)
 
         vf = self.vf_head(x)
+        vf = self.vf_head2(vf)
 
         return p, vf
 
@@ -78,7 +81,7 @@ class HugeFCPolicyModel(abstract.Model):
         super(HugeFCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 1024
+        self.intermediate_size = 128
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
