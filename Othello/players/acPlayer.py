@@ -10,9 +10,9 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class ACStrategy(Strategy):
 
-    def __init__(self, lr, model, online, gamma=config.GAMMA):
+    def __init__(self, lr, model, gamma=config.GAMMA):
         super(ACStrategy, self).__init__()
-        self.online = online
+        self.online = False
         self.lr = lr
         self.gamma = gamma
 
@@ -83,27 +83,27 @@ class ACStrategy(Strategy):
 
 
 class FCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, online=False):
+    def __init__(self, lr=config.LR, strategy=None):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=FCPolicyModel(config=config), online=online))
+                                         else ACStrategy(lr, model=FCPolicyModel(config=config)))
 
 
 class LargeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, online=False):
+    def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=LargeFCPolicyModel(config=config), online=online))
+                                         else ACStrategy(lr, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, online=False):
+    def __init__(self, lr=config.LR, strategy=None):
         super(HugeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=HugeFCPolicyModel(config=config), online=online))
+                                         else ACStrategy(lr, model=HugeFCPolicyModel(config=config)))
 
 
 class ConvACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, online=False):
+    def __init__(self, lr=config.LR, strategy=None):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                           else ACStrategy(lr, model=ConvPolicyModel(config=config), online=online))
+                                           else ACStrategy(lr, model=ConvPolicyModel(config=config)))
 
 
 @jit
