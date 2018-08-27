@@ -25,7 +25,7 @@ class TrainReinforcePlayerVsBest(OthelloBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCReinforcePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     GAMES = 10000000
     EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 2e-5
-    MILESTONES = False
+    MILESTONES = True
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 

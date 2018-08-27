@@ -25,7 +25,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaselinePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -78,7 +78,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    MILESTONES = False
+    MILESTONES = True
     GAMES = 10000000
     EVALUATIONS = GAMES//1000
     LR = random()*1e-9 + 1e-4
