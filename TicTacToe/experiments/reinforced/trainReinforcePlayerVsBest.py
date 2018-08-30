@@ -24,13 +24,11 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCReinforcePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
         self.player2.strategy.train = False
-
-        self.simulation = TicTacToe([self.player1, self.player2])
 
         games_per_evaluation = self.games // self.evaluations
         self.replacements = []
@@ -39,6 +37,7 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
+            self.simulation = TicTacToe([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
 
@@ -66,9 +65,9 @@ class TrainReinforcePlayerVsBest(TicTacToeBaseExperiment):
 
 if __name__ == '__main__':
 
-    GAMES = 100000
+    GAMES = 200000
     EVALUATIONS = GAMES//100
-    LR = random()*1e-9 + 1e-4
+    LR = random()*1e-9 + 1e-5
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
