@@ -1,22 +1,18 @@
-import numpy as np
-
+from two_player_game import TwoPlayerGame
 import Othello.config as config
 from Othello.environment.board import OthelloBoard
 
 
-class Othello:
+class Othello(TwoPlayerGame):
 
     def __init__(self, players, gui=None):
-        self.player1 = players[0]
-        self.player2 = players[1]
+        super(Othello, self).__init__(players=players, config=config, gui=gui)
 
         self.player1.color = config.BLACK
         self.player2.color = config.WHITE
 
         for player in players:
             player.original_color = player.color
-
-        self.gui = gui
 
     def __run__(self, player1, player2):
         """

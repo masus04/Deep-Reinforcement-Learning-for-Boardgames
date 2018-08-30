@@ -1,21 +1,15 @@
-from two_player_game import TwoPlayerGame
-
-import TicTacToe.config as config
-from TicTacToe.environment.board import TicTacToeBoard
 
 
-class TicTacToe(TwoPlayerGame):
+class TwoPlayerGame:
 
-    def __init__(self, players):
-        super(TicTacToe, self).__init__(players=players, config=config)
+    def __init__(self, players, config, gui=None):
+        self.player1 = players[0]
+        self.player2 = players[1]
+        self.config = config
 
-        self.player1.color = config.BLACK
-        self.player2.color = config.WHITE
+        self.gui = gui
 
-        for player in players:
-            player.original_color = player.color
-
-    def __run__(self, player1, player2):
+    def __run__(self, player1, player2, board):
         """
         Runs an episode of the game
 
@@ -23,16 +17,25 @@ class TicTacToe(TwoPlayerGame):
         :param player2:
         :return: The original color of the winning player
         """
-        self.board = TicTacToeBoard()
+        self.board = board
         players = player1, player2
+        if self.gui:
+            self.gui.show_game(self.board)
 
         while True:
-            move = players[0].get_move(self.board)
-            self.board.apply_move(move, players[0].color)
+            if len(self.board.get_valid_moves(players[0].color)) > 0:
+                move = players[0].get_move(self.board)
+                self.board.apply_move(move, players[0].color)
 
-            winner = self.board.game_won()
-            if winner is not None:
-                return config.get_label_from_winner_color(player1, player2, winner)
+                if self.gui:
+                    self.gui.flash_move(move, players[0].color)
+                    self.gui.update(self.board, players[1])
+
+                winner = self.board.game_won()
+                if winner is not None:
+                    if self.gui:
+                        self.gui.show_winner(winner, self.board)
+                    return self.config.get_label_from_winner_color(player1, player2, winner)
 
             players = list(reversed(players))
 
@@ -57,6 +60,7 @@ class TicTacToe(TwoPlayerGame):
             if switch_colors and episode != 0 and episode % 2 == 0:
                 simulation_players[0].color, simulation_players[1].color = simulation_players[1].color, simulation_players[0].color
 
+            # Alternate starting color, effectively resulting in 4 starting positions rather than 2.
             if switch_players and episode != 0 and episode + 1 % 2:
                 simulation_players = list(reversed(simulation_players))
 
