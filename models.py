@@ -6,11 +6,11 @@ import abstractClasses as abstract
 
 class FCPolicyModel(abstract.Model):
 
-    def __init__(self, config):
+    def __init__(self, config, intermediate_size=128):
         super(FCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 128
+        self.intermediate_size = intermediate_size
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size**2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)

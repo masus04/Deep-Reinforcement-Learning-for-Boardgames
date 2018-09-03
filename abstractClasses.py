@@ -276,13 +276,12 @@ class Model(torch.nn.Module):
     @staticmethod
     def legal_softmax(input, legal_moves_map):
         legal_moves_map = legal_moves_map.view(input.data.shape)
-        x = input
 
-        # set illegal moves to about float.minvalue
-        x = x * legal_moves_map
-        x = x + (legal_moves_map-1) * 3e38
-
+        # set illegal moves to zero, softmax, set illegal moves to zero again
+        x = input * legal_moves_map
         x = F.softmax(x, dim=1)
+        x = x * legal_moves_map
+
         return x
 
     def copy(self):

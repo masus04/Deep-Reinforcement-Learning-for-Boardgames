@@ -27,7 +27,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
 
     def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaseLinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
 
         if self.opponent is not None:
             self.player2 = self.opponent
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     MILESTONES = True
     start = datetime.now()
 
-    GAMES = 50000
+    GAMES = 200000
     EVALUATIONS = 500
     LR = random()*1e-15 + 1e-4  # uniform(1e-2, 1e-4)
 

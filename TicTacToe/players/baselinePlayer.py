@@ -73,19 +73,19 @@ class BaselinePGStrategy(Strategy):
 class FCBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=FCPolicyModel(config=config)))
+                                         else BaselinePGStrategy(lr, model=FCPolicyModel(config=config, intermediate_size=16)))
 
 
 class LargeFCBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=LargeFCPolicyModel(config=config)))
+                                         else BaselinePGStrategy(lr, model=LargeFCPolicyModel(config=config, intermediate_size=16)))
 
 
 class ConvBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=ConvPolicyModel(config=config)))
+                                         else BaselinePGStrategy(lr, model=ConvPolicyModel(config=config, intermediate_size=16)))
 
 
 @jit

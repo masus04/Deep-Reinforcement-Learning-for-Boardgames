@@ -64,14 +64,15 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 1000000
-        EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
-        LR = random()*1e-9 + 1e-5  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
+        GAMES = 250000
+        EVALUATIONS = GAMES//1000  # 100 * randint(10, 500)
+        LR = random()*1e-9 + 1e-4  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
         experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         experiment.run(lr=LR)
+        experiment.save_player(experiment.player1)
 
         print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
         if PLAYER:
