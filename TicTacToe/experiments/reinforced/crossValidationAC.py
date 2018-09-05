@@ -11,13 +11,13 @@ if __name__ == '__main__':
 
     start = datetime.now()
 
-    GAMES = 10000000
-    EVALUATIONS = 1000
+    GAMES = 10000
+    EVALUATIONS = 100
     BATCH_SIZE = 1
 
     PLAYER = None  # PLAYER = Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
 
-    experiment = ActorCriticCrossValidation(TrainACPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER), BATCH_SIZE)
+    experiment = ActorCriticCrossValidation(TrainACPlayer(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER))
 
     results = experiment.run(5, -4.5, -5)
 

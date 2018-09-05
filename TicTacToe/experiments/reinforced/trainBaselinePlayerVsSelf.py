@@ -4,7 +4,7 @@ import numpy as np
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.baselinePlayer import FCBaseLinePlayer, LargeFCBaseLinePlayer
+from TicTacToe.players.baselinePlayer import FCBaseLinePlayer, LargeFCBaseLinePlayer, HugeFCBaseLinePlayer
 from TicTacToe.players.basePlayers import ExperiencedPlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, evaluate_both_players, evaluate_against_each_other
@@ -39,6 +39,7 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_results(("Losses", np.mean(losses)))
+            self.add_results(("Self", np.mean(results)))
 
             # evaluate
             if episode*games_per_evaluation % 1000 == 0:
@@ -64,9 +65,9 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 250000
-        EVALUATIONS = GAMES//1000  # 100 * randint(10, 500)
-        LR = random()*1e-9 + 1e-4  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
+        GAMES = 100000
+        EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
+        LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 

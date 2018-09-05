@@ -1,6 +1,7 @@
 import numpy as np
 from numba import njit
 
+from copy import deepcopy
 from abstractClasses import Board, BoardException
 import TicTacToe.config as config
 from TicTacToe.config import BLACK, WHITE, EMPTY
@@ -55,6 +56,15 @@ class TicTacToeBoard(Board):
 
     def get_legal_moves_map(self, color):
         return __get_legal_moves_map__(self.board_size, __get_valid_moves__(self.board, self.board_size))
+
+    def rotate_and_flip(self):
+        boards = []
+        for b in __rotate_and_flip__(deepcopy(self.board)):
+            board = TicTacToeBoard()
+            board.board = b
+            boards.append(board)
+
+        return boards
 
     def copy(self):
         return TicTacToeBoard(self)
@@ -111,7 +121,7 @@ def __in_bounds__(position, board_size):
     return True
 
 
-#@njit
+# @njit
 def __get_representation__(board, color):
     if color == BLACK:
         return board.copy()
@@ -171,3 +181,15 @@ def __generate_vectorized_get_representation__():
         raise BoardException("Board contains illegal colors")
 
     return np.vectorize(__element_wise_representation__, otypes=[np.float])
+
+
+# @njit
+def __rotate_and_flip__(board):
+    boards = []
+
+    for b in deepcopy(board), np.fliplr(deepcopy(board)):
+        for i in range(4):
+            boards.append(np.rot90(m=b, k=i))
+    assert (boards[0] == board).all()
+
+    return boards

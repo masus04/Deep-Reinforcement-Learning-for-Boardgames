@@ -28,7 +28,7 @@ class PGStrategy(abstract.Strategy):
         distribution = Categorical(probs)
         action = distribution.sample()
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (action // config.BOARD_SIZE, action % config.BOARD_SIZE)
         log_prob = distribution.log_prob(action)
         if self.train:
             self.log_probs.append(log_prob)
@@ -55,7 +55,7 @@ class PGStrategy(abstract.Strategy):
         del self.rewards[:]
         del self.log_probs[:]
 
-        return abs(policy_loss.data[0])
+        return abs(policy_loss.data)
 
 
 class FCReinforcePlayer(LearningPlayer):

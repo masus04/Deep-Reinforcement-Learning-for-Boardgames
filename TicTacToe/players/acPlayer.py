@@ -32,13 +32,13 @@ class ACStrategy(Strategy):
         action = distribution.sample()
         log_prob = distribution.log_prob(action)
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (action // config.BOARD_SIZE, action % config.BOARD_SIZE)
         if self.train:
             if self.online and self.state_values:
                 self.online_policy_update(board_sample, legal_moves_map, log_prob)
 
             self.log_probs.append(log_prob)
-            self.state_values.append(state_value)
+            self.state_values.append(state_value[0])
             self.board_samples.append(board_sample)
             self.legal_moves.append(legal_moves_map)
         return move
@@ -72,7 +72,7 @@ class ACStrategy(Strategy):
         del self.board_samples[:]
         del self.legal_moves[:]
 
-        return abs(loss.data[0])
+        return abs(loss.data)
 
     def online_policy_update(self, board, legal_moves, logprob):
         new_value = self.model(config.make_variable(torch.FloatTensor([board])), config.make_variable(torch.FloatTensor([legal_moves])))[1].data[0,0]

@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 from numba import jit
 
 import TicTacToe.config as config
-from models import FCPolicyModel, LargeFCPolicyModel, ConvPolicyModel
+from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
 from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 
@@ -17,7 +17,7 @@ class BaselinePGStrategy(Strategy):
 
         self.model = model if model else FCPolicyModel(config=config)
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=0.01)
 
         self.state_values = []
         self.board_samples = []
@@ -30,10 +30,10 @@ class BaselinePGStrategy(Strategy):
         distribution = Categorical(probs)
         action = distribution.sample()
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (action // config.BOARD_SIZE, action % config.BOARD_SIZE)
         if self.train:
             self.log_probs.append(distribution.log_prob(action))
-            self.state_values.append(state_value)
+            self.state_values.append(state_value[0][0])
             self.board_samples.append(board_sample)
             self.legal_moves.append(legal_moves_map)
         return move
@@ -47,6 +47,7 @@ class BaselinePGStrategy(Strategy):
             raise PlayerException("log_probs length must be equal to rewards length as well as state_values length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.state_values)))
 
         # ----------------------------------------------------------- #
+
         # Use either Discount (and baseline),
         rewards = self.discount_rewards(self.rewards, self.gamma)
         rewards = self.rewards_baseline(rewards)
@@ -67,34 +68,43 @@ class BaselinePGStrategy(Strategy):
         del self.board_samples[:]
         del self.legal_moves[:]
 
-        return abs(loss.data[0])
+        return abs(loss.data)
+
+
+INTERMEDIATE_SIZE = 9*4
 
 
 class FCBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(FCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=FCPolicyModel(config=config, intermediate_size=16)))
+                                         else BaselinePGStrategy(lr, model=FCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class LargeFCBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(LargeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=LargeFCPolicyModel(config=config, intermediate_size=16)))
+                                         else BaselinePGStrategy(lr, model=LargeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
+
+
+class HugeFCBaseLinePlayer(LearningPlayer):
+    def __init__(self, lr=config.LR, strategy=None):
+        super(HugeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
+                                         else BaselinePGStrategy(lr, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class ConvBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=ConvPolicyModel(config=config, intermediate_size=16)))
+                                         else BaselinePGStrategy(lr, model=ConvPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
-@jit
+# @jit
 def calculate_loss(log_probs, state_values, rewards):
     policy_losses = []
     value_losses = []
 
     for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
-        policy_losses.append(-log_prob * (reward - state_value.data[0][0]))
+        policy_losses.append(-log_prob * (reward - state_value.data))
         value_losses.append(F.smooth_l1_loss(state_value, reward))
 
     return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()

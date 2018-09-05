@@ -25,6 +25,8 @@ class FCPolicyModel(abstract.Model):
 
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size**2)
+        legal_moves_map = legal_moves_map.flatten()
+
         x = F.leaky_relu(self.fc1(x))
         x = F.leaky_relu(self.fc2(x))
 
@@ -38,11 +40,11 @@ class FCPolicyModel(abstract.Model):
 
 class LargeFCPolicyModel(abstract.Model):
 
-    def __init__(self, config):
+    def __init__(self, config, intermediate_size=128):
         super(LargeFCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 128
+        self.intermediate_size = intermediate_size
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
@@ -61,6 +63,8 @@ class LargeFCPolicyModel(abstract.Model):
 
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size ** 2)
+        legal_moves_map = legal_moves_map.flatten()
+
         x = F.leaky_relu(self.fc1(x))
         x = F.leaky_relu(self.fc2(x))
         x = F.leaky_relu(self.fc3(x))
@@ -77,11 +81,11 @@ class LargeFCPolicyModel(abstract.Model):
 
 class HugeFCPolicyModel(abstract.Model):
 
-    def __init__(self, config):
+    def __init__(self, config, intermediate_size=128):
         super(HugeFCPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        self.intermediate_size = 128
+        self.intermediate_size = intermediate_size
 
         self.fc1 = torch.nn.Linear(in_features=self.board_size ** 2, out_features=self.intermediate_size)
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
@@ -104,6 +108,8 @@ class HugeFCPolicyModel(abstract.Model):
 
     def forward(self, input, legal_moves_map):
         x = input.view(-1, self.board_size ** 2)
+        legal_moves_map = legal_moves_map.flatten()
+
         x = F.leaky_relu(self.fc1(x))
         x = F.leaky_relu(self.fc2(x))
         x = F.leaky_relu(self.fc3(x))
@@ -124,11 +130,11 @@ class HugeFCPolicyModel(abstract.Model):
 
 class ConvPolicyModel(abstract.Model):
 
-    def __init__(self, config):
+    def __init__(self, config, intermediate_size=128):
         super(ConvPolicyModel, self).__init__()
 
         self.board_size = config.BOARD_SIZE
-        self.self.conv_channels = 32
+        self.self.conv_channels = intermediate_size
 
         # Create representation
         self.conv1 = torch.nn.Conv2d(in_channels=1, out_channels=self.conv_channels, kernel_size=3, padding=1)

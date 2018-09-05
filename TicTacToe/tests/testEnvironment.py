@@ -47,7 +47,7 @@ class TestEnvironment(unittest.TestCase):
         board.apply_move((2, 2), config.WHITE)
         self.assertFalse(board.game_won(), msg="No Winner yet")
         board.apply_move((2, 0), config.BLACK)
-        self.assertTrue(board.game_won(), msg="Black Won")
+        self.assertEqual(board.game_won(), config.BLACK, msg="Black Won")
 
     def test_Board_Representation(self):
         random_player = ttt_players.RandomPlayer()

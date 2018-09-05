@@ -165,6 +165,8 @@ class Player(ABC):
 
 class LearningPlayer(Player):
 
+    ROTATE_AND_FLIP = True
+
     def __init__(self, strategy):
         super(LearningPlayer, self).__init__()
 
@@ -176,6 +178,11 @@ class LearningPlayer(Player):
     def get_move(self, board):
         if self.strategy.train:
             self.strategy.rewards.append(0)
+            if self.ROTATE_AND_FLIP:
+                for b in board.rotate_and_flip()[1:]:  # Do for all symmetries except for the original
+                    self.strategy.evaluate(b.get_representation(self.color), board.get_legal_moves_map(self.color))
+                    self.strategy.rewards.append(0)
+
         return self.strategy.evaluate(board.get_representation(self.color), board.get_legal_moves_map(self.color))
 
     def register_winner(self, winner_color):
@@ -262,7 +269,7 @@ class Strategy(ABC):
 
     def rewards_baseline(self, rewards):
         # TODO: Catch illegal use of this method
-        return [rewards[i] - self.state_values[i].data[0, 0] for i in range(len(self.rewards))]
+        return [rewards[i] - self.state_values[i].data for i in range(len(self.rewards))]
 
 
 class Model(torch.nn.Module):
@@ -275,8 +282,6 @@ class Model(torch.nn.Module):
 
     @staticmethod
     def legal_softmax(input, legal_moves_map):
-        legal_moves_map = legal_moves_map.view(input.data.shape)
-
         # set illegal moves to zero, softmax, set illegal moves to zero again
         x = input * legal_moves_map
         x = F.softmax(x, dim=1)

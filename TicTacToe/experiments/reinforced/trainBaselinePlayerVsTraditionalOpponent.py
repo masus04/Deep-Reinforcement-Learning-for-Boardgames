@@ -73,9 +73,9 @@ if __name__ == '__main__':
     MILESTONES = True
     start = datetime.now()
 
-    GAMES = 200000
+    GAMES = 100000
     EVALUATIONS = 500
-    LR = random()*1e-15 + 1e-4  # uniform(1e-2, 1e-4)
+    LR = random()*1e-15 + 1e-3  # uniform(1e-2, 1e-4)
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
     OPPONENT = None  # ExperiencedPlayer(deterministic=True)
