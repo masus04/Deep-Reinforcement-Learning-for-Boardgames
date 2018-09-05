@@ -50,7 +50,7 @@ class PGStrategy(abstract.Strategy):
         del self.rewards[:]
         del self.log_probs[:]
 
-        return abs(policy_loss.data[0])
+        return abs(int(policy_loss))
 
 
 class FCReinforcePlayer(LearningPlayer):

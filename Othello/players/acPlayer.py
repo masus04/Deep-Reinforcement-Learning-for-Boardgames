@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
-from numba import jit
 
 import Othello.config as config
 from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
@@ -32,13 +31,13 @@ class ACStrategy(Strategy):
         action = distribution.sample()
         log_prob = distribution.log_prob(action)
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (int(action) // config.BOARD_SIZE, int(action) % config.BOARD_SIZE)
         if self.train:
             if self.online:
                 self.online_policy_update(board_sample, legal_moves_map, log_prob)
 
             self.log_probs.append(log_prob)
-            self.state_values.append(state_value)
+            self.state_values.append(state_value[0])
             self.board_samples.append(board_sample)
             self.legal_moves.append(legal_moves_map)
         return move
@@ -56,9 +55,9 @@ class ACStrategy(Strategy):
         # rewards = self.normalize_rewards(rewards)
 
         if self.online:
-            loss = calculate_online_loss(self.state_values, rewards)
+            loss = self.calculate_online_loss(self.state_values, rewards)
         else:
-            loss = calculate_loss(self.log_probs, self.state_values, rewards)
+            loss = self.calculate_loss(self.log_probs, self.state_values, rewards)
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -70,16 +69,37 @@ class ACStrategy(Strategy):
         del self.board_samples[:]
         del self.legal_moves[:]
 
-        return abs(loss.data[0])
+        return abs(int(loss))
 
     def online_policy_update(self, board, legal_moves, logprob):
-        new_value = self.model(config.make_variable(torch.FloatTensor([board])), config.make_variable(torch.FloatTensor([legal_moves])))[1].data[0,0]
+        """ Not Tested after PyTorch update"""
+        new_value = self.model(config.make_variable(torch.FloatTensor([board])), config.make_variable(torch.FloatTensor([legal_moves])))[1].data[0, 0]
         reward = self.state_values[-1] - new_value
         loss = -logprob * reward
 
         self.optimizer.zero_grad()
         loss.backward(retain_graph=True)
         self.optimizer.step()
+
+    @staticmethod
+    def calculate_loss(log_probs, state_values, rewards):
+        policy_losses = []
+        value_losses = []
+
+        for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
+            policy_losses.append(-log_prob * reward)
+            value_losses.append(F.smooth_l1_loss(state_value, reward))
+
+        return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
+
+    @staticmethod
+    def calculate_online_loss(state_values, rewards):
+        value_losses = []
+
+        for state_value, reward in zip(state_values, rewards):
+            value_losses.append(F.smooth_l1_loss(state_value, reward))
+
+        return torch.stack(value_losses).sum()
 
 
 class FCACPlayer(LearningPlayer):
@@ -104,25 +124,3 @@ class ConvACPlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
                                            else ACStrategy(lr, model=ConvPolicyModel(config=config)))
-
-
-@jit
-def calculate_loss(log_probs, state_values, rewards):
-    policy_losses = []
-    value_losses = []
-
-    for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
-        policy_losses.append(-log_prob * reward)
-        value_losses.append(F.smooth_l1_loss(state_value, reward))
-
-    return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
-
-
-@jit
-def calculate_online_loss(state_values, rewards):
-    value_losses = []
-
-    for state_value, reward in zip(state_values, rewards):
-        value_losses.append(F.smooth_l1_loss(state_value, reward))
-
-    return torch.stack(value_losses).sum()

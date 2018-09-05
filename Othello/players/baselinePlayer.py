@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
-from numba import jit
 
 import Othello.config as config
 from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
@@ -30,10 +29,10 @@ class BaselineStrategy(Strategy):
         distribution = Categorical(probs)
         action = distribution.sample()
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (int(action) // config.BOARD_SIZE, int(action) % config.BOARD_SIZE)
         if self.train:
             self.log_probs.append(distribution.log_prob(action))
-            self.state_values.append(state_value)
+            self.state_values.append(state_value[0])
             self.board_samples.append(board_sample)
             self.legal_moves.append(legal_moves_map)
         return move
@@ -50,7 +49,7 @@ class BaselineStrategy(Strategy):
         rewards = config.make_variable(torch.FloatTensor(rewards))
         # rewards = self.normalize_rewards(rewards)
 
-        loss = calculate_loss(self.log_probs, self.state_values, rewards)
+        loss = self.calculate_loss(self.log_probs, self.state_values, rewards)
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -62,7 +61,18 @@ class BaselineStrategy(Strategy):
         del self.board_samples[:]
         del self.legal_moves[:]
 
-        return abs(loss.data[0])
+        return abs(int(loss))
+
+    @staticmethod
+    def calculate_loss(log_probs, state_values, rewards):
+        policy_losses = []
+        value_losses = []
+
+        for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
+            policy_losses.append(-log_prob * reward)
+            value_losses.append(F.smooth_l1_loss(state_value, reward))
+
+        return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
 
 
 class FCBaselinePlayer(LearningPlayer):
@@ -87,15 +97,3 @@ class ConvBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None):
         super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
             else BaselineStrategy(lr, model=ConvPolicyModel(config=config)))
-
-
-@jit
-def calculate_loss(log_probs, state_values, rewards):
-    policy_losses = []
-    value_losses = []
-
-    for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
-        policy_losses.append(-log_prob * reward)
-        value_losses.append(F.smooth_l1_loss(state_value, reward))
-
-    return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()

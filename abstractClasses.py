@@ -84,6 +84,18 @@ class Board(ABC):
         """
         return __other_color__(color)
 
+    def rotate_and_flip(self):
+        boards = []
+
+        for b in deepcopy(self.board), np.fliplr(deepcopy(self.board)):
+            for i in range(4):
+                board = self.__class__()
+                board.board = np.rot90(m=b, k=i)
+                boards.append(board)
+
+        assert (boards[0].board == self.board).all()
+        return boards
+
     def __lt__(self, other):
         return random()
 
