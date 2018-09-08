@@ -8,7 +8,6 @@ from TicTacToe.players.basePlayers import RandomPlayer
 from TicTacToe.environment.game import TicTacToe
 
 from TicTacToe.players.searchPlayer import SearchPlayer
-from TicTacToe.players.perfectPlayer import PerfectPlayer
 
 CORNERS = [(0, 0), (0, 2), (2, 0), (2, 2)]
 SIDES   = [(1, 0), (0, 1), (1, 2), (2, 1)]

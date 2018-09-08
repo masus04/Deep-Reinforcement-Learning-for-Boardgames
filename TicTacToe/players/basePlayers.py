@@ -3,7 +3,7 @@ from random import choice, random
 
 import TicTacToe.config as config
 from abstractClasses import Player, PlayerException
-from TicTacToe.players.perfectPlayer import PerfectPlayer as ExpertPlayer
+from TicTacToe.players.searchPlayer import SearchPlayer as ExpertPlayer
 
 
 class RandomPlayer(Player):

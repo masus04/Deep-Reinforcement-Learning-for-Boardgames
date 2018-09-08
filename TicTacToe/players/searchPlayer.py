@@ -7,7 +7,7 @@ from TicTacToe.players.search_based_ai import GameArtificialIntelligence
 
 class SearchPlayer(Player):
 
-    def __init__(self, search_depth=10):
+    def __init__(self, search_depth=9):
         super(SearchPlayer, self).__init__()
         self.search_depth = search_depth
         self.ai = GameArtificialIntelligence(evaluate)

@@ -25,9 +25,9 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
         return self
 
-    def run(self, lr, silent=False):
+    def run(self, lr, weight_decay, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
 
         if self.opponent is not None:
             self.player2 = self.opponent
@@ -76,14 +76,14 @@ if __name__ == '__main__':
     GAMES = 50000
     EVALUATIONS = 5000
     LR = random()*1e-15 + 1e-3  # uniform(1e-2, 1e-4)
+    WEIGHT_DECAY = 0.003
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-    OPPONENT = None  # ExperiencedPlayer(deterministic=True)
+    OPPONENT = ExpertPlayer()  # None  # ExpertPlayer()
 
     print("Training BaselinePlayer vs %s with lr: %s" % (OPPONENT, LR))
     experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
-    experiment.run(lr=LR)
+    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
     experiment.save_player(experiment.player1)
-    print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 
     print("took: %s" % (datetime.now() - start))
