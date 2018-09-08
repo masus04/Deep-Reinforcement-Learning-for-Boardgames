@@ -19,14 +19,14 @@ class TestSearchPlayer(unittest.TestCase):
         SearchPlayer()
 
     def test_neverLose(self):
-        GAMES = 1000
+        GAMES = 10000
 
         player1 = SearchPlayer()
         player2 = SearchPlayer()
         random_player = RandomPlayer()
 
         simulation = TicTacToe([player1, player2])
-        results, losses = simulation.run_simulations(GAMES)
+        results, losses = simulation.run_simulations(GAMES//100)
         self.assertEqual(len(results), results.count(0), "Perfect player mirror match resulted in a result other than draw")
         print("\nFirst 20 results: %s against self" % results[:20])
 
@@ -34,6 +34,7 @@ class TestSearchPlayer(unittest.TestCase):
         results, losses = simulation.run_simulations(GAMES)
         self.assertEqual(0, results.count(-1), "Perfect player lost against random")
         print("First 20 results: %s against random player" % results[:20])
+        print("Win rate: %s vs random player" % (sum(results) / len(results)))
 
 
 if __name__ == '__main__':
