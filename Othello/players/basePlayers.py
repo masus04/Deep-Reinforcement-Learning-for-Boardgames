@@ -116,10 +116,8 @@ class SearchPlayer(Player):
         self.ai = GameArtificialIntelligence(OthelloHeuristic(strategy).evaluate)
 
     def get_move(self, board):
+        assert self.color
         return self.ai.move_search(board, self.search_depth, self.color, board.other_color(self.color))
-
-    def register_winner(self, winner_color):
-        self.ai.trans_table = dict()  # Clear move cache after each game.
 
     def __str__(self):
         return "[%s search depth %s]" % (self.__class__.__name__, self.search_depth)

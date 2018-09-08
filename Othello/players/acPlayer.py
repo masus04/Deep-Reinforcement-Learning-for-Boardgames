@@ -9,15 +9,16 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class ACStrategy(Strategy):
 
-    def __init__(self, lr, model, gamma=config.GAMMA):
+    def __init__(self, lr, weight_decay, model, gamma=config.GAMMA):
         super(ACStrategy, self).__init__()
         self.online = False
         self.lr = lr
         self.gamma = gamma
+        self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
         self.state_values = []
         self.board_samples = []
@@ -102,25 +103,28 @@ class ACStrategy(Strategy):
         return torch.stack(value_losses).sum()
 
 
+DEFAULT_WEIGHT_DECAY = 0.01
+
+
 class FCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=FCPolicyModel(config=config)))
+                                         else ACStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config)))
 
 
 class LargeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=LargeFCPolicyModel(config=config)))
+                                         else ACStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(HugeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=HugeFCPolicyModel(config=config)))
+                                         else ACStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config)))
 
 
 class ConvACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                           else ACStrategy(lr, model=ConvPolicyModel(config=config)))
+                                           else ACStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config)))

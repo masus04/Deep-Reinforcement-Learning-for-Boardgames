@@ -79,7 +79,7 @@ class OthelloBoard(Board):
     def copy(self):
         return OthelloBoard(self)
 
-    def child_nodes(self, color):
+    def get_afterstates(self, color):
         return [(self.copy().apply_move(move=move, color=color), move) for move in self.get_valid_moves(color)]
 
     def count_stones(self):

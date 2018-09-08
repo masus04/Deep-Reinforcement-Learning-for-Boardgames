@@ -244,9 +244,9 @@ class Strategy(ABC):
 
     def copy(self, shared_weights=True):
         if shared_weights:
-            strategy = self.__class__(model=self.model, lr=self.lr)
+            strategy = self.__class__(model=self.model, lr=self.lr, weight_decay=self.weight_decay)
         else:
-            strategy = self.__class__(model=self.model.copy(), lr=self.lr)
+            strategy = self.__class__(model=self.model.copy(), lr=self.lr, weight_decay=self.weight_decay)
 
         strategy.train = deepcopy(self.train)
         strategy.log_probs = deepcopy(self.log_probs)

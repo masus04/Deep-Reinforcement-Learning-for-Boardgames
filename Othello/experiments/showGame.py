@@ -21,11 +21,15 @@ class ShowGame(OthelloBaseExperiment):
 
         self.player1 = player1
         player1.gui = self.gui
-        self.player1.strategy.train = False
 
         self.player2 = player2
         player2.gui = self.gui
-        self.player2.strategy.train = False
+
+        try:
+            self.player1.strategy.train = False
+            self.player2.strategy.train = False
+        except:
+            pass
 
     def reset(self):
         self.__init__(player1=self.player1, player2=self.player2)
@@ -39,8 +43,8 @@ class ShowGame(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    PLAYER1 = SearchPlayer(search_depth=3, strategy=OthelloHeuristic.PURE_MOBILITY_STRATEGY)
-    PLAYER2 = SearchPlayer(search_depth=2, strategy=OthelloHeuristic.GREEDY_STRATEGY)
+    PLAYER1 = SearchPlayer(search_depth=3, strategy=OthelloHeuristic.MASUS_STRATEGY)
+    PLAYER2 = SearchPlayer(search_depth=3, strategy=OthelloHeuristic.GREEDY_STRATEGY)
 
     start = datetime.now()
 

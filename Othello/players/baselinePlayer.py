@@ -9,14 +9,15 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class BaselineStrategy(Strategy):
 
-    def __init__(self, lr, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, weight_decay, gamma=config.GAMMA, model=None):
         super(BaselineStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
+        self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
         self.state_values = []
         self.board_samples = []
@@ -75,25 +76,28 @@ class BaselineStrategy(Strategy):
         return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
 
 
+DEFAULT_WEIGHT_DECAY = 0.01
+
+
 class FCBaselinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(FCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=FCPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config)))
 
 
 class LargeFCBaselinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=LargeFCPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCBaselinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=HugeFCPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config)))
 
 
 class ConvBaselinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, model=ConvPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config)))

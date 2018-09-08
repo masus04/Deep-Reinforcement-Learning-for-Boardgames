@@ -10,14 +10,15 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class BaselinePGStrategy(Strategy):
 
-    def __init__(self, lr, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, weight_decay, gamma=config.GAMMA, model=None):
         super(BaselinePGStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
+        self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=0.01)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
         self.state_values = []
         self.board_samples = []
@@ -75,27 +76,27 @@ INTERMEDIATE_SIZE = 9*4
 
 
 class FCBaseLinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(FCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=FCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
+                                         else BaselinePGStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class LargeFCBaseLinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(LargeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=LargeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
+                                         else BaselinePGStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class HugeFCBaseLinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(HugeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
+                                         else BaselinePGStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class ConvBaseLinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(ConvBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, model=ConvPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
+                                         else BaselinePGStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 # @jit

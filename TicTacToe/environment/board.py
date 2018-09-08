@@ -30,6 +30,7 @@ class TicTacToeBoard(Board):
             self.board[move[0]][move[1]] = color
         else:
             print("!! Illegal move !!")
+            print("Player %s played move %s" % (color, move))
             self.illegal_move = color
         return self
 
@@ -42,6 +43,9 @@ class TicTacToeBoard(Board):
             return EMPTY
 
         return __game_won__(self.board, self.board_size, valid_moves)
+
+    def get_afterstates(self, color):
+        return [(self.copy().apply_move(move=move, color=color), move) for move in self.get_valid_moves(color)]
 
     def in_bounds(self, position):
         return __in_bounds__(position, self.board_size)
@@ -62,6 +66,12 @@ class TicTacToeBoard(Board):
 
     def count_stones(self):
         return __count_stones__(self.board, self.board_size)
+
+    def __eq__(self, other):
+        return (self.board == other.board).all()
+
+    def __hash__(self):
+        return hash(str(self.board))
 
 
 """   ---  Numba implementations  ---   '''

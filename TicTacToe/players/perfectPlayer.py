@@ -1,115 +1,46 @@
-import numpy as np
-from random import choice, random
-from numba import njit
+import os
+import torch
 
 import TicTacToe.config as config
+from plotting import Printer
+from TicTacToe.environment.board import TicTacToeBoard
+from TicTacToe.players.searchPlayer import SearchPlayer
 from abstractClasses import Player, PlayerException
 
 
 class PerfectPlayer(Player):
 
+    def __init__(self):
+        super(PerfectPlayer, self).__init__()
+        self.move_table = None
+
     def get_move(self, board):
-        other_color = board.other_color(self.color)
-        CORNERS = [(0, 0), (0, 2), (2, 0), (2, 2)]
-        SIDES = [(1, 0), (0, 1), (1, 2), (2, 1)]
+        assert self.color
 
-        # Win
-        valid_moves = board.get_valid_moves(self.color)
-        afterstates = [(move, board.copy().apply_move(move, self.color)) for move in valid_moves]  # chosen move, afterstate
-        for move, afterstate in afterstates:
-            if afterstate.game_won() == self.color:
+        if self.move_table is None:
+            self.create_table()
+
+        depth = sum(board.count_stones())
+        for state, move in self.move_table[depth]:
+            if (board.get_representation(self.color) == state.get_representation(self.color)).all():
                 return move
 
-        # Block win
-        afterstates_opponent = []
-        for move, afterstate in afterstates:
-            opponent_vm = afterstate.get_valid_moves(other_color)
-            opponent_as = [(move, afterstate.copy().apply_move(move, other_color)) for move in opponent_vm]
-            afterstates_opponent += opponent_as
+    def create_table(self):
+        # Zero depth
+        search_player = SearchPlayer()
+        search_player.color = config.BLACK
+        temp_color = TicTacToeBoard.other_color(search_player.color)
 
-            for move, opp_as in opponent_as:
-                if opp_as.game_won():
-                    return move
+        empty_board = set([TicTacToeBoard()])
+        self.move_table = [[(a, search_player.get_move(a)) for a in empty_board]]
 
-        # Fork & Block Fork
-        for move, afterstate in afterstates:
-            if is_fork_move(afterstate.board, board.board_size, self.color, other_color):
-                return move
+        for i in range(8):  # 8 moves
+            search_player.color = temp_color
+            temp_color = TicTacToeBoard.other_color(temp_color)
 
-        # Block Fork
-        for move, afterstate in afterstates_opponent:
-            if is_fork_move(afterstate.board, board.board_size, other_color, self.color):
-                return move
+            temp_as = set()
+            for afterstate, move in self.move_table[-1]:
+                temp_as.update(a[0] for a in afterstate.get_afterstates(temp_color))
 
-        # First move: Randomly chose center or corner
-        if (board.board == config.EMPTY).all():
-            return choice(CORNERS + [(1, 1)])
-
-        # Center
-        if board.board[1][1] == config.EMPTY:
-            return 1, 1
-
-        # Opposite Corner
-        for corner in CORNERS:
-            if board.board[corner[0]][corner[1]] == other_color:
-                return (corner[0]+2)%2, (corner[1]+2)%2
-
-        # Empty Corner
-        for corner in CORNERS:
-            if board.board[corner[0]][corner[1]] == config.EMPTY:
-                return corner
-
-        # Empty Side
-        for side in SIDES:
-            if board.board[side[0]][side[1]] == config.EMPTY:
-                return side
-
-
-@njit
-def is_fork_move(board, board_size, color, other_color):
-    # check if two directions have a win chance: 3+3+1+1 possibilities
-    win_directions = 0
-
-    # lines
-    for col in range(board_size):
-        player_hor, opponent_hor = 0, 0
-        player_ver, opponent_ver = 0, 0
-
-        for row in range(board_size):
-            # horizontal
-            if board[col][row] == color:
-                player_hor += 1
-            if board[col][row] == other_color:
-                opponent_hor += 1
-
-            # vertical
-            if board[row][col] == color:
-                player_ver += 1
-            if board[row][col] == other_color:
-                opponent_ver += 1
-
-        if (player_hor - opponent_hor) == 2:  # win direction
-            win_directions += 1
-        if (player_ver - opponent_ver) == 2:
-            win_directions += 1
-
-    player_diag, opponent_diag = 0, 0
-    for pos in range(board_size):
-        if board[pos][pos] == color:
-            player_diag += 1
-        if board[pos][pos] == other_color:
-            opponent_diag += 1
-
-    player_rev_diag, opponent_rev_diag = 0, 0
-    for pos in range(board_size-1, -1, -1):
-        if board[pos][pos] == color:
-            player_rev_diag += 1
-        if board[pos][pos] == other_color:
-            opponent_rev_diag += 1
-
-    if (player_diag - opponent_diag) == 2:
-        win_directions += 1
-    if (player_rev_diag - opponent_rev_diag) == 2:
-        win_directions += 1
-
-    return True if win_directions > 1 else False
+            self.move_table.append([(afterstate, search_player.get_move(afterstate)) for afterstate in temp_as])
+            Printer.print_inplace("Created table up to depth: %s" % (i+2), round((i+2)/9*100))

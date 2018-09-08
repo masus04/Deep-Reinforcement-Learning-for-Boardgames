@@ -3,7 +3,7 @@ from random import choice, random
 
 import TicTacToe.config as config
 from abstractClasses import Player, PlayerException
-from TicTacToe.environment.game import TicTacToe
+from TicTacToe.players.perfectPlayer import PerfectPlayer as ExpertPlayer
 
 
 class RandomPlayer(Player):
@@ -90,11 +90,3 @@ class ExperiencedPlayer(Player):
         if not self.deterministic:
             score += random() * 0.001  # Bring some randomness to equaly valued boards
         return score
-
-
-class ExpertPlayer(Player):
-    """ Perfect player: never loses, only draws """
-    pass
-
-    def get_move(self, board):
-        raise NotImplementedError("Implement when needed")

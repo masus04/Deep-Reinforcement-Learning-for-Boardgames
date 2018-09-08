@@ -9,13 +9,14 @@ from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPol
 
 class PGStrategy(abstract.Strategy):
 
-    def __init__(self, lr, gamma=config.GAMMA,  model=None):
+    def __init__(self, lr, weight_decay, gamma=config.GAMMA,  model=None):
         super(PGStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
+        self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)  # PGFCModel()
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable(torch.FloatTensor([board_sample]))
@@ -53,25 +54,28 @@ class PGStrategy(abstract.Strategy):
         return abs(int(policy_loss))
 
 
+DEFAULT_WEIGHT_DECAY = 0.01
+
+
 class FCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(FCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=FCPolicyModel(config=config)))
+            else PGStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config)))
 
 
 class LargeFCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(LargeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=LargeFCPolicyModel(config=config)))
+            else PGStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(HugeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=HugeFCPolicyModel(config=config)))
+            else PGStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config)))
 
 
 class ConvReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(ConvReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
-            else PGStrategy(lr, model=ConvPolicyModel(config=config)))
+            else PGStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config)))

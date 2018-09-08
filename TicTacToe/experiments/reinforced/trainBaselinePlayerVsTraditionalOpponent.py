@@ -4,7 +4,7 @@ import numpy as np
 
 import TicTacToe.config as config
 from TicTacToe.experiments.ticTacToeBaseExperiment import TicTacToeBaseExperiment
-from TicTacToe.players.basePlayers import RandomPlayer, DeterministicPlayer, NovicePlayer, ExperiencedPlayer
+from TicTacToe.players.basePlayers import RandomPlayer, DeterministicPlayer, ExperiencedPlayer, ExpertPlayer
 from TicTacToe.players.baselinePlayer import FCBaseLinePlayer, LargeFCBaseLinePlayer, ConvBaseLinePlayer
 from TicTacToe.environment.game import TicTacToe
 from TicTacToe.environment.evaluation import evaluate_against_base_players, format_overview
@@ -38,7 +38,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
         for episode in range(1, self.evaluations+1):
 
             if self.opponent is None:
-                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer(deterministic=False)))
+                self.player2 = choice((RandomPlayer(), ExpertPlayer(), ExperiencedPlayer(deterministic=False)))
                 self.simulation = TicTacToe([self.player1, self.player2])
 
             # train
@@ -73,8 +73,8 @@ if __name__ == '__main__':
     MILESTONES = True
     start = datetime.now()
 
-    GAMES = 100000
-    EVALUATIONS = 500
+    GAMES = 50000
+    EVALUATIONS = 5000
     LR = random()*1e-15 + 1e-3  # uniform(1e-2, 1e-4)
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")

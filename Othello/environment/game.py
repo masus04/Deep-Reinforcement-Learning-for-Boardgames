@@ -29,7 +29,7 @@ class Othello(TwoPlayerGame):
 
         while True:
             if len(self.board.get_valid_moves(players[0].color)) > 0:
-                move = players[0].get_move(self.board)
+                move = players[0].get_move(self.board.copy())
                 self.board.apply_move(move, players[0].color)
 
                 if self.gui:

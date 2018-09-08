@@ -10,15 +10,16 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class ACStrategy(Strategy):
 
-    def __init__(self, lr, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, weight_decay=0.003, gamma=config.GAMMA, model=None):
         super(ACStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
+        self.weight_decay = weight_decay
         self.online = False
 
         self.model = model if model else FCPolicyModel(config=config)
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
         self.state_values = []
         self.board_samples = []
@@ -85,21 +86,21 @@ class ACStrategy(Strategy):
 
 
 class FCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(FCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=FCPolicyModel(config=config)))
+                                         else ACStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config)))
 
 
 class LargeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else ACStrategy(lr, model=LargeFCPolicyModel(config=config)))
+                                         else ACStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 
 
 class ConvACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(ConvACPlayer, self).__init__(strategy=strategy if strategy is not None
-                                           else ACStrategy(lr, model=ConvPolicyModel(config=config)))
+                                           else ACStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config)))
 
 
 @jit

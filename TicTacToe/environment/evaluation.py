@@ -5,10 +5,10 @@ from copy import deepcopy
 import TicTacToe.config as config
 from abstractClasses import LearningPlayer
 from TicTacToe.environment.game import TicTacToe
-from TicTacToe.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
+from TicTacToe.players.basePlayers import RandomPlayer, ExperiencedPlayer, ExpertPlayer
 
 
-def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), NovicePlayer(), ExperiencedPlayer()], silent=True):
+def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), ExperiencedPlayer(), ExpertPlayer()], silent=True):
     """
     Standardized evaluation against base players.
 

@@ -9,7 +9,7 @@ class GameArtificialIntelligence(object):
     def __init__(self, heuristic_fn):
         self.heuristic = heuristic_fn
 
-    @lru_cache(maxsize=2**10)
+    @lru_cache(maxsize=2**19)
     def move_search(self, starting_node, depth, current_player, other_player):
         self.player = current_player
         self.other_player = other_player
@@ -65,7 +65,7 @@ class GameArtificialIntelligence(object):
         return sha1(node.board.data).hexdigest()
 
     def alpha_beta_search(self, node, depth, current_player, other_player, alpha=-sys.maxsize-1, beta=sys.maxsize, maximizing=True):
-        if depth == 0 or node.game_won() is not None:
+        if node.game_won() is not None:
             return self.heuristic(node, self.player, self.other_player)
 
         children = node.get_afterstates(current_player)

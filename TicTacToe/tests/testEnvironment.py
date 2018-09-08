@@ -170,6 +170,23 @@ class TestEnvironment(unittest.TestCase):
         p2 = FCReinforcePlayer(lr=1e-5)
         evaluate_against_base_players(p2, silent=False)
 
+    def test_getAfterstates(self):
+        board = TicTacToeBoard()
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], [a[1] for a in board.get_afterstates(config.BLACK)])
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)], [a[1] for a in board.get_afterstates(config.WHITE)])
+
+        board.apply_move((2, 2), config.BLACK)
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1)], [a[1] for a in board.get_afterstates(config.BLACK)])
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1)], [a[1] for a in board.get_afterstates(config.WHITE)])
+
+        board.apply_move((2, 1), config.WHITE)
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0)], [a[1] for a in board.get_afterstates(config.BLACK)])
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0)], [a[1] for a in board.get_afterstates(config.WHITE)])
+
+        board.apply_move((1, 1), config.BLACK)
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0)], [a[1] for a in board.get_afterstates(config.BLACK)])
+        self.assertEqual([(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0)], [a[1] for a in board.get_afterstates(config.WHITE)])
+
 
 if __name__ == '__main__':
     unittest.main()

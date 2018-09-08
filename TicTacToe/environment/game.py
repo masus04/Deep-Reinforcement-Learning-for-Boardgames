@@ -27,7 +27,7 @@ class TicTacToe(TwoPlayerGame):
         players = player1, player2
 
         while True:
-            move = players[0].get_move(self.board)
+            move = players[0].get_move(self.board.copy())
             self.board.apply_move(move, players[0].color)
 
             winner = self.board.game_won()
