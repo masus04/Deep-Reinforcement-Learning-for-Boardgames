@@ -24,7 +24,7 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, weight_decay, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
+        self.player1 = self.pretrained_player if self.pretrained_player else HugeFCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=True)
@@ -38,7 +38,8 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_results(("Losses", np.mean(losses)))
+            self.add_loss(np.mean(losses))
+            self.add_results(("Loss", np.mean(losses)))
             self.add_results(("Self", np.mean(results)))
 
             # evaluate
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 100000
+        GAMES = 1000000
         EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
         WEIGHT_DECAY = 0.01

@@ -82,15 +82,15 @@ class FCBaseLinePlayer(LearningPlayer):
 
 
 class LargeFCBaseLinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.005):
         super(LargeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
                                          else BaselinePGStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class HugeFCBaseLinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.01):
         super(HugeFCBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
-                                         else BaselinePGStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
+                                         else BaselinePGStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE*2)))
 
 
 class ConvBaseLinePlayer(LearningPlayer):

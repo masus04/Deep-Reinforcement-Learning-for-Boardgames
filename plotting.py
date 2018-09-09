@@ -1,5 +1,4 @@
 import sys
-import os
 import math
 import matplotlib
 matplotlib.use("Agg")
@@ -9,15 +8,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from collections import OrderedDict
 
-import TicTacToe.config as config
-
 
 class Plotter:
 
     def __init__(self):
-        HISTORY_SIZE = 1000
-
         self.values = OrderedDict()
+        self.losses = DataResolutionManager()
 
     def add_values(self, values):
         """
@@ -33,7 +29,12 @@ class Plotter:
                 self.values[val[0]] = DataResolutionManager()
                 self.values[val[0]].append(val[1])
 
+    def add_loss(self, losses):
+        self.losses.append(losses)
+
     def plot(self, title):
+
+        fig, axes = plt.subplots(nrows=2, ncols=1)
 
         if self.values:
             lines = []
@@ -62,13 +63,22 @@ class Plotter:
             line3 = pd.Series(line3_values, name=self.line3_name)
             df = pd.DataFrame([line1, line2, line3])
 
+        if len(self.losses) > 0:
+            line = pd.Series(self.losses.get_values(), name="Loss")
+            loss_frame = pd.DataFrame(line)
+            loss_ax = loss_frame.plot(ax=axes[0], title=title, legend=True, figsize=(16, 9))
+            loss_ax.xaxis.set_ticks([i * self.num_episodes / 10 for i in range(11)])
+            loss_ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
+        else:
+            plt.title(title)
+
         df = df.transpose()
-        ax = df.plot(legend=True, figsize=(16, 9), ylim=(-1, 5))  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
+        ax = df.plot(ax=axes[1], legend=True, figsize=(16, 9), ylim=(-1, 1) if len(self.losses) > 0 else None)  # secondary_y=[line2_name] for separate scales | ylim=(min, max) for limiting y scale
 
         ax.xaxis.set_ticks([i * self.num_episodes / 10 for i in range(11)])
         ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
+        ax.yaxis.set_ticks = [i/2 for i in range(-2, 3)]
 
-        plt.title(title)
         plt.xlabel("Episodes")
         plt.grid()
 

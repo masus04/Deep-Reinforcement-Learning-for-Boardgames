@@ -212,7 +212,7 @@ class LearningPlayer(Player):
         return self.__class__(strategy=self.strategy.copy(shared_weights=shared_weights))
 
     def __str__(self):
-        return "[%s lr %s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.model)
+        return "[%s lr %s wd %s %s]" % (self.__class__.__name__, self.strategy.lr, self.strategy.weight_decay, self.strategy.model)
 
 
 class PlayerException(Exception):

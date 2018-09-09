@@ -39,7 +39,9 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
 
             self.simulation = TicTacToe([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_results(("Losses", np.mean(losses)))
+            self.add_loss(np.mean(losses))
+            self.add_results(("Loss", np.mean(losses)))
+            self.add_results(("Best", np.mean(results)))
 
             # evaluate
             if episode*games_per_evaluation % 1000 == 0:
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 100000
+        GAMES = 1000000
         EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
         WEIGHT_DECAY = 0.01

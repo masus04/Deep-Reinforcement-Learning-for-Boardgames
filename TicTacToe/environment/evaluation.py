@@ -8,7 +8,7 @@ from TicTacToe.environment.game import TicTacToe
 from TicTacToe.players.basePlayers import RandomPlayer, ExperiencedPlayer, ExpertPlayer
 
 
-def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), ExperiencedPlayer(), ExpertPlayer()], silent=True):
+def evaluate_against_base_players(player, evaluation_players=[RandomPlayer(), ExpertPlayer()], silent=True):
     """
     Standardized evaluation against base players.
 

@@ -46,6 +46,11 @@ class Experiment(ABC):
         except Exception as e:
             raise Exception("add_result received an illegal argument: " + str(e))
 
+    def add_loss(self, loss):
+        if not self.__plotter__:
+            raise Exception("__plotter__ not initialized, Experiment's super() must be called")
+        self.__plotter__.add_loss(loss)
+
     def plot_scores(self, title):
         if not self.__plotter__:
             raise Exception("__plotter__ not initialized, Experiment's super() must be called")
