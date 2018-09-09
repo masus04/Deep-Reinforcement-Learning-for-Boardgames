@@ -78,6 +78,9 @@ class Plotter:
         ax.xaxis.set_ticks([i * self.num_episodes / 10 for i in range(11)])
         ax.set_xticklabels([i * self.num_episodes / 10 for i in range(11)])
         ax.yaxis.set_ticks = [i/2 for i in range(-2, 3)]
+        ax.axhline(y=0, color='black', linewidth=2)
+        ax.axhline(y=0.5, color='black', linewidth=1)
+        ax.axhline(y=-0.5, color='black', linewidth=1)
 
         plt.xlabel("Episodes")
         plt.grid()

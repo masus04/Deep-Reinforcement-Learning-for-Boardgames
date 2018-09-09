@@ -24,7 +24,7 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, weight_decay, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
+        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -57,7 +57,7 @@ class TrainBaselinePlayerVsBest(TicTacToeBaseExperiment):
 
             if evaluate_against_each_other(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
-                self.player2.strategy.train = False
+                self.player2.strategy.train, self.player2.strategy.model.training = False, False
                 self.replacements.append(episode)
 
         print("Best player replaced after episodes: %s" % self.replacements)
@@ -73,12 +73,12 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 1000000
+        GAMES = 100000
         EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
         WEIGHT_DECAY = 0.01
 
-        PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
+        PLAYER = None  # TrainBaselinePlayerVsBest.load_player("PartlyPretrainedOnRandomAndExpert.pth")
 
         experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
