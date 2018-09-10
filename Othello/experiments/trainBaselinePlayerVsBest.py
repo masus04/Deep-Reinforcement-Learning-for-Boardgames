@@ -79,9 +79,9 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     MILESTONES = True
-    GAMES = 10000000
-    EVALUATIONS = GAMES//1000
-    LR = random()*1e-9 + 1e-4
+    GAMES = 1000000
+    EVALUATIONS = GAMES//100
+    LR = random()*1e-9 + 1e-3
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
