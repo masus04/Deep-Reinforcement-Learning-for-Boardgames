@@ -17,7 +17,7 @@ else:
 COLOR = config.BLACK
 
 board = game_states[0][0]
-board_var = config.make_variable(torch.FloatTensor([board.board]))
+board_var = config.make_variable([board.board])
 legal_moves = config.make_variable(board.get_legal_moves_map(COLOR))
 probs, state_value = LOAD_PLAYER.strategy.model(board_var, legal_moves)
 nonzero_move_probs = [p for p in probs.data[0] if p >= 1e-4]

@@ -24,7 +24,7 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
         return self
 
     def run(self, lr, weight_decay, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=True)

@@ -38,7 +38,7 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
         for episode in range(1, self.evaluations+1):
 
             if self.opponent is None:
-                self.player2 = choice((RandomPlayer(), ExpertPlayer()))  # choice((RandomPlayer(), NovicePlayer()))
+                self.player2 = choice((RandomPlayer(), NovicePlayer(), ExperiencedPlayer()))  # choice((RandomPlayer(), ExpertPlayer()))
                 self.simulation = TicTacToe([self.player1, self.player2])
 
             # train

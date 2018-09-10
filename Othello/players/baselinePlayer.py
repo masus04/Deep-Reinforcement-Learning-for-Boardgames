@@ -16,6 +16,7 @@ class BaselineStrategy(Strategy):
         self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)
+        self.model.double()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -24,7 +25,7 @@ class BaselineStrategy(Strategy):
         self.legal_moves = []
 
     def evaluate(self, board_sample, legal_moves_map):
-        input = config.make_variable(torch.FloatTensor([board_sample]))
+        input = config.make_variable([board_sample])
 
         probs, state_value = self.model(input, config.make_variable(legal_moves_map))
         distribution = Categorical(probs)
@@ -47,7 +48,7 @@ class BaselineStrategy(Strategy):
 
         rewards = self.discount_rewards(self.rewards, self.gamma)
         rewards = self.rewards_baseline(rewards)
-        rewards = config.make_variable(torch.FloatTensor(rewards))
+        rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)
 
         loss = self.calculate_loss(self.log_probs, self.state_values, rewards)

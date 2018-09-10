@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
 from numba import jit
+import numpy as np
 
 import TicTacToe.config as config
 from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
@@ -17,6 +18,7 @@ class BaselinePGStrategy(Strategy):
         self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)
+        self.model.double()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -25,13 +27,17 @@ class BaselinePGStrategy(Strategy):
         self.legal_moves = []
 
     def evaluate(self, board_sample, legal_moves_map):
-        input = config.make_variable(torch.FloatTensor([board_sample]))
+        input = config.make_variable([board_sample])
 
         probs, state_value = self.model(input, config.make_variable(legal_moves_map))
-        distribution = Categorical(probs)
-        action = distribution.sample()
 
-        move = (action // config.BOARD_SIZE, action % config.BOARD_SIZE)
+        try:  # Hacky way of ensuring nonzero distribution
+            distribution = Categorical(probs)
+            action = distribution.sample()
+            move = (action // config.BOARD_SIZE, action % config.BOARD_SIZE)
+        except RuntimeError:
+            print("Probs: \n%s \nBoard: \n%s \nLegal moves: \n%s" % (probs, board_sample, legal_moves_map))
+
         if self.train:
             self.log_probs.append(distribution.log_prob(action))
             self.state_values.append(state_value[0][0])
@@ -54,7 +60,7 @@ class BaselinePGStrategy(Strategy):
         rewards = self.rewards_baseline(rewards)
         # Or Bootstrapping
         # rewards = self.bootstrap_rewards()
-        rewards = config.make_variable(torch.FloatTensor(rewards))
+        rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
         loss = calculate_loss(self.log_probs, self.state_values, rewards)

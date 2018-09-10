@@ -18,6 +18,7 @@ class ACStrategy(Strategy):
         self.online = False
 
         self.model = model if model else FCPolicyModel(config=config)
+        self.model.double()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -26,7 +27,7 @@ class ACStrategy(Strategy):
         self.legal_moves = []
 
     def evaluate(self, board_sample, legal_moves_map):
-        input = config.make_variable(torch.FloatTensor([board_sample]))
+        input = config.make_variable([board_sample])
 
         probs, state_value = self.model(input, config.make_variable(legal_moves_map))
         distribution = Categorical(probs)
@@ -55,7 +56,7 @@ class ACStrategy(Strategy):
 
         # Bootstrapping
         rewards = self.bootstrap_rewards()
-        rewards = config.make_variable(torch.FloatTensor(rewards))
+        rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
         if self.online:
@@ -76,7 +77,7 @@ class ACStrategy(Strategy):
         return abs(loss.data)
 
     def online_policy_update(self, board, legal_moves, logprob):
-        new_value = self.model(config.make_variable(torch.FloatTensor([board])), config.make_variable(torch.FloatTensor([legal_moves])))[1].data[0,0]
+        new_value = self.model(config.make_variable([board]), config.make_variable([legal_moves]))[1].data[0,0]
         reward = self.state_values[-1].data[0, 0] - new_value
         loss = -logprob * reward
 

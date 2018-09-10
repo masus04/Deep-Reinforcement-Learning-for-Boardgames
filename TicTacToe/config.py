@@ -51,7 +51,7 @@ def time_diff(start):
 
 
 def make_variable(lst):
-    var = Variable(torch.FloatTensor(lst))
+    var = Variable(torch.DoubleTensor(lst))
     if CUDA:
         var = var.cuda(0)
     return var

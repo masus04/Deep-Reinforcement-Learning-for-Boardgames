@@ -44,7 +44,7 @@ class TestReinforcePlayer(unittest.TestCase):
 
     def test_LegalSoftMax(self):
         def transform(x):
-            return [Variable(torch.FloatTensor((x*3)).view(-1, 9))]
+            return [Variable(torch.DoubleTensor((x*3)).view(-1, 9))]
 
         edge_cases = transform([0.2, 0.3, 0.8])
         edge_cases += transform([-0.2, -0.3, -0.8])

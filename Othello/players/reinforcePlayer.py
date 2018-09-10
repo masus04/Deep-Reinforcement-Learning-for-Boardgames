@@ -16,10 +16,11 @@ class PGStrategy(abstract.Strategy):
         self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)  # PGFCModel()
+        self.model.double()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
     def evaluate(self, board_sample, legal_moves_map):
-        input = config.make_variable(torch.FloatTensor([board_sample]))
+        input = config.make_variable([board_sample])
 
         probs, state_value = self.model(input, config.make_variable(legal_moves_map))
         distribution = Categorical(probs)
@@ -38,7 +39,7 @@ class PGStrategy(abstract.Strategy):
             raise PlayerException("log_probs length must be equal to rewards length. Got %s - %s" % (len(self.log_probs), len(self.rewards)))
 
         rewards = self.discount_rewards(self.rewards, self.gamma)
-        rewards = config.make_variable(torch.FloatTensor(rewards))
+        rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
         policy_losses = [(-log_prob * reward / len(self.log_probs)) for log_prob, reward in zip(self.log_probs, rewards)]

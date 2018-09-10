@@ -17,6 +17,7 @@ class ACStrategy(Strategy):
         self.weight_decay = weight_decay
 
         self.model = model if model else FCPolicyModel(config=config)
+        self.model.double()
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -25,7 +26,7 @@ class ACStrategy(Strategy):
         self.legal_moves = []
 
     def evaluate(self, board_sample, legal_moves_map):
-        input = config.make_variable(torch.FloatTensor([board_sample]))
+        input = config.make_variable([board_sample])
 
         probs, state_value = self.model(input, config.make_variable(legal_moves_map))
         distribution = Categorical(probs)
@@ -52,7 +53,7 @@ class ACStrategy(Strategy):
             raise PlayerException("log_probs length must be equal to rewards length as well as state_values length. Got %s - %s - %s" % (len(self.log_probs), len(self.rewards), len(self.state_values)))
 
         rewards = self.bootstrap_rewards()
-        rewards = config.make_variable(torch.FloatTensor(rewards))
+        rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)
 
         if self.online:
@@ -74,7 +75,7 @@ class ACStrategy(Strategy):
 
     def online_policy_update(self, board, legal_moves, logprob):
         """ Not Tested after PyTorch update"""
-        new_value = self.model(config.make_variable(torch.FloatTensor([board])), config.make_variable(torch.FloatTensor([legal_moves])))[1].data[0, 0]
+        new_value = self.model(config.make_variable([board]), config.make_variable([legal_moves]))[1].data[0, 0]
         reward = self.state_values[-1] - new_value
         loss = -logprob * reward
 
