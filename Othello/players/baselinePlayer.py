@@ -78,27 +78,28 @@ class BaselineStrategy(Strategy):
 
 
 DEFAULT_WEIGHT_DECAY = 0.01
+INTERMEDIATE_SIZE = 64*4
 
 
 class FCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(FCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=FCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class LargeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class HugeFCBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class ConvBaselinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
         super(ConvBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
-            else BaselineStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config)))
+            else BaselineStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
