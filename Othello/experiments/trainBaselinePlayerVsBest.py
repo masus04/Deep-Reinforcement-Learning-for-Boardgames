@@ -46,7 +46,9 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
+            self.add_loss(np.mean(losses))
             self.add_results(("Losses", np.mean(losses)))
+            self.add_results(("Best", np.mean(results)))
 
             # evaluate
             if episode*games_per_evaluation % 1000 == 0:
