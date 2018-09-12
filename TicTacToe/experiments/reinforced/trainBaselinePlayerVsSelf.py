@@ -66,7 +66,7 @@ if __name__ == '__main__':
     for i in range(ITERATIONS):
 
         print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 100000
+        GAMES = 1000000
         EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
         WEIGHT_DECAY = 0.003
