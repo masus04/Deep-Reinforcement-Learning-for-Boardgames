@@ -61,7 +61,7 @@ class TestReinforcePlayer(unittest.TestCase):
         for i, case in enumerate(edge_cases):
             for j, l_moves in enumerate(legal_moves):
                 try:
-                    x = Model.legal_softmax(case, l_moves)
+                    x = Model.legal_softmax_functional(case, l_moves)
                 except Exception as e:
                     raise PlayerException("LegalSoftMax failed for edge case %s and legal move %s: \n    %s" % (i, j, e))
 

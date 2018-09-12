@@ -293,7 +293,7 @@ class Model(torch.nn.Module):
                 # torch.nn.init.xavier_normal(module.bias.data)
 
     @staticmethod
-    def legal_softmax(input, legal_moves_map):
+    def legal_softmax_functional(input, legal_moves_map):
         x = input
         # set illegal moves to zero, softmax, set illegal moves to zero again
         # x = input * legal_moves_map
@@ -320,3 +320,20 @@ class Model(torch.nn.Module):
 
     def __str__(self):
         return "%s %s" % (self.__class__.__name__, ("intermediate size %s" % self.intermediate_size) if self.intermediate_size is not None else "conv channels %s" % self.conv_channels)
+
+    class LegalSoftmax:
+
+        def __init__(self, dim=1):
+            self.softmax = torch.nn.LogSoftmax(dim=dim)
+
+        def forward(self, input, legal_moves_map):
+            x = input
+            # set illegal moves to zero, softmax, set illegal moves to zero again
+            # x = input * legal_moves_map
+            x = self.softmax(x)
+            x = x * legal_moves_map
+
+            return x
+
+        def __call__(self, input, legal_moves_map):
+            return self.forward(input, legal_moves_map)

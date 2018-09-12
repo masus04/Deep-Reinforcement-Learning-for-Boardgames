@@ -16,6 +16,8 @@ class FCPolicyModel(abstract.Model):
         self.fc2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
 
         self.policy_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
+        self.legal_softmax = self.LegalSoftmax(dim=1)
+
         self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
         self.__xavier_initialization__()
@@ -52,6 +54,7 @@ class LargeFCPolicyModel(abstract.Model):
 
         self.policy_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.policy_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
+        self.legal_softmax = self.LegalSoftmax(dim=1)
 
         self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.vf_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
@@ -97,6 +100,7 @@ class HugeFCPolicyModel(abstract.Model):
 
         self.policy_head1 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.policy_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.board_size ** 2)
+        self.legal_softmax = self.LegalSoftmax(dim=1)
 
         self.vf_head1 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.vf_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
@@ -148,6 +152,7 @@ class ConvPolicyModel(abstract.Model):
 
         # Evaluate and output move possibilities
         self.reduce = torch.nn.Conv2d(in_channels=self.conv_channels, out_channels=1, kernel_size=1, padding=0)
+        self.legal_softmax = self.LegalSoftmax(dim=1)
 
         self.vf_head = torch.nn.Linear(in_features=self.board_size**2, out_features=1)
 
