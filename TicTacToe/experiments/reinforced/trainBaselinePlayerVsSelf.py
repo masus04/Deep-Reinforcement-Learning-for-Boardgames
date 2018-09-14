@@ -39,7 +39,6 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_loss(np.mean(losses))
-            self.add_results(("Loss", np.mean(losses)))
             self.add_results(("Self", np.mean(results)))
 
             # evaluate
@@ -50,8 +49,8 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
 
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs BEST" % (self.player1),
-                        "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
+                        "%s vs SELF" % (self.player1),
+                        "Train %s vs Self version of self\nGames: %s Evaluations: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
