@@ -25,7 +25,7 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
         return self
 
     def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else LargeFCBaselinePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
