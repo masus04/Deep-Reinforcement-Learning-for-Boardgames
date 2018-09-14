@@ -330,7 +330,7 @@ class Model(torch.nn.Module):
             x = input
             # set illegal moves to zero, softmax, set illegal moves to zero again
             # x = input * legal_moves_map
-            x = self.softmax(x)
+            x = self.softmax(x).exp()
             x = x * legal_moves_map
 
             return x
