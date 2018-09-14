@@ -1,8 +1,6 @@
 import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical
-from numba import jit
-import numpy as np
 
 import TicTacToe.config as config
 from models import FCPolicyModel, LargeFCPolicyModel, HugeFCPolicyModel, ConvPolicyModel
@@ -55,15 +53,11 @@ class BaselinePGStrategy(Strategy):
 
         # ----------------------------------------------------------- #
 
-        # Use either Discount (and baseline),
         rewards = self.discount_rewards(self.rewards, self.gamma)
         rewards = self.rewards_baseline(rewards)
-        # Or Bootstrapping
-        # rewards = self.bootstrap_rewards()
         rewards = config.make_variable(rewards)
-        # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
-        loss = calculate_loss(self.log_probs, self.state_values, rewards)
+        loss = self.calculate_loss(self.log_probs, self.state_values, rewards)
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -76,6 +70,17 @@ class BaselinePGStrategy(Strategy):
         del self.legal_moves[:]
 
         return abs(loss.data)
+
+    @staticmethod
+    def calculate_loss(log_probs, state_values, rewards):
+        policy_losses = []
+        value_losses = []
+
+        for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
+            policy_losses.append(-log_prob * reward)
+            value_losses.append(F.smooth_l1_loss(state_value, reward))
+
+        return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
 
 
 INTERMEDIATE_SIZE = 9*8
@@ -103,15 +108,3 @@ class ConvBaseLinePlayer(LearningPlayer):
     def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
         super(ConvBaseLinePlayer, self).__init__(strategy=strategy if strategy is not None
                                          else BaselinePGStrategy(lr, weight_decay=weight_decay, model=ConvPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
-
-
-# @jit
-def calculate_loss(log_probs, state_values, rewards):
-    policy_losses = []
-    value_losses = []
-
-    for log_prob, state_value, reward in zip(log_probs, state_values, rewards):
-        policy_losses.append(-log_prob * (reward - state_value.data))
-        value_losses.append(F.smooth_l1_loss(state_value, reward))
-
-    return torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
