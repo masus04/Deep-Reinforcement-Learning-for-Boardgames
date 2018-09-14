@@ -39,7 +39,6 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_loss(np.mean(losses))
-            self.add_results(("Loss", np.mean(losses)))
             self.add_results(("Self", np.mean(results)))
 
             # evaluate
