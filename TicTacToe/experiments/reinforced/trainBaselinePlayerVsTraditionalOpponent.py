@@ -74,7 +74,7 @@ if __name__ == '__main__':
     MILESTONES = True
     start = datetime.now()
 
-    GAMES = 100000
+    GAMES = 3000000
     EVALUATIONS = 1000
     LR = random()*1e-9 + 1e-3  # uniform(1e-2, 1e-4)
     WEIGHT_DECAY = 0.003
