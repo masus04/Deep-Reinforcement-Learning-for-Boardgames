@@ -67,7 +67,7 @@ class FCReinforcePlayer(LearningPlayer):
 
 
 class LargeFCReinforcePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.005):
         super(LargeFCReinforcePlayer, self).__init__(strategy=strategy if strategy is not None
                                                 else PGStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 

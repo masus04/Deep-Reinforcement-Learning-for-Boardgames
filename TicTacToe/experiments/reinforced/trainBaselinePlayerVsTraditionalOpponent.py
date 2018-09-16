@@ -25,9 +25,9 @@ class TrainBaselinePlayerVsTraditionalOpponent(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
         return self
 
-    def run(self, lr, weight_decay, silent=False):
+    def run(self, lr, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
 
         if self.opponent is not None:
             self.player2 = self.opponent

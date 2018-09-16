@@ -33,6 +33,9 @@ class BaselineStrategy(Strategy):
             action = distribution.sample()
         except RuntimeError:
             print("Invalid distribution. Board sample: \n%s" % board_sample)
+            probs, state_value = self.model(input, config.make_variable(legal_moves_map))
+            distribution = Categorical(probs)
+            action = distribution.sample()
 
         move = (int(action) // config.BOARD_SIZE, int(action) % config.BOARD_SIZE)
         if self.train:
@@ -91,13 +94,13 @@ class FCBaselinePlayer(LearningPlayer):
 
 
 class LargeFCBaselinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY*2):
         super(LargeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
             else BaselineStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 
 
 class HugeFCBaselinePlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY*2):
         super(HugeFCBaselinePlayer, self).__init__(strategy=strategy if strategy is not None
             else BaselineStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config, intermediate_size=INTERMEDIATE_SIZE)))
 

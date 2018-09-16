@@ -114,13 +114,13 @@ class FCACPlayer(LearningPlayer):
 
 
 class LargeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY*2):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 
 
 class HugeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=DEFAULT_WEIGHT_DECAY*2):
         super(HugeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, weight_decay=weight_decay, model=HugeFCPolicyModel(config=config)))
 

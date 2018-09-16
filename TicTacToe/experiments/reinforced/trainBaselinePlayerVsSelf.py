@@ -23,8 +23,8 @@ class TrainBaselinePlayerVsSelf(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, weight_decay, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr, weight_decay=weight_decay)
+    def run(self, lr, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaseLinePlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=True)
@@ -68,13 +68,12 @@ if __name__ == '__main__':
         GAMES = 1000000
         EVALUATIONS = GAMES//100  # 100 * randint(10, 500)
         LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
-        WEIGHT_DECAY = 0.003
 
         PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
         experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         try:
-            experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+            experiment.run(lr=LR)
         except:
             experiment.save_player(experiment.player1)
 

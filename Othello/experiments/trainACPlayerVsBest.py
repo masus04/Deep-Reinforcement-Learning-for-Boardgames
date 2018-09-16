@@ -24,8 +24,8 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, weight_decay=0.01, milestones=False, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, weight_decay=weight_decay)
+    def run(self, lr, milestones=False, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -85,13 +85,12 @@ if __name__ == '__main__':
     GAMES = 1000000
     EVALUATIONS = GAMES // 100
     LR = random() * 1e-9 + 1e-3
-    WEIGHT_DECAY = 0.01
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
     experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     try:
-        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY, milestones=MILESTONES)
+        experiment.run(lr=LR, milestones=MILESTONES)
     finally:
         experiment.save_player(experiment.player1)
 

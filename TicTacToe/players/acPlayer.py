@@ -10,7 +10,7 @@ from abstractClasses import LearningPlayer, Strategy, PlayerException
 
 class ACStrategy(Strategy):
 
-    def __init__(self, lr, weight_decay=0.003, gamma=config.GAMMA, model=None):
+    def __init__(self, lr, weight_decay, gamma=config.GAMMA, model=None):
         super(ACStrategy, self).__init__()
         self.lr = lr
         self.gamma = gamma
@@ -93,7 +93,7 @@ class FCACPlayer(LearningPlayer):
 
 
 class LargeFCACPlayer(LearningPlayer):
-    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.003):
+    def __init__(self, lr=config.LR, strategy=None, weight_decay=0.005):
         super(LargeFCACPlayer, self).__init__(strategy=strategy if strategy is not None
                                          else ACStrategy(lr, weight_decay=weight_decay, model=LargeFCPolicyModel(config=config)))
 

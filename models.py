@@ -20,7 +20,7 @@ class FCPolicyModel(abstract.Model):
 
         self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
-        self.__xavier_initialization__()
+        # self.__xavier_initialization__()
 
         if config.CUDA:
             self.cuda(0)
@@ -59,7 +59,7 @@ class LargeFCPolicyModel(abstract.Model):
         self.vf_head = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.vf_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
-        self.__xavier_initialization__()
+        # self.__xavier_initialization__()
 
         if config.CUDA:
             self.cuda(0)
@@ -105,7 +105,7 @@ class HugeFCPolicyModel(abstract.Model):
         self.vf_head1 = torch.nn.Linear(in_features=self.intermediate_size, out_features=self.intermediate_size)
         self.vf_head2 = torch.nn.Linear(in_features=self.intermediate_size, out_features=1)
 
-        self.__xavier_initialization__()
+        # self.__xavier_initialization__()
 
         if config.CUDA:
             self.cuda(0)
@@ -156,7 +156,7 @@ class ConvPolicyModel(abstract.Model):
 
         self.vf_head = torch.nn.Linear(in_features=self.board_size**2, out_features=1)
 
-        self.__xavier_initialization__()
+        # self.__xavier_initialization__()
 
     def forward(self, input, legal_moves_map):
         x = input.unsqueeze(dim=0)
