@@ -24,8 +24,8 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr)
+    def run(self, lr, weight_decay=0.01, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr, weight_decay=weight_decay)
 
         games_per_evaluation = self.games // self.evaluations
         start_time = datetime.now()
@@ -73,11 +73,12 @@ if __name__ == '__main__':
     GAMES = 1000000
     EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 1e-3
+    WEIGHT_DECAY = 0.01
 
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
     experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-    experiment.run(lr=LR)
+    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
     experiment.save_player(experiment.player1)
 
     print("\nSuccessfully trained on %s games" % experiment.num_episodes)
