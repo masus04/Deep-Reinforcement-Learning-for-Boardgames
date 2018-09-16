@@ -24,15 +24,15 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
+    def run(self, lr, weight_decay=0.01, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, weight_decay=weight_decay)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
-        self.player2.strategy.train = False
+        self.player2.strategy.train, self.player2.strategy.model.training = False, False  # eval mode
 
         games_per_evaluation = self.games // self.evaluations
-        self.replacements = []
+        self.replacements = (0, 0)
         start_time = datetime.now()
         for episode in range(1, self.evaluations+1):
             # train
@@ -43,8 +43,13 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
                 self.player2 = choice(self.milestones)
 
             self.simulation = Othello([self.player1, self.player2])
+
+            # train
+            self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
+
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_results(("Losses", np.mean(losses)))
+            self.add_loss(np.mean(losses))
+            self.add_results(("Best", np.mean(results)))
 
             # evaluate
             if episode*games_per_evaluation % 1000 == 0:
@@ -55,13 +60,15 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
                         "%s vs BEST" % (self.player1.__str__() + (" milestones" if MILESTONES else "")),
-                        "Train %s vs Best version of self\nGames: %s Evaluations: %s\nTime: %s"
-                        % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
+                        "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
+                        % (self.player1, episode * games_per_evaluation, self.evaluations, self.replacements[0] / self.replacements[1], config.time_diff(start_time)))
 
-            if evaluate_against_each_other(self.player1, self.player2, games=4):
+            if evaluate_against_each_other(self.player1, self.player2, games=8):
                 self.player2 = self.player1.copy(shared_weights=False)
-                self.player2.strategy.train = False
-                self.replacements.append(episode)
+                self.player2.strategy.train, self.player2.strategy.model.training = False, False
+                self.replacements = self.replacements[0] + 1, self.replacements[1] + 1
+            else:
+                self.replacements = self.replacements[0], self.replacements[1] + 1
 
             # If x/5th of training is completed, save milestone
             if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
@@ -75,24 +82,20 @@ class TrainACPlayerVsBest(OthelloBaseExperiment):
 
 if __name__ == '__main__':
 
-    ITERATIONS = 1
-    MILESTONES = False
+    MILESTONES = True
+    GAMES = 1000000
+    EVALUATIONS = GAMES // 100
+    LR = random() * 1e-9 + 1e-3
+    WEIGHT_DECAY = 0.01
 
-    start = datetime.now()
-    for i in range(ITERATIONS):
+    PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
-        print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 15000000
-        EVALUATIONS = GAMES//1000
-        LR = random()*1e-9 + 1e-4 #  uniform(1e-4, 4e-6)
-
-        PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
-
-        experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-        experiment.run(lr=LR)
+    experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
+    try:
+        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+    finally:
         experiment.save_player(experiment.player1)
 
-        print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
-        if PLAYER:
-            print("Pretrained on %s legal moves" % 1000000)
-    print("Experiment completed successfully, took %s" % (datetime.now()-start))
+    print("\nSuccessfully trained on %s games" % experiment.num_episodes)
+    if PLAYER:
+        print("Pretrained on %s legal moves" % 1000000)

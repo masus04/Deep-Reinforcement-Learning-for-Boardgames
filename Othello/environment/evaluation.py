@@ -80,7 +80,7 @@ def evaluate_against_each_other(player1, player2, games=config.EVALUATION_GAMES,
     :return: True if player1 scores at least as high as player2
     """
     score, results, overview = evaluate_against_base_players(player1, [player2], games=games, silent=silent)
-    return score >= 0
+    return score >= 0.1
 
 
 def evaluate_both_players(player1, player2):

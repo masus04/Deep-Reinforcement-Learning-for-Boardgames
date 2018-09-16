@@ -2,8 +2,6 @@ from random import random
 
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 
-from Othello.experiments.trainPGSupervisedContinuous import TrainPGSupervisedContinuous
-
 from Othello.experiments.trainACPlayerVsTraditionalOpponent import TrainACPlayerVsTraditionalOpponent
 from Othello.experiments.trainBaselinePlayerVsTraditionalOpponent import TrainBaselinePlayerVsTraditionalOpponent
 from Othello.experiments.trainReinforcePlayerVsTraditionalOpponent import TrainReinforcePlayerVsTraditionalOpponent
@@ -28,34 +26,9 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
     def reset(self):
         super().__init__()
 
-    def run(self, mode):
-        
-        if SUPERVISED:
-            # ACTOR CRITIC
-            if AC:
-                for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
-                    experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
-                    print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(player=player, lr=LR)
-                    experiment.reset()
+    def run(self):
 
-            # BASELINE
-            if BASELINE:
-                for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
-                    experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
-                    print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(player=player, lr=LR)
-                    experiment.reset()
-
-            # REINFORCE
-            if REINFORCE:
-                for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
-                    experiment = TrainPGSupervisedContinuous(games=GAMES, evaluation_period=EVALUATION_PERIOD)
-                    print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(player=player, lr=LR)
-                    experiment.reset()
-
-        if TRADITIONAL:
+        if VS_TRADITIONAL:
             PLAYER = None
             OPPONENT = None
 
@@ -83,7 +56,7 @@ class GreatOthelloCrossValidation(OthelloBaseExperiment):
                     experiment.run(lr=LR)
                     experiment.reset()
             
-            if VS_BEST:
+        if VS_BEST:
             # ACTOR CRITIC
             if AC:
                 for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
@@ -141,9 +114,8 @@ if __name__ == '__main__':
     BASELINE = True
     REINFORCE = False
 
-    # 
-    SUPERVISED = False
-    TRADITIONAL = True
+    # Train following modes
+    VS_TRADITIONAL = True
     VS_BEST = True
     VS_SELF = True
 
@@ -155,6 +127,6 @@ if __name__ == '__main__':
 
     for i in range(1):
         greatCrossVal = GreatOthelloCrossValidation()
-        greatCrossVal.run(mode=TRADITIONAL)
+        greatCrossVal.run()
 
     print("\n| Great TicTacToe Crossvalidation completed |")

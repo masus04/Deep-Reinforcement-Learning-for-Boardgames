@@ -23,9 +23,9 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player, opponent=self.opponent)
         return self
 
-    def run(self, lr, silent=False):
+    def run(self, lr, weight_decay=0.01, silent=False):
 
-        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr)
+        self.player1 = self.pretrained_player if self.pretrained_player else FCReinforcePlayer(lr=lr, weight_decay=weight_decay)
 
         if self.opponent is not None:
             self.player2 = self.opponent
@@ -43,34 +43,49 @@ class TrainReinforcePlayerVsTraditionalOpponent(OthelloBaseExperiment):
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
             results, losses = self.simulation.run_simulations(games_per_evaluation)
-            self.add_results(("Losses", np.mean(losses)))
+            self.add_loss(np.mean(losses))
+            self.add_results(("Training Results", np.mean(results)))
 
             # evaluate
             self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-            score, results, overview = evaluate_against_base_players(self.player1)
+            if self.opponent is None:
+                score, results, overview = evaluate_against_base_players(self.player1)
+            else:
+                score, results, overview = evaluate_against_base_players(self.player1, evaluation_players=[self.opponent])
             self.add_results(results)
 
             if not silent:
                 if Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "ReinforcementTraining vs %s LR: %s" % (self.opponent, lr),
-                        "Train ReinforcementPlayer vs traditional opponents: %s \nLR: %s Games: %s \nFinal score: %s" % (self.opponent, lr, episode*games_per_evaluation, results))
+                        "%s vs TRADITIONAL OPPONENT" % (self.player1),
+                        "Train %s vs %s\nGames: %s Evaluations: %s\nTime: %s"
+                        % (self.player1, self.opponent, episode * games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
 
 
 if __name__ == '__main__':
+
+    start = datetime.now()
+
     GAMES = 1000000
     EVALUATIONS = GAMES // 1000
-    LR = random()*1e-9 + 1e-4
+    LR = random() * 1e-9 + 1e-3  # uniform(1e-2, 1e-4)
+    WEIGHT_DECAY = 0.01
 
     PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
-    OPPONENT = None  # ExperiencedPlayer(deterministic=False, block_mid=False)
+    OPPONENT = None  # ExperiencedPlayer(deterministic=True)
 
     print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
     experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
-    experiment.run(lr=LR)
-    experiment.save_player(experiment.player1, "%s pretrained on traditional opponents" % experiment.player1)
+    try:
+        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+    finally:
+        experiment.save_player(experiment.player1)
+
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
+
+    print("took: %s" % (datetime.now() - start))
+
 

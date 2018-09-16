@@ -29,7 +29,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
-        self.player2.strategy.train = False
+        self.player2.strategy.train, self.player2.strategy.model.training = False, False  # eval mode
 
         games_per_evaluation = self.games // self.evaluations
         self.replacements = (0, 0)
@@ -37,7 +37,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
         for episode in range(1, self.evaluations+1):
 
             # If milestones exist, use them with probability p
-            if self.milestones and random() < 0.1:
+            if self.milestones and random() < 0.2:
                 self.player2 = choice(self.milestones)
 
             self.simulation = Othello([self.player1, self.player2])
@@ -61,9 +61,9 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
                         "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, self.replacements[0]/self.replacements[1], config.time_diff(start_time)))
 
-            if evaluate_against_each_other(self.player1, self.player2, games=4):
+            if evaluate_against_each_other(self.player1, self.player2, games=8):
                 self.player2 = self.player1.copy(shared_weights=False)
-                self.player2.strategy.train = False
+                self.player2.strategy.train, self.player2.strategy.model.training = False, False
                 self.replacements = self.replacements[0] + 1, self.replacements[1] + 1
             else:
                 self.replacements = self.replacements[0], self.replacements[1] + 1
