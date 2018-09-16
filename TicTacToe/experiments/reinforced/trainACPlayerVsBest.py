@@ -18,7 +18,6 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         self.games = games
         self.evaluations = evaluations
         self.pretrained_player = pretrained_player.copy(shared_weights=False) if pretrained_player else None
-        self.milestones = []
 
     def reset(self):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
@@ -37,8 +36,6 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         for episode in range(1, self.evaluations+1):
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
-            if self.milestones and random() < 0.2:
-                self.player2 = choice(self.milestones)
 
             self.simulation = TicTacToe([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
@@ -62,11 +59,6 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
                 self.player2 = self.player1.copy(shared_weights=False)
                 self.player2.strategy.train, self.player2.strategy.model.training = False, False
                 self.replacements.append(episode)
-
-            # If x/5th of training is completed, save milestone
-            if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
-                self.milestones.append(self.player1.copy(shared_weights=False))
-                self.milestones[-1].strategy.train = False
 
         print("Best player replaced after episodes: %s" % self.replacements)
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)

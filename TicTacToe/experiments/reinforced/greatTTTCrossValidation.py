@@ -34,7 +34,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
                 for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
                     experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player, opponent=None)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
                     experiment.reset()
 
             # BASELINE
@@ -50,7 +50,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
                 for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
                     experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player, opponent=None)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
                     experiment.reset()
 
         if VS_BEST:
@@ -59,7 +59,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
                 for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
                     experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
                     experiment.reset()
 
             # BASELINE
@@ -75,7 +75,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
                 for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
                     experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
                     experiment.reset()
 
         if VS_SELF:
@@ -85,7 +85,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
                 for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
                     experiment = TrainACPlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
                     experiment.reset()
             """
 
@@ -103,7 +103,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
                 for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
                     experiment = TrainReinforcePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
                     experiment.reset()
             """
 
@@ -111,9 +111,9 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     # Player selection
-    AC = False
+    AC = True
     BASELINE = True
-    REINFORCE = False
+    REINFORCE = True
 
     # Mode selection
     VS_TRADITIONAL = True
@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
     # Training Parameters    
     LR = 1e-3 + random()*1e-9
-    GAMES = 1000000
+    GAMES = 100
     EVALUATIONS = GAMES // 100
     WEIGHT_DECAY = 0.003
 
