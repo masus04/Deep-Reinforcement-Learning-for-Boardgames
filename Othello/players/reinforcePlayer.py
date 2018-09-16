@@ -26,7 +26,7 @@ class PGStrategy(abstract.Strategy):
         distribution = Categorical(probs)
         action = distribution.sample()
 
-        move = (action.data[0] // config.BOARD_SIZE, action.data[0] % config.BOARD_SIZE)
+        move = (int(action) // config.BOARD_SIZE, int(action) % config.BOARD_SIZE)
         if self.train:
             self.log_probs.append(distribution.log_prob(action))
         return move

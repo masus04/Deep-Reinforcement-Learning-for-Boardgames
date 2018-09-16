@@ -24,7 +24,7 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, weight_decay=0.01, silent=False):
+    def run(self, lr, weight_decay=0.01, milestones=False, silent=False):
         self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr, weight_decay=weight_decay)
 
         games_per_evaluation = self.games // self.evaluations
@@ -54,12 +54,12 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
 
                 if not silent and Printer.print_episode(episode*games_per_evaluation, self.games, datetime.now() - start_time):
                     self.plot_and_save(
-                        "%s vs SELF" % (self.player1.__str__() + (" milestones" if MILESTONES else "")),
+                        "%s vs SELF" % (self.player1.__str__() + (" milestones" if milestones else "")),
                         "Train %s vs Self\nGames: %s Evaluations: %s\nTime: %s"
                         % (self.player1, episode*games_per_evaluation, self.evaluations, config.time_diff(start_time)))
 
             # If x/5th of training is completed, save milestone
-            if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
+            if milestones and (self.games / episode * games_per_evaluation) % 5 == 0:
                 self.milestones.append(self.player1.copy(shared_weights=False))
                 self.milestones[-1].strategy.train = False
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
     try:
-        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY, milestones=MILESTONES)
     finally:
         experiment.save_player(experiment.player1)
 

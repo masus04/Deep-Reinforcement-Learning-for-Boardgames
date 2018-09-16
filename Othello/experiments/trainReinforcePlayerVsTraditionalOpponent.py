@@ -2,6 +2,7 @@ from datetime import datetime
 from random import random, choice
 import numpy as np
 
+import Othello.config as config
 from Othello.experiments.othelloBaseExperiment import OthelloBaseExperiment
 from Othello.players.basePlayers import RandomPlayer, NovicePlayer, ExperiencedPlayer
 from Othello.players.reinforcePlayer import FCReinforcePlayer

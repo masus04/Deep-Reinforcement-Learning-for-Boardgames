@@ -10,109 +10,123 @@ from Othello.experiments.trainACPlayerVsBest import TrainACPlayerVsBest
 from Othello.experiments.trainBaselinePlayerVsBest import TrainBaselinePlayerVsBest
 from Othello.experiments.trainReinforcePlayerVsBest import TrainReinforcePlayerVsBest
 
-from Othello.experiments.trainACPlayerVsSelf import TrainACPlayerVsSelf
+# from Othello.experiments.trainACPlayerVsSelf import TrainACPlayerVsSelf
 from Othello.experiments.trainBaselinePlayerVsSelf import TrainBaselinePlayerVsSelf
-from Othello.experiments.TrainReinforcePlayerVsSelf import TrainReinforcePlayerVsSelf
+# from Othello.experiments.TrainReinforcePlayerVsSelf import TrainReinforcePlayerVsSelf
 
 from Othello.players.reinforcePlayer import FCReinforcePlayer, LargeFCReinforcePlayer, HugeFCReinforcePlayer, ConvReinforcePlayer
 from Othello.players.baselinePlayer import FCBaselinePlayer, LargeFCBaselinePlayer, HugeFCBaselinePlayer, ConvBaselinePlayer
 from Othello.players.acPlayer import FCACPlayer, LargeFCACPlayer, HugeFCACPlayer, ConvACPlayer
 
+
 class GreatOthelloCrossValidation(OthelloBaseExperiment):
 
-    def __init__(self):
+    def __init__(self, ac, baseline, reinforce, vs_traditional, vs_best, vs_self):
         super(GreatOthelloCrossValidation, self).__init__()
+        self.ac = ac
+        self.baseline=baseline
+        self.reinforce = reinforce
+        self.vs_traditional = vs_traditional
+        self.vs_best = vs_best
+        self.vs_self = vs_self
 
     def reset(self):
         super().__init__()
 
-    def run(self):
+    def run(self, lr, games, evaluations):
 
-        if VS_TRADITIONAL:
+        if self.vs_traditional:
             PLAYER = None
             OPPONENT = None
 
             # ACTOR CRITIC
-            if AC:
-                for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
-                    experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+            if self.ac:
+                for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+                    experiment = TrainACPlayerVsTraditionalOpponent(games=games, evaluations=evaluations, pretrained_player=PLAYER, opponent=OPPONENT)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
 
             # BASELINE
-            if BASELINE:
-                for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
-                    experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+            if self.baseline:
+                for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
+                    experiment = TrainBaselinePlayerVsTraditionalOpponent(games=games, evaluations=evaluations, pretrained_player=PLAYER, opponent=OPPONENT)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
 
             # REINFORCE
-            if REINFORCE:
-                for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
-                    experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
+            if self.reinforce:
+                for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+                    experiment = TrainReinforcePlayerVsTraditionalOpponent(games=games, evaluations=evaluations, pretrained_player=PLAYER, opponent=OPPONENT)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
             
-        if VS_BEST:
+        if self.vs_best:
             # ACTOR CRITIC
-            if AC:
-                for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
-                    experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
+            if self.ac:
+                for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+                    experiment = TrainACPlayerVsBest(games=games, evaluations=evaluations, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, milestones=False)
                     experiment.reset()
+                    experiment.run(lr=LR, milestones=True)
 
             # BASELINE
-            if BASELINE:
-                for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
-                    experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
+            if self.baseline:
+                for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
+                    experiment = TrainBaselinePlayerVsBest(games=games, evaluations=evaluations, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, milestones=False)
                     experiment.reset()
+                    experiment.run(lr=LR, milestones=True)
 
             # REINFORCE
-            if REINFORCE:
-                for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
-                    experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
+            if self.reinforce:
+                for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+                    experiment = TrainReinforcePlayerVsBest(games=games, evaluations=evaluations, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
-                    experiment.run(lr=LR)
+                    experiment.run(lr=LR, milestones=False)
                     experiment.reset()
+                    experiment.run(lr=LR, milestones=True)
         
-        if VS_SELF:
+        if self.vs_self:
             # ACTOR CRITIC
-            if AC:
-                for player in [LargeFCACPlayer(LR), HugeFCACPlayer(LR)]:
-                    experiment = TrainACPlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
+            """ Not implemented 
+            if self.ac:
+                for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+                    experiment = TrainACPlayerVsSelf(games=games, evaluations=evaluations, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
+            """
 
             # BASELINE
-            if BASELINE:
-                for player in [LargeFCBaselinePlayer(LR), HugeFCBaselinePlayer(LR)]:
-                    experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
+            if self.baseline:
+                for player in [FCBaselinePlayer(LR), LargeFCBaselinePlayer(LR)]:
+                    experiment = TrainBaselinePlayerVsSelf(games=games, evaluations=evaluations, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
 
             # REINFORCE
-            if REINFORCE:
-                for player in [LargeFCReinforcePlayer(LR), HugeFCReinforcePlayer(LR)]:
-                    experiment = TrainReinforcePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
+            """ Not implemented 
+            if self.reinforce:
+                for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+                    experiment = TrainReinforcePlayerVsSelf(games=games, evaluations=evaluations, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
+            """
 
 
 if __name__ == '__main__':
 
     # Train following players:
-    AC = False
+    AC = True
     BASELINE = True
-    REINFORCE = False
+    REINFORCE = True
 
     # Train following modes
     VS_TRADITIONAL = True
@@ -126,7 +140,7 @@ if __name__ == '__main__':
     EVALUATIONS = GAMES // EVALUATION_PERIOD
 
     for i in range(1):
-        greatCrossVal = GreatOthelloCrossValidation()
-        greatCrossVal.run()
+        greatCrossVal = GreatOthelloCrossValidation(ac=AC, baseline=BASELINE, reinforce=REINFORCE, vs_traditional=VS_TRADITIONAL, vs_best=VS_BEST, vs_self=VS_SELF)
+        greatCrossVal.run(lr=LR, games=GAMES, evaluations=EVALUATIONS)
 
     print("\n| Great TicTacToe Crossvalidation completed |")
