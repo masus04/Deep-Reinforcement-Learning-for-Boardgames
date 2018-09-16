@@ -31,7 +31,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
         if VS_TRADITIONAL:
             # ACTOR CRITIC
             if AC:
-                for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+                for player in [FCACPlayer(LR)]:
                     experiment = TrainACPlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player, opponent=None)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -39,7 +39,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
 
             # BASELINE
             if BASELINE:
-                for player in [FCBaseLinePlayer(LR), LargeFCBaseLinePlayer(LR)]:
+                for player in [FCBaseLinePlayer(LR)]:
                     experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player, opponent=None)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -47,7 +47,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
 
             # REINFORCE
             if REINFORCE:
-                for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+                for player in [FCReinforcePlayer(LR)]:
                     experiment = TrainReinforcePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player, opponent=None)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -56,7 +56,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
         if VS_BEST:
             # ACTOR CRITIC
             if AC:
-                for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+                for player in [FCACPlayer(LR)]:
                     experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -64,15 +64,16 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
 
             # BASELINE
             if BASELINE:
-                for player in [FCBaseLinePlayer(LR), LargeFCBaseLinePlayer(LR)]:
+                for player in [FCBaseLinePlayer(LR)]:
                     experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
+                    experiment.run(lr=LR, milestones=True)
 
             # REINFORCE
             if REINFORCE:
-                for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+                for player in [FCReinforcePlayer(LR)]:
                     experiment = TrainReinforcePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -82,7 +83,7 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
             # ACTOR CRITIC
             """ Not yet implemented
             if AC:
-                for player in [FCACPlayer(LR), LargeFCACPlayer(LR)]:
+                for player in [FCACPlayer(LR)]:
                     experiment = TrainACPlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -91,16 +92,17 @@ class GreatTTTCrossValidation(TicTacToeBaseExperiment):
 
             # BASELINE
             if BASELINE:
-                for player in [FCBaseLinePlayer(LR), LargeFCBaseLinePlayer(LR)]:
+                for player in [FCBaseLinePlayer(LR)]:
                     experiment = TrainBaselinePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
                     experiment.reset()
+                    experiment.run(lr=LR, milestones=True)
 
             # REINFORCE
             """ Not yet implemented
             if REINFORCE:
-                for player in [FCReinforcePlayer(LR), LargeFCReinforcePlayer(LR)]:
+                for player in [FCReinforcePlayer(LR)]:
                     experiment = TrainReinforcePlayerVsSelf(games=GAMES, evaluations=EVALUATIONS, pretrained_player=player)
                     print("\n|| ----- Running %s with %s ----- ||" % (experiment, player))
                     experiment.run(lr=LR)
@@ -122,8 +124,8 @@ if __name__ == '__main__':
 
     # Training Parameters    
     LR = 1e-3 + random()*1e-9
-    GAMES = 1000000
-    EVALUATIONS = GAMES // 1000
+    GAMES = 10
+    EVALUATIONS = GAMES // 5
 
     for i in range(1):
         greatCrossVal = GreatTTTCrossValidation()

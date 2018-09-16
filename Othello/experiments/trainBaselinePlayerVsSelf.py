@@ -31,17 +31,16 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
         start_time = datetime.now()
         for episode in range(1, self.evaluations+1):
             # If milestones exist, use them with probability p
-            if self.milestones and random() < 0.1:
+            if self.milestones and random() < 0.2:
                 self.player2 = choice(self.milestones)
             else:
                 self.player2 = self.player1.copy(shared_weights=True)
 
-            self.player2.strategy.train = False
-            self.simulation = Othello([self.player1, self.player2])
-
             # train
             self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
+            self.player2.strategy.train = False
 
+            self.simulation = Othello([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
             self.add_loss(np.mean(losses))
             self.add_results(("Self", np.mean(results)))
@@ -61,7 +60,6 @@ class TrainBaselinePlayerVsSelf(OthelloBaseExperiment):
             # If x/5th of training is completed, save milestone
             if milestones and (self.games / episode * games_per_evaluation) % 5 == 0:
                 self.milestones.append(self.player1.copy(shared_weights=False))
-                self.milestones[-1].strategy.train = False
 
         self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
         return self
