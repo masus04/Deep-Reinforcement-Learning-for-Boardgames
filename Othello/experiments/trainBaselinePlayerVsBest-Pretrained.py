@@ -24,57 +24,57 @@ class TrainBaselinePlayerVsBest_Pretrained(OthelloBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-        def run(self, lr, weight_decay=0.01, silent=False):
-            self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr, weight_decay=weight_decay)
+    def run(self, lr, weight_decay=0.01, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCBaselinePlayer(lr=lr, weight_decay=weight_decay)
 
-            # Player 2 has the same start conditions as Player 1 but does not train
-            self.player2 = self.player1.copy(shared_weights=False)
-            self.player2.strategy.train, self.player2.strategy.model.training = False, False  # eval mode
+        # Player 2 has the same start conditions as Player 1 but does not train
+        self.player2 = self.player1.copy(shared_weights=False)
+        self.player2.strategy.train, self.player2.strategy.model.training = False, False  # eval mode
 
-            games_per_evaluation = self.games // self.evaluations
-            self.replacements = (0, 0)
-            start_time = datetime.now()
-            for episode in range(1, self.evaluations + 1):
+        games_per_evaluation = self.games // self.evaluations
+        self.replacements = (0, 0)
+        start_time = datetime.now()
+        for episode in range(1, self.evaluations + 1):
 
-                # If milestones exist, use them with probability p
-                if self.milestones and random() < 0.2:
-                    self.player2 = choice(self.milestones)
+            # If milestones exist, use them with probability p
+            if self.milestones and random() < 0.2:
+                self.player2 = choice(self.milestones)
 
-                self.simulation = Othello([self.player1, self.player2])
+            self.simulation = Othello([self.player1, self.player2])
 
-                # train
-                self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
+            # train
+            self.player1.strategy.train, self.player1.strategy.model.training = True, True  # training mode
 
-                results, losses = self.simulation.run_simulations(games_per_evaluation)
-                self.add_loss(np.mean(losses))
-                self.add_results(("Best", np.mean(results)))
+            results, losses = self.simulation.run_simulations(games_per_evaluation)
+            self.add_loss(np.mean(losses))
+            self.add_results(("Best", np.mean(results)))
 
-                # evaluate
-                if episode * games_per_evaluation % 1000 == 0:
-                    self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
-                    score, results, overview = evaluate_against_base_players(self.player1)
-                    self.add_results(results)
+            # evaluate
+            if episode * games_per_evaluation % 1000 == 0:
+                self.player1.strategy.train, self.player1.strategy.model.training = False, False  # eval mode
+                score, results, overview = evaluate_against_base_players(self.player1)
+                self.add_results(results)
 
-                    if not silent and Printer.print_episode(episode * games_per_evaluation, self.games, datetime.now() - start_time):
-                        self.plot_and_save(
-                            "%s vs BEST" % (self.player1.__str__() + (" milestones" if MILESTONES else "")),
-                            "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
-                            % (self.player1, episode * games_per_evaluation, self.evaluations, self.replacements[0] / self.replacements[1], config.time_diff(start_time)))
+                if not silent and Printer.print_episode(episode * games_per_evaluation, self.games, datetime.now() - start_time):
+                    self.plot_and_save(
+                        "%s vs BEST" % (self.player1.__str__() + (" milestones" if MILESTONES else "")),
+                        "Train %s vs Best version of self\nGames: %s Evaluations: %s Replacement ratio: %s\nTime: %s"
+                        % (self.player1, episode * games_per_evaluation, self.evaluations, self.replacements[0] / self.replacements[1], config.time_diff(start_time)))
 
-                if evaluate_against_each_other(self.player1, self.player2, games=8):
-                    self.player2 = self.player1.copy(shared_weights=False)
-                    self.player2.strategy.train, self.player2.strategy.model.training = False, False
-                    self.replacements = self.replacements[0] + 1, self.replacements[1] + 1
-                else:
-                    self.replacements = self.replacements[0], self.replacements[1] + 1
+            if evaluate_against_each_other(self.player1, self.player2, games=8):
+                self.player2 = self.player1.copy(shared_weights=False)
+                self.player2.strategy.train, self.player2.strategy.model.training = False, False
+                self.replacements = self.replacements[0] + 1, self.replacements[1] + 1
+            else:
+                self.replacements = self.replacements[0], self.replacements[1] + 1
 
-                # If x/5th of training is completed, save milestone
-                if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
-                    self.milestones.append(self.player1.copy(shared_weights=False))
-                    self.milestones[-1].strategy.train = False
+            # If x/5th of training is completed, save milestone
+            if MILESTONES and (self.games / episode * games_per_evaluation) % 5 == 0:
+                self.milestones.append(self.player1.copy(shared_weights=False))
+                self.milestones[-1].strategy.train = False
 
-            self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
-            return self
+        self.final_score, self.final_results, self.results_overview = evaluate_against_base_players(self.player1, silent=False)
+        return self
 
 
 if __name__ == '__main__':
