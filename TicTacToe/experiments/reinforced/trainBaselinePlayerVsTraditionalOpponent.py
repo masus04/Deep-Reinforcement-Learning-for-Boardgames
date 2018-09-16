@@ -74,7 +74,7 @@ if __name__ == '__main__':
     MILESTONES = True
     start = datetime.now()
 
-    GAMES = 1000000
+    GAMES = 100000
     EVALUATIONS = 1000
     LR = random()*1e-9 + 1e-3  # uniform(1e-2, 1e-4)
     WEIGHT_DECAY = 0.003
@@ -83,8 +83,11 @@ if __name__ == '__main__':
     OPPONENT = None  # ExpertPlayer()
 
     print("Training BaselinePlayer vs %s with lr: %s" % (OPPONENT, LR))
+
     experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
-    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
-    experiment.save_player(experiment.player1)
+    try:
+        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+    except:
+        experiment.save_player(experiment.player1)
 
     print("took: %s" % (datetime.now() - start))

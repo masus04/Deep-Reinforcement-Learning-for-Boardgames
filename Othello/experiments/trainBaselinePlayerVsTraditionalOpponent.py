@@ -85,8 +85,11 @@ if __name__ == '__main__':
 
         print("Training ReinforcePlayer vs %s with lr: %s" % (OPPONENT, LR))
         experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
-        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
-        experiment.save_player(experiment.player1)
+        try:
+            experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+        finally:
+            experiment.save_player(experiment.player1)
+
     print("Successfully trained on %s games, pretrained on %s" % (experiment.__plotter__.num_episodes, 10000000))
 
     print("took: %s" % (datetime.now() - start))

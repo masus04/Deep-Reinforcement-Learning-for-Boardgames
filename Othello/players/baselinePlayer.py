@@ -27,9 +27,12 @@ class BaselineStrategy(Strategy):
     def evaluate(self, board_sample, legal_moves_map):
         input = config.make_variable([board_sample])
 
-        probs, state_value = self.model(input, config.make_variable(legal_moves_map))
-        distribution = Categorical(probs)
-        action = distribution.sample()
+        try:
+            probs, state_value = self.model(input, config.make_variable(legal_moves_map))
+            distribution = Categorical(probs)
+            action = distribution.sample()
+        except RuntimeError:
+            print("Invalid distribution. Board sample: \n%s" % board_sample)
 
         move = (int(action) // config.BOARD_SIZE, int(action) % config.BOARD_SIZE)
         if self.train:

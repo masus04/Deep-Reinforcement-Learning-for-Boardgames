@@ -88,8 +88,10 @@ if __name__ == '__main__':
     PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
 
     experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-    experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
-    experiment.save_player(experiment.player1)
+    try:
+        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+    finally:
+        experiment.save_player(experiment.player1)
 
     print("\nSuccessfully trained on %s games" % experiment.num_episodes)
     if PLAYER:

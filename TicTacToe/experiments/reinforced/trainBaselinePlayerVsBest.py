@@ -80,8 +80,10 @@ if __name__ == '__main__':
         PLAYER = None  # TrainBaselinePlayerVsBest.load_player("PartlyPretrainedOnRandomAndExpert.pth")
 
         experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
-        experiment.save_player(experiment.player1)
+        try:
+            experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+        except:
+            experiment.save_player(experiment.player1)
 
         print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
         if PLAYER:
