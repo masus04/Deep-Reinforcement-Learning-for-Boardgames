@@ -77,7 +77,6 @@ if __name__ == '__main__':
     GAMES = 3000000
     EVALUATIONS = 1000
     LR = random()*1e-9 + 1e-3  # uniform(1e-2, 1e-4)
-    WEIGHT_DECAY = 0.003
 
     PLAYER = None  # Experiment.load_player("player.pth")
     OPPONENT = None  # ExpertPlayer()
@@ -86,7 +85,7 @@ if __name__ == '__main__':
 
     experiment = TrainBaselinePlayerVsTraditionalOpponent(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER, opponent=OPPONENT)
     try:
-        experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+        experiment.run(lr=LR)
     except:
         experiment.save_player(experiment.player1)
 

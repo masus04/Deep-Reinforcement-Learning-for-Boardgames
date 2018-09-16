@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     start = datetime.now()
 
-    GAMES = 1000000
+    GAMES = 3000000
     EVALUATIONS = GAMES//1000
     LR = random()*1e-9 + 1e-3  # uniform(1e-2, 1e-4)
 
