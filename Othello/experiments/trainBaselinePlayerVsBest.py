@@ -80,7 +80,7 @@ class TrainBaselinePlayerVsBest(OthelloBaseExperiment):
 if __name__ == '__main__':
 
     MILESTONES = True
-    GAMES = 3000000
+    GAMES = 2000000
     EVALUATIONS = GAMES//100
     LR = random()*1e-9 + 1e-3
 
