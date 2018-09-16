@@ -24,8 +24,8 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
         self.__init__(games=self.games, evaluations=self.evaluations, pretrained_player=self.pretrained_player)
         return self
 
-    def run(self, lr, silent=False):
-        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr)
+    def run(self, lr, weight_decay, silent=False):
+        self.player1 = self.pretrained_player if self.pretrained_player else FCACPlayer(lr=lr, weight_decay=weight_decay)
 
         # Player 2 has the same start conditions as Player 1 but does not train
         self.player2 = self.player1.copy(shared_weights=False)
@@ -42,7 +42,9 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 
             self.simulation = TicTacToe([self.player1, self.player2])
             results, losses = self.simulation.run_simulations(games_per_evaluation)
+            self.add_loss(np.mean(losses))
             self.add_results(("Losses", np.mean(losses)))
+            self.add_results(("Best", np.mean(results)))
 
             # evaluate
             if episode*games_per_evaluation % 1000 == 0:
@@ -58,7 +60,7 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 
             if evaluate_against_each_other(self.player1, self.player2):
                 self.player2 = self.player1.copy(shared_weights=False)
-                self.player2.strategy.train = False
+                self.player2.strategy.train, self.player2.strategy.model.training = False, False
                 self.replacements.append(episode)
 
             # If x/5th of training is completed, save milestone
@@ -74,22 +76,25 @@ class TrainACPlayerVsBest(TicTacToeBaseExperiment):
 if __name__ == '__main__':
 
     ITERATIONS = 1
-    MILESTONES = False
 
     start = datetime.now()
     for i in range(ITERATIONS):
 
-        print("|| ITERATION: %s/%s ||" % (i+1, ITERATIONS))
-        GAMES = 100000
-        EVALUATIONS = GAMES//100
-        LR = random()*1e-9 + 1e-4  # uniform(1e-4, 2e-5)
+        print("|| ITERATION: %s/%s ||" % (i + 1, ITERATIONS))
+        GAMES = 1000000
+        EVALUATIONS = GAMES // 100  # 100 * randint(10, 500)
+        LR = random() * 1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
+        WEIGHT_DECAY = 0.01
 
-        PLAYER = None  # Experiment.load_player("Pretrain player [all traditional opponents].pth")
+        PLAYER = None
 
         experiment = TrainACPlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
-        experiment.run(lr=LR)
+        try:
+            experiment.run(lr=LR, weight_decay=WEIGHT_DECAY)
+        except:
+            experiment.save_player(experiment.player1)
 
         print("\nSuccessfully trained on %s games\n" % experiment.num_episodes)
         if PLAYER:
             print("Pretrained on %s legal moves" % 1000000)
-    print("Experiment completed successfully, Time: %s" % (datetime.now()-start))
+    print("Experiment completed successfully, Time: %s" % (datetime.now() - start))

@@ -79,7 +79,7 @@ if __name__ == '__main__':
     LR = random()*1e-9 + 1e-3  # uniform(1e-2, 1e-4)
     WEIGHT_DECAY = 0.003
 
-    PLAYER = None  # Experiment.load_player("ReinforcePlayer using 3 layers pretrained on legal moves for 1000000 games.pth")
+    PLAYER = None  # Experiment.load_player("player.pth")
     OPPONENT = None  # ExpertPlayer()
 
     print("Training BaselinePlayer vs %s with lr: %s" % (OPPONENT, LR))

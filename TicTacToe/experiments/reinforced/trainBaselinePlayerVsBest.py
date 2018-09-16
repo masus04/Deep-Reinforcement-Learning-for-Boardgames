@@ -77,7 +77,7 @@ if __name__ == '__main__':
         LR = random()*1e-9 + 1e-3  # uniform(1e-4, 2e-5)  # random()*1e-9 + 1e-5
         WEIGHT_DECAY = 0.01
 
-        PLAYER = None  # TrainBaselinePlayerVsBest.load_player("PartlyPretrainedOnRandomAndExpert.pth")
+        PLAYER = None
 
         experiment = TrainBaselinePlayerVsBest(games=GAMES, evaluations=EVALUATIONS, pretrained_player=PLAYER)
         try:
