@@ -72,14 +72,15 @@ def to_status(label):
         return "l"
 
 
-def evaluate_against_each_other(player1, player2):
+def evaluate_against_each_other(player1, player2, silent=True):
     """
     Evaluates player1 vs player2 using direct matches in oder to determine which one is used as new reference player
     :param player1:
     :param player2:
+    :param silent: Print results to console if set to False
     :return: True if player1 scores at least as high as player2
     """
-    score, results, overview = evaluate_against_base_players(player1, [player2])
+    score, results, overview = evaluate_against_base_players(player1, [player2], silent=silent)
     return score >= 0
 
 

@@ -52,7 +52,7 @@ class PGStrategy(abstract.Strategy):
         del self.rewards[:]
         del self.log_probs[:]
 
-        return abs(int(policy_loss))
+        return abs(float(policy_loss))
 
 
 DEFAULT_WEIGHT_DECAY = 0.01

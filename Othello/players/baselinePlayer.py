@@ -69,7 +69,7 @@ class BaselineStrategy(Strategy):
         del self.board_samples[:]
         del self.legal_moves[:]
 
-        return abs(int(loss))
+        return abs(float(loss))
 
     @staticmethod
     def calculate_loss(log_probs, state_values, rewards):
