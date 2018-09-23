@@ -125,7 +125,7 @@ if __name__ == '__main__':
     # Training Parameters    
     LR = 1e-3 + random()*1e-9
     GAMES = 1000000
-    EVALUATIONS = GAMES // 1000
+    EVALUATIONS = GAMES // 100
 
     for i in range(1):
         greatCrossVal = GreatTTTCrossValidation()
