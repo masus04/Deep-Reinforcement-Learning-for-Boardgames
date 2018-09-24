@@ -71,7 +71,7 @@ class ACStrategy(Strategy):
         del self.board_samples[:]
         del self.legal_moves[:]
 
-        return abs(int(loss))
+        return abs(float(loss))
 
     def online_policy_update(self, board, legal_moves, logprob):
         """ Not Tested after PyTorch update"""

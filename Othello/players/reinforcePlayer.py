@@ -42,7 +42,7 @@ class PGStrategy(abstract.Strategy):
         rewards = config.make_variable(rewards)
         # rewards = self.normalize_rewards(rewards)  # For now nothing to normalize, standard deviation = 0
 
-        policy_losses = [(-log_prob * reward / len(self.log_probs)) for log_prob, reward in zip(self.log_probs, rewards)]
+        policy_losses = [(-log_prob * reward) for log_prob, reward in zip(self.log_probs, rewards)]
 
         self.optimizer.zero_grad()
         policy_loss = torch.cat(policy_losses).sum()
@@ -52,7 +52,7 @@ class PGStrategy(abstract.Strategy):
         del self.rewards[:]
         del self.log_probs[:]
 
-        return abs(int(policy_loss))
+        return abs(float(policy_loss))
 
 
 DEFAULT_WEIGHT_DECAY = 0.01
