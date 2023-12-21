@@ -1,6 +1,6 @@
 Deep Reinforcement Learning for TicTacToe and Othello
 ---------------------------------------------------------------
-This repository contains all resources for my ongoing master's thesis on Deep Reinforcement Learning for zero sum games including TicTacToe and Othello.
+This repository contains all resources for my master's thesis on Deep Reinforcement Learning for zero sum board games including TicTacToe and Othello.
 
 I chose these games specifically because they represent a progression from a very simple game to a rather complicated one that can still be approached with resources available to an average student. I will release all my work here and it is my hope that other researchers will find both my framework as well as my players helpful and may even write their own players and or games to extend and contribute to it.
 
